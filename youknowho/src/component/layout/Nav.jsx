@@ -9,11 +9,6 @@ const NavStyle = createGlobalStyle`
     font-weight: normal;
     font-style: normal;
   }
-
-  body{
-    font-family: 'GmarketSansMedium',  sans-serif;
-  }
-  
 `
 
 export const Nav = () => {
