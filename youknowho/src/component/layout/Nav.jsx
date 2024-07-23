@@ -99,6 +99,7 @@ const MainButton = styled.button`
 `
 
 const Button = styled.button`
+  position: relative;
   font-size: 16px;
   font-family: 'GmarketSansMedium',  sans-serif;
   background: none;
