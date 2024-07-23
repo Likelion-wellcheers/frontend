@@ -33,35 +33,29 @@ export const Nav = () => {
       <NavStyle />
       <Container>
         <MainButton
-        key={"home"}
         onClick={()=>{handleClick("")}}>
           <LogoContainer>
             <Logo src="/images/mainlogo.png" alt="logo"></Logo>
           </LogoContainer>
           유노유노후</MainButton>
         <Button 
-        key={"searchhome"}
          $active={curPage === "searchhome"}
         onClick={()=>handleClick("searchhome")}>
           집찾기</Button>
         <Button 
-        key={"localnews"} 
         $active={curPage === "localnews"}
         onClick={()=>handleClick("localnews")}>
           동네소식</Button>
         <Button 
-        key={"mypage"} 
         $active={curPage === "mypage"}
         onClick={()=>handleClick("mypage")}>
           마이페이지</Button>
         <UserButtons>
           <UserButton
-          key={"login"}
           onClick={()=>{handleClick("login")}}
           >로그인</UserButton>
           <UserButtonDivide>|</UserButtonDivide>
           <UserButton
-          key={"siginup"}
           onClick={()=>{handleClick("signup")}}
           >회원가입</UserButton>
         </UserButtons>
