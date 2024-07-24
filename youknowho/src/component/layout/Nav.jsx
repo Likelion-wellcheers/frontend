@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import styled, { createGlobalStyle } from "styled-components";
 import { useNavigate } from 'react-router-dom';
+import { ThemeColorContext } from '../../context/context';
 
 const NavStyle = createGlobalStyle`
   @font-face {
@@ -16,6 +17,7 @@ export const Nav = () => {
   //home의 경로는 '/' 이므로 디폴트 값으로
   const [curPage, setCurPage] = useState("/");
   const navigate = useNavigate();
+  const themeColor = useContext(ThemeColorContext);
 
   //메뉴 클릭 시 해당 버튼에 대한 페이지로 이동하도록
   const handleClick = (buttonName) => {
@@ -33,15 +35,15 @@ export const Nav = () => {
             <Logo src="/images/mainlogo.png" alt="logo"></Logo>
           </LogoContainer>
           유노유노후</MainButton>
-        <Button 
+        <Button  themeColor={themeColor}
          $active={curPage === "searchhome"}
         onClick={()=>handleClick("searchhome")}>
           집찾기</Button>
-        <Button 
+        <Button  themeColor={themeColor}
         $active={curPage === "localnews"}
         onClick={()=>handleClick("localnews")}>
           동네소식</Button>
-        <Button 
+        <Button  themeColor={themeColor}
         $active={curPage === "mypage"}
         onClick={()=>handleClick("mypage")}>
           마이페이지</Button>
@@ -103,7 +105,7 @@ const Button = styled.button`
     bottom: -5px;
     width: 100%;
     height: 2px;
-    background-color: #5D5FEF; 
+    background-color: ${({themeColor})=> themeColor.main}; 
   }
 `
 
