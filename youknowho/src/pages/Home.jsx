@@ -223,7 +223,7 @@ const ArticleBackground = styled.div`
 `
 
 const ArticleTitle = styled.div`
-  position :relative;
+  //position :relative;
 `
 
 const ArticleContents = styled.div`
