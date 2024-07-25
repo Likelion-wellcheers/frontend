@@ -63,7 +63,13 @@ export const Home = () => {
           </SectionContents>
         </Section>
         <Article>
+          <ArticleBackground></ArticleBackground>
           <ArticleTitle></ArticleTitle>
+          <ArticleContents>
+            <ArticleContent></ArticleContent>
+            <ArticleContent></ArticleContent>
+            <ArticleContent></ArticleContent>
+          </ArticleContents>
         </Article>
     </Container>
       
@@ -86,20 +92,20 @@ const Banner = styled.div`
   background-color: ${({themeColor})=>themeColor.sub};
 `
 
-const BannerImg = styled.img`
-  width: 470px;
-  height: 490px;
-  margin-right: 130px;
-
-`
-
 const BannerDesc = styled.div`
-  width: 40%;
+  width: 38%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   margin-left: 70px;
   padding-left: 80px;
+`
+
+const BannerImg = styled.img`
+  width: 40%;
+  width: 470px;
+  height: 490px;
+  margin-right: 160px;
 `
 
 const BannerSubTitle = styled.div`
@@ -205,8 +211,24 @@ const SectionContentKey = styled.div`
 `
 
 const Article = styled.div`
+  height: 620px;
+  background-color: rgba(244, 243, 255, 1);
+  position: relative;
   
 `
+const ArticleBackground = styled.div`
+  height: 360px;
+  background-image: url("/images/background.png");
+  background-size: cover; 
+`
+
 const ArticleTitle = styled.div`
+  position :relative;
+`
+
+const ArticleContents = styled.div`
+  
+`
+const ArticleContent = styled.div`
   
 `
