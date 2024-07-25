@@ -1,39 +1,25 @@
 import React from 'react'
-//import { useForm } from '../../hooks/useForm';
 import styled, { createGlobalStyle } from 'styled-components';
-//import { Link } from 'react-router-dom';
 
 export const Login = () => {
-  //const [id, onChangeId] = useForm("");
-  //const [pw, onChangePw] = useForm("");
+  const Rest_API_key = 'b36f8d550e5424c31723c5c5fa3373e8';
+  const Redirect_uri = '<http://localhost:3000/kakaologin>';
+  const kakaoURL = `https://kauth.kakao.com/oauth/authorize?client_id=${Rest_API_key}&redirect_uri=${Redirect_uri}&response_type=code`;
 
-  //const router = useNavigate();
-/*
-  useEffect(() => {
-    if(localStorage.getItem("access")) {
-      router("/mypage");
-    }
-  }, [router]);
+  const handleLogin = () => {
+    window.location.href = kakaoURL;
+  };
 
-  const onClick = async () => {
-    try{
-        //const result = await login(id, pw);
-        //localStorage.setItem("access", result.accessToken);
-        //localStorage.setItem("refresh", result.refreshToken);
-        //router("/mypage");
-    } catch (error) {
-        alert("id나 pw를 입력하세요")
-    }
-};
-
-*/
 return (
   <Wrapper>
     <GlobalStyle />
     <Logo src="/images/mainlogo.png" alt="Logo" />
     <Title>간편하게 가입하고<br />유노유노후와 집을 찾아보세요!</Title>
     <BtnWrapper>
-      <KakaoButton>카카오로 시작하기</KakaoButton>
+      <KakaoButton onClick={handleLogin}>
+        <img src="/images/kakaologo.png" alt="Kakao" />
+        <div>카카오로 시작하기</div>
+      </KakaoButton>
     </BtnWrapper>
   </Wrapper>
 );
@@ -76,17 +62,27 @@ const BtnWrapper = styled.div`
 display: flex;
 flex-direction: column;
 gap: 10px;
-width: 100%;
+width: 110%;
 margin-bottom: 20px;
 `;
 
 const KakaoButton = styled.button`
+display: flex;
+align-items: center;
 background: #ffe812;
 color: #3c1e1e;
-padding: 15px;
+padding: 12px;
 border: none;
 border-radius: 5px;
 font-size: 16px;
 font-weight: bold;
 cursor: pointer;
+
+img {
+  width: 4%;
+  height: auto;
+  margin-right: 3%;
+  margin-left: 29%
+}
+
 `;
