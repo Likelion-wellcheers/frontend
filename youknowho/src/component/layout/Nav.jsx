@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import styled, { createGlobalStyle } from "styled-components";
 import { useNavigate } from 'react-router-dom';
+import { ThemeColorContext } from '../../context/context';
 
 const NavStyle = createGlobalStyle`
   @font-face {
@@ -16,6 +17,7 @@ export const Nav = () => {
   //home의 경로는 '/' 이므로 디폴트 값으로
   const [curPage, setCurPage] = useState("/");
   const navigate = useNavigate();
+  const themeColor = useContext(ThemeColorContext);
 
   //메뉴 클릭 시 해당 버튼에 대한 페이지로 이동하도록
   const handleClick = (buttonName) => {
@@ -26,38 +28,46 @@ export const Nav = () => {
   return (
     <>
       <NavStyle />
-      <Container>
-        <MainButton
-        onClick={()=>{handleClick("")}}>
-          <LogoContainer>
-            <Logo src="/images/mainlogo.png" alt="logo"></Logo>
-          </LogoContainer>
-          유노유노후</MainButton>
-        <Button 
-         $active={curPage === "searchhome"}
-        onClick={()=>handleClick("searchhome")}>
-          집찾기</Button>
-        <Button 
-        $active={curPage === "localnews"}
-        onClick={()=>handleClick("localnews")}>
-          동네소식</Button>
-        <Button 
-        $active={curPage === "mypage"}
-        onClick={()=>handleClick("mypage")}>
-          마이페이지</Button>
-        <UserButtons>
-          <UserButton
-          onClick={()=>{handleClick("login")}}
-          >로그인</UserButton>
-          <UserButtonDivide>|</UserButtonDivide>
-          <UserButton
-          onClick={()=>{handleClick("signup")}}
-          >회원가입</UserButton>
-        </UserButtons>
-      </Container>
+      <OuterContainer>
+        <Container>
+          <MainButton
+          onClick={()=>{handleClick("")}}>
+            <LogoContainer>
+              <Logo src="/images/mainlogo.png" alt="logo"></Logo>
+            </LogoContainer>
+            유노유노후</MainButton>
+          <Button  themeColor={themeColor}
+          $active={curPage === "searchhome"}
+          onClick={()=>handleClick("searchhome")}>
+            나만의 집찾기</Button>
+          <Button  themeColor={themeColor}
+          $active={curPage === "localnews"}
+          onClick={()=>handleClick("localnews")}>
+            동네소식</Button>
+          <Button  themeColor={themeColor}
+          $active={curPage === "mypage"}
+          onClick={()=>handleClick("mypage")}>
+            마이페이지</Button>
+          <UserButtons>
+            <UserButton
+            onClick={()=>{handleClick("login")}}
+            >로그인</UserButton>
+            <UserButtonDivide>|</UserButtonDivide>
+            <UserButton
+            onClick={()=>{handleClick("signup")}}
+            >회원가입</UserButton>
+          </UserButtons>
+        </Container>
+      </OuterContainer>
+      
     </>
   )
 }
+
+const OuterContainer = styled.div`
+  display: flex;
+  justify-content: center;
+`
 
 const Container = styled.div`
   display: flex;
@@ -65,7 +75,7 @@ const Container = styled.div`
   justify-content: center;
   height: 64px;
   background-color: #FFFFFF;
-  gap: 124px;
+  gap: 150px;
   white-space: nowrap; //화면 줄여도 내부 텍스트 한줄로 유지
 `
 
@@ -80,16 +90,17 @@ const Logo = styled.img`
 const MainButton = styled.button`
   display: flex;
   gap: 5px;
-  font-size: 19px;
+  font-size: 20px;
   font-family: 'GmarketSansMedium',  sans-serif;
   background: none;
   border: none;
+  margin-right: 40px;
   cursor: pointer;
 `
 
 const Button = styled.button`
   position: relative;
-  font-size: 16px;
+  font-size: 17px;
   font-family: 'GmarketSansMedium',  sans-serif;
   background: none;
   border: none;
@@ -99,17 +110,18 @@ const Button = styled.button`
     content: '';
     display: ${props => (props.$active ? 'block' : 'none')};
     position: absolute;
-    left: 0;
-    bottom: -5px;
-    width: 100%;
+    left: -20%;
+    bottom: -20px;
+    width: 140%;
     height: 2px;
-    background-color: #5D5FEF; 
+    background-color: ${({themeColor})=> themeColor.main}; 
   }
 `
 
 const UserButtons = styled.div`
   display: flex;
   gap: 1px;
+  margin-left: 30px;
 `
 
 const UserButtonDivide = styled.div`
