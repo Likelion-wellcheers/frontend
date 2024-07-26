@@ -2,6 +2,8 @@ import React, { useContext, useState } from 'react'
 import styled, { createGlobalStyle } from "styled-components";
 import { useNavigate } from 'react-router-dom';
 import { ThemeColorContext } from '../../context/context';
+import { useRecoilState } from 'recoil';
+import { curPageRecoil } from '../../recoil/atom';
 
 const NavStyle = createGlobalStyle`
   @font-face {
@@ -15,9 +17,9 @@ const NavStyle = createGlobalStyle`
 export const Nav = () => {
   //nav에서 현제 어떤 페이지인지 저장하는 상태
   //home의 경로는 '/' 이므로 디폴트 값으로
-  const [curPage, setCurPage] = useState("/");
   const navigate = useNavigate();
   const themeColor = useContext(ThemeColorContext);
+  const [curPage, setCurPage] = useRecoilState(curPageRecoil);
 
   //메뉴 클릭 시 해당 버튼에 대한 페이지로 이동하도록
   const handleClick = (buttonName) => {
@@ -80,6 +82,7 @@ const Container = styled.div`
 `
 
 const LogoContainer = styled.div`
+  display: flex;
   margin-right: 1px;
 `
 
@@ -96,6 +99,7 @@ const MainButton = styled.button`
   border: none;
   margin-right: 40px;
   cursor: pointer;
+  align-items: center;
 `
 
 const Button = styled.button`
@@ -137,5 +141,3 @@ const UserButton = styled.button`
   border: none;
   cursor: pointer;
 `
-
-
