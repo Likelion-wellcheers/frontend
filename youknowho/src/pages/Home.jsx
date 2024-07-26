@@ -1,6 +1,10 @@
 import React, { useContext } from 'react'
-import styled, { createGlobalStyle } from 'styled-components'
+import { useNavigate } from 'react-router-dom';
+import styled, { createGlobalStyle, keyframes } from 'styled-components'
 import { ThemeColorContext } from '../context/context'
+import { useRecoilState } from 'recoil';
+import { curPageRecoil } from '../recoil/atom';
+
 
 const HomeStyle = createGlobalStyle`
   @font-face {
@@ -13,6 +17,13 @@ const HomeStyle = createGlobalStyle`
 
 export const Home = () => {
   const themeColor = useContext(ThemeColorContext);
+  const navigate = useNavigate();
+  const [curPage, setCurPage] = useRecoilState(curPageRecoil);
+
+  const handleSearchClick = () => {
+    setCurPage("searchhome");
+    navigate("/searchhome");
+  }
 
   return (
     <>
@@ -21,16 +32,16 @@ export const Home = () => {
           <BannerDesc>
             <BannerSubTitle themeColor={themeColor}>맞춤형 주거 추천 서비스</BannerSubTitle>
             <BannerTitle>유노유노후는 이런이런<br/> 서비스입니다</BannerTitle>
-            <BannerNotice></BannerNotice>
+            <BannerButton themeColor={themeColor} onClick={handleSearchClick}>나만의 집 찾아보기</BannerButton>
           </BannerDesc>
           <BannerImg src="/images/bannerImg.png" alt="이미지"></BannerImg>
         </Banner>
         <Section>
-          <SectionDesc>
-            <SectionTitle>이런 지역은 어때요?</SectionTitle>
-            <SectionSubTitle>오늘 추천 드리는 지역이에요</SectionSubTitle>
-          </SectionDesc>
           <SectionContents>
+              <SectionDesc themeColor={themeColor}>
+                <SectionTitle>이런 지역은 <br/> 어때요?</SectionTitle>
+                <SectionSubTitle>오늘 추천 드리는 지역이에요</SectionSubTitle>
+              </SectionDesc>
               <SectionContent>
                   <SectionContentImg src="" alt="거주지사진"></SectionContentImg>
                   <SectionContentTitle>경상남도 통영시</SectionContentTitle>
@@ -62,15 +73,22 @@ export const Home = () => {
 
           </SectionContents>
         </Section>
-        <Article>
-          <ArticleBackground></ArticleBackground>
-          <ArticleTitle></ArticleTitle>
-          <ArticleContents>
-            <ArticleContent></ArticleContent>
-            <ArticleContent></ArticleContent>
-            <ArticleContent></ArticleContent>
-          </ArticleContents>
-        </Article>
+        <ArticleContainer>
+          <ArticleDescContainer>
+            <ArticleDesc>
+              <ArticleTitle>매거진을 확인해 보세요!</ArticleTitle>
+              <ArticleSubTitle>다양한 지역의 소식을 알아보세요</ArticleSubTitle>
+            </ArticleDesc>
+            <Article id="article1"></Article>
+          </ArticleDescContainer>            
+          <Article id="article2">
+          
+          </Article>
+          <Article id="article3">
+
+          </Article>
+        </ArticleContainer>
+          
     </Container>
       
     </>
@@ -90,22 +108,26 @@ const Banner = styled.div`
   justify-content: center;
   height: 560px;
   background-color: ${({themeColor})=>themeColor.sub};
+  padding: 49px;
+  gap: 140px;
 `
 
 const BannerDesc = styled.div`
+  line-height: 380%;
   width: 38%;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin-left: 70px;
   padding-left: 80px;
+  margin-bottom: 60px;
 `
 
 const BannerImg = styled.img`
   width: 40%;
-  width: 470px;
-  height: 490px;
-  margin-right: 160px;
+  width: 600px;
+  height: 460.95px;
+  object-fit: cover;
+  margin-right: 80px;
 `
 
 const BannerSubTitle = styled.div`
@@ -113,20 +135,32 @@ const BannerSubTitle = styled.div`
   font-family: 'GmarketSansMedium';
   font-weight: 700;
   color: ${({themeColor})=>themeColor.main};
-  margin-top: 20px;
 `
 
 const BannerTitle = styled.div`
   font-size: 44px;
   font-family: 'GmarketSansMedium';
-  margin-top: 10px;
+  margin-top: 16px;
   font-weight: 500;
 `
 
-const BannerNotice = styled.div`
+const BannerButton = styled.button`
+  color: var(--White, #FFF);
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
   border-color: black;
-  width: 604px;
-  height: 220px;
+  width: 396px;
+  height: 48px;
+  margin-top: 24px; 
+  padding: 4px 12px;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(89deg, ${({themeColor})=>themeColor.point} 12.9%, #FF9FAD 89.61%);
+  box-shadow: 4px 4px 4px 0px rgba(0, 0, 0, 0.12);
 `
 
 const Section = styled.div`
@@ -138,30 +172,35 @@ const Section = styled.div`
   align-items: center;
 `
 
-const SectionDesc = styled.div`
-  width: 18%;
+
+const SectionContents = styled.div`
   display: flex;
+  flex-direction: row;
+  gap: 16px;
+  justify-content: center;
+`
+
+const SectionDesc = styled.div`
+  color: var(--White, #FFF);
+  display: flex;
+  width: 292px;
+  height: 266px;
   flex-direction: column;
-  gap: 10px;
-  margin-bottom: 200px;
+  justify-content: space-between;
+  align-items: flex-start; 
+  padding: 28px;
+  box-sizing: border-box;
+  border-radius: 8px;
+  background-color: ${({themeColor}) => themeColor.main};
 `
 
 const SectionTitle = styled.div`
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 700;
 `
 const SectionSubTitle = styled.div`
   font-size: 18px;
   font-weight: 500;
-  color: #615D67;
-`
-
-const SectionContents = styled.div`
-  display: flex;
-  flex-direction: row;
-  width: 68%;
-  margin-left: 20px;
-  gap: 20px;
 `
 
 const SectionContent = styled.div`
@@ -169,16 +208,15 @@ const SectionContent = styled.div`
   flex-direction: column;
   border: 1px solid #BBB8B8;
   border-radius: 8px;
-  width: 260px;
-  height: 240;
-  height: 100%;
-  padding: 23px;
+  width: 292px;
+  height: 266px;
   gap: 8px;
 `
 
 const SectionContentImg = styled.img`
-  width: 260px;
-  height: 170px;
+  width: 292px;
+  height: 186px;
+  flex-shrink: 0;
   object-fit : cover;
 `
 
@@ -186,6 +224,8 @@ const SectionContentTitle = styled.div`
   font-weight: 600;
   font-size: 18px;
   height: 10%;
+  padding-left: 16px;
+  padding-right: 16px;
 `
 
 const SectionContentKeys = styled.div`
@@ -193,42 +233,63 @@ const SectionContentKeys = styled.div`
   flex-direction: row;
   gap: 8px;
   height: 10%;
+  padding-right: 16px;
+  padding-left: 16px;
+  padding-bottom: 16px;
 `
 
 const SectionContentKey = styled.div`
   color: ${({themeColor})=>themeColor.main};
-  height: 21px
+  height: 21px;
   font-size: 12px;
   font-weight: 500;
-  text-align: center;
   border-radius: 8px;
   background-color: ${({themeColor})=>themeColor.light};
-  padding-right: 10px;
-  padding-left: 10px;
-  padding: 2px 10px 2px 10px;
+  padding: 0px 12px 0px 12px;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
+
+const ArticleContainer = styled.div`
+  width: 100%;
+  position: relative;
+  height: 700px;
+  background-image: url("/images/background.png");
+  background-size: 100% 490px;;
+  background-repeat: no-repeat;
 
 `
 
 const Article = styled.div`
-  height: 620px;
-  background-color: rgba(244, 243, 255, 1);
-  position: relative;
+
+  width: 396px;
+  height: 448px;
+`
+
+
+const ArticleDescContainer = styled.div`
+  position: absolute;
+  top: 15%;
+  left: 10%;
   
 `
-const ArticleBackground = styled.div`
-  height: 360px;
-  background-image: url("/images/background.png");
-  background-size: cover; 
+
+const ArticleDesc = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 `
 
 const ArticleTitle = styled.div`
-  //position :relative;
+  color: #FFFFFF;
+  font-size: 32px;
+  font-weight: 700;
 `
 
-const ArticleContents = styled.div`
-  
-`
-const ArticleContent = styled.div`
-  
+const ArticleSubTitle = styled.div`
+  color: #FFFFFF;
+  font-size: 18px;
+  font-weight: 500;
 `
