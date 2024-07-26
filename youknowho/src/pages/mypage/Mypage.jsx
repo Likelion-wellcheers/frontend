@@ -36,6 +36,7 @@ export const Mypage = () => {
 
   return (
     <MypageWrapper>
+      <SectionContentImg src="images/background.png" alt="배경사진"></SectionContentImg>
       <Header>
         <ProfileImage src="/path/to/profile-image.jpg" alt="Profile" />
         <ProfileName>야채윤경님</ProfileName>
@@ -85,20 +86,29 @@ export const Mypage = () => {
 
 const MypageWrapper = styled.div`
   font-family: Arial, sans-serif;
-  background-color: #f3f4f6;
-  padding: 20px;
+  background-color: rgba(244, 243, 255, 1);
+  padding-bottom: 7%;
 `;
 
 const Header = styled.header`
   display: flex;
+  position: relative;
+  z-index: 1;
   text-align: center;
   background-color: #ffffff;
   padding: 10%;
   border-radius: 20px;
   margin: 5%;
-  margin-top: 8%;
+  margin-top: -15%;
   color: black;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+`;
+
+const SectionContentImg = styled.img`
+  position: relative;
+  width: 100%;
+  height: 400px;
+  z-index: 0;
 `;
 
 const ProfileImage = styled.img`
@@ -136,7 +146,7 @@ const SectionTitle = styled.h2`
 `;
 
 const MoreButton = styled.button`
-  background-color: #5865f2;
+  background: linear-gradient(247.34deg, #BCBDFF 7.5%, #5D5FEF 62.93%);
   color: white;
   border: none;
   padding: 5px 10px;
@@ -222,5 +232,5 @@ const SectionWrapper = styled.div`
   gap: 2%;
   margin-left: 5%;
   margin-right: 5%;
-  margin-bottom: 5%;
+  //margin-bottom: 5%;
 `;
