@@ -24,7 +24,7 @@ export const Nav = () => {
   //메뉴 클릭 시 해당 버튼에 대한 페이지로 이동하도록
   const handleClick = (buttonName) => {
     setCurPage(buttonName);
-    navigate('/'+buttonName);
+    navigate(buttonName);
   } 
 
   return (
@@ -39,24 +39,24 @@ export const Nav = () => {
             </LogoContainer>
             유노유노후</MainButton>
           <Button  themeColor={themeColor}
-          $active={curPage === "searchhome"}
-          onClick={()=>handleClick("searchhome")}>
+          $active={curPage === "/searchhome"}
+          onClick={()=>handleClick("/searchhome")}>
             나만의 집찾기</Button>
           <Button  themeColor={themeColor}
-          $active={curPage === "localnews"}
-          onClick={()=>handleClick("localnews")}>
+          $active={curPage === "/localnews"}
+          onClick={()=>handleClick("/localnews")}>
             동네소식</Button>
           <Button  themeColor={themeColor}
-          $active={curPage === "mypage"}
-          onClick={()=>handleClick("mypage")}>
+          $active={curPage === "/mypage"}
+          onClick={()=>handleClick("/mypage")}>
             마이페이지</Button>
           <UserButtons>
             <UserButton
-            onClick={()=>{handleClick("login")}}
+            onClick={()=>{handleClick("/login")}}
             >로그인</UserButton>
             <UserButtonDivide>|</UserButtonDivide>
             <UserButton
-            onClick={()=>{handleClick("signup")}}
+            onClick={()=>{handleClick("/signup")}}
             >회원가입</UserButton>
           </UserButtons>
         </Container>
