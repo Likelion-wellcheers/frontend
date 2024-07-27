@@ -12,7 +12,8 @@ export const Login = () => {
 
 return (
   <Wrapper>
-    <GlobalStyle />
+    <LoginWrapper>
+          {/* <GlobalStyle /> */}
     <Logo src="/images/mainlogo.png" alt="Logo" />
     <Title>간편하게 가입하고<br />유노유노후와 집을 찾아보세요!</Title>
     <BtnWrapper>
@@ -21,30 +22,33 @@ return (
         <div>카카오로 시작하기</div>
       </KakaoButton>
     </BtnWrapper>
+    </LoginWrapper>
   </Wrapper>
 );
 };
 
-const GlobalStyle = createGlobalStyle`
-  body {
-    background-color: #F4F3FF; 
-  }
-`;
+// const GlobalStyle = createGlobalStyle`
+//   body {
+//     background-color: #F4F3FF; 
+//   }
+// `;
 
 const Wrapper = styled.div`
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-padding: 20px;
-max-width: 400px;
-margin: 0 auto;
+  //justify-content: center;
+`;
+
+const LoginWrapper = styled.div`
+  background-color: rgba(244, 243, 255, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 `;
 
 const Logo = styled.img`
-width: 25%;
-height: 25%;
-margin-top: 40%;
+width: 8%;
+height: 8%;
+margin-top: 10%;
 margin-bottom: 1%;
 `;
 
@@ -61,17 +65,20 @@ line-height: 1.5;
 const BtnWrapper = styled.div`
 display: flex;
 flex-direction: column;
+align-items: center;
 gap: 10px;
-width: 110%;
-margin-bottom: 20px;
+/* width: 110%; */
+margin-bottom: 19%;
 `;
 
 const KakaoButton = styled.button`
 display: flex;
 align-items: center;
+justify-content: center;
+width: 70%;
 background: #ffe812;
 color: #3c1e1e;
-padding: 12px;
+padding: 2%;
 border: none;
 border-radius: 5px;
 font-size: 16px;
@@ -81,8 +88,9 @@ cursor: pointer;
 img {
   width: 4%;
   height: auto;
-  margin-right: 3%;
-  margin-left: 29%
+  padding-right: 3%;
+  //margin-right: 3%;
+  //margin-left: 29%
 }
 
 `;
