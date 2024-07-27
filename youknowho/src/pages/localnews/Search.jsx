@@ -13,7 +13,7 @@ export const Search = () => {
 
     useEffect(() => {
         // Fetch cities from the backend or use a static list
-        setCities(['서울특별시', '부산광역시', '전라남도 여수시', '제주특별자치도 서귀포시']);
+        setCities(['서울특별시', '부산광역시', '전라남도 여수시', '제주특별자치도 서귀포시', '고양시']);
     }, []);
 
     useEffect(() => {
