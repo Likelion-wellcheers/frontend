@@ -6,7 +6,9 @@ import { Login } from './pages/login/Login';
 import { Mypage } from './pages/mypage/Mypage';
 import { SearchHome } from './pages/searchHome/SearchHome';
 import { Signup } from './pages/signup/Signup';
-import { Localnews } from './pages/localnews/Localnews';
+import { Search } from './pages/localnews/Search';
+import { Localinfo } from './pages/localnews/Localinfo';
+
 
 
 const App = () => {
@@ -18,7 +20,8 @@ const App = () => {
                   <Route path="mypage" element={<Mypage />} />
                   <Route path="searchhome" element={<SearchHome />} />
                   <Route path="signup" element={<Signup />} />
-                  <Route path="localnews" element={<Localnews />} />
+                  <Route path="localnews" element={<Search />} />
+                  <Route path="localinfo" element={<Localinfo />} />
                 </Route>
             </Routes>
     );
