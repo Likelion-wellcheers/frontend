@@ -31,7 +31,7 @@ export const Home = () => {
       <Banner themeColor={themeColor}> 
           <BannerDesc>
             <BannerSubTitle themeColor={themeColor}>맞춤형 주거 추천 서비스</BannerSubTitle>
-            <BannerTitle>유노유노후는 이런이런<br/> 서비스입니다</BannerTitle>
+            <BannerTitle>유노유노후는 이런이런 서비스입니다</BannerTitle>
             <BannerButton themeColor={themeColor} onClick={handleSearchClick}>나만의 집 찾아보기</BannerButton>
           </BannerDesc>
           <BannerImg src="/images/bannerImg.png" alt="이미지"></BannerImg>
@@ -43,7 +43,9 @@ export const Home = () => {
                 <SectionSubTitle>오늘 추천 드리는 지역이에요</SectionSubTitle>
               </SectionDesc>
               <SectionContent>
-                  <SectionContentImg src="" alt="거주지사진"></SectionContentImg>
+                  <SectionContentImgContainer>
+                    <SectionContentImg src="" alt="거주지사진"></SectionContentImg>
+                  </SectionContentImgContainer>
                   <SectionContentTitle>경상남도 통영시</SectionContentTitle>
                   <SectionContentKeys>
                     <SectionContentKey themeColor={themeColor}>#섬도시</SectionContentKey>
@@ -79,16 +81,25 @@ export const Home = () => {
               <ArticleTitle>매거진을 확인해 보세요!</ArticleTitle>
               <ArticleSubTitle>다양한 지역의 소식을 알아보세요</ArticleSubTitle>
             </ArticleDesc>
-            <Article id="article1"></Article>
+            <Article id="article1">
+                <ArticleImg src="/images/bannerImg.png"></ArticleImg>
+                <ArticleContents>
+                  <ArticleContentTitle>카드뉴스제목</ArticleContentTitle>
+                  <ArticleContentBtn themeColor={themeColor}>상세보기</ArticleContentBtn>
+                </ArticleContents>
+            </Article>
           </ArticleDescContainer>            
-          <Article id="article2">
-          
-          </Article>
-          <Article id="article3">
+            <Article id="article2">
+                <ArticleImg></ArticleImg>
+                <ArticleContents>
+                  <ArticleContentTitle>카드뉴스제목</ArticleContentTitle>
+                  <ArticleContentBtn themeColor={themeColor}>상세보기</ArticleContentBtn>
+                </ArticleContents>
+            </Article>
+            <Article id="article3">
 
-          </Article>
+            </Article>
         </ArticleContainer>
-          
     </Container>
       
     </>
@@ -118,7 +129,7 @@ const BannerDesc = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding-left: 80px;
+  padding-left: 90px;
   margin-bottom: 60px;
 `
 
@@ -127,7 +138,7 @@ const BannerImg = styled.img`
   width: 600px;
   height: 460.95px;
   object-fit: cover;
-  margin-right: 80px;
+  margin-right: 90px;
 `
 
 const BannerSubTitle = styled.div`
@@ -170,6 +181,12 @@ const Section = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  @media (max-width: 1192px) {
+    height: 730px;
+  }
+  @media (max-width: 590px) {
+    height: 1200px;
+  }
 `
 
 
@@ -178,12 +195,13 @@ const SectionContents = styled.div`
   flex-direction: row;
   gap: 16px;
   justify-content: center;
+  flex-wrap: wrap;
 `
 
 const SectionDesc = styled.div`
   color: var(--White, #FFF);
   display: flex;
-  width: 292px;
+  width: 285px;
   height: 266px;
   flex-direction: column;
   justify-content: space-between;
@@ -208,13 +226,19 @@ const SectionContent = styled.div`
   flex-direction: column;
   border: 1px solid #BBB8B8;
   border-radius: 8px;
-  width: 292px;
+  width: 285px;
   height: 266px;
   gap: 8px;
 `
 
+const SectionContentImgContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
+
 const SectionContentImg = styled.img`
-  width: 292px;
+  width: 285px;
   height: 186px;
   flex-shrink: 0;
   object-fit : cover;
@@ -241,7 +265,7 @@ const SectionContentKeys = styled.div`
 const SectionContentKey = styled.div`
   color: ${({themeColor})=>themeColor.main};
   height: 21px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
   border-radius: 8px;
   background-color: ${({themeColor})=>themeColor.light};
@@ -253,27 +277,46 @@ const SectionContentKey = styled.div`
 `
 
 const ArticleContainer = styled.div`
+  display: flex;
+  flex-direction: row;
   width: 100%;
   position: relative;
-  height: 700px;
+  justify-content: center;
+  align-items: center;
+  height: 720px;
   background-image: url("/images/background.png");
-  background-size: 100% 490px;;
+  background-size: 100% 470px;;
   background-repeat: no-repeat;
-
 `
 
 const Article = styled.div`
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  width: 24vw;
+  height: 27vw;
+  border-radius: 12px;
+  background: #FFF;
+  box-shadow: 4px 4px 4px 0px rgba(0, 0, 0, 0.12);
 
-  width: 396px;
-  height: 448px;
+ &[id="article1"]{
+    top: 150%;
+ }
+
+ &[id="article2"]{
+  left: 38.3%;
+ }
+
+ &[id="article3"]{
+  top: 31%;
+  left: 64.5%;
+ }
 `
-
 
 const ArticleDescContainer = styled.div`
   position: absolute;
   top: 15%;
-  left: 10%;
-  
+  left: 12%;
 `
 
 const ArticleDesc = styled.div`
@@ -292,4 +335,51 @@ const ArticleSubTitle = styled.div`
   color: #FFFFFF;
   font-size: 18px;
   font-weight: 500;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 150%;
+`
+
+const ArticleImg = styled.img`
+  width: 24vw;
+  height: 24vw;
+  object-fit: cover;
+  
+`
+const ArticleContents = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+`
+
+const ArticleContentTitle = styled.div`
+  font-weight: 600;
+  font-size: 1.2rem;
+  white-space: nowrap;
+  @media (max-width: 980px) {
+    font-size: 0.9rem;
+  }
+  @media (max-width: 600px) {
+    display: none;
+  }
+`
+
+const ArticleContentBtn = styled.button`
+  width: 72px;
+  height: 28px;
+  padding: 4px 12px;
+  justify-content: center;
+  align-items: center;
+  color: var(--White, #FFF);
+  font-size: 0.85rem;
+  font-style: normal;
+  font-weight: 500;
+  white-space: nowrap;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(247deg, #BCBDFF 7.5%, ${({themeColor})=>themeColor.main} 62.93%);
 `
