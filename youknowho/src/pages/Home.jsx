@@ -30,9 +30,9 @@ export const Home = () => {
     <Container>
       <Banner themeColor={themeColor}> 
           <BannerDesc>
-            <BannerSubTitle themeColor={themeColor}>맞춤형 주거 추천 서비스</BannerSubTitle>
+            <BannerSubTitle themeColor={themeColor}>맞춤형 노후 지역 추천 서비스</BannerSubTitle>
             <BannerTitle>유노유노후는 이런이런 서비스입니다</BannerTitle>
-            <BannerButton themeColor={themeColor} onClick={handleSearchClick}>나만의 집 찾아보기</BannerButton>
+            <BannerButton themeColor={themeColor} onClick={handleSearchClick}>나만의 노후 지역 찾아보기</BannerButton>
           </BannerDesc>
           <BannerImg src="/images/bannerImg.png" alt="이미지"></BannerImg>
         </Banner>
@@ -145,7 +145,9 @@ const BannerSubTitle = styled.div`
   font-size: 32px;
   font-family: 'GmarketSansMedium';
   font-weight: 700;
+  line-height: 48px;
   color: ${({themeColor})=>themeColor.main};
+  white-space: nowrap;
 `
 
 const BannerTitle = styled.div`
@@ -342,8 +344,8 @@ const ArticleSubTitle = styled.div`
 `
 
 const ArticleImg = styled.img`
-  width: 24vw;
-  height: 24vw;
+  width: 23vw;
+  height: 23vw;
   object-fit: cover;
   
 `
