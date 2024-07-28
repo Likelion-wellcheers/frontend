@@ -136,7 +136,7 @@ const BannerDesc = styled.div`
 const BannerImg = styled.img`
   width: 40%;
   width: 600px;
-  height: 460.95px;
+  height: 520px;
   object-fit: cover;
   margin-right: 90px;
 `
