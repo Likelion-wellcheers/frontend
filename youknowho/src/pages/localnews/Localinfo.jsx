@@ -165,19 +165,19 @@ const SectionTitle = styled.div`
     margin-left: 10%;
 
     img {
-        width: 30px;
-        height: 30px;
+        width: 20px;
+        height: 20px;
         margin-right: 10px;
     }
 `;
 
 const Subtitle = styled.h2`
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 600;
 `;
 
 const DifferentSubtitle = styled.h2`
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 600;
     color: white;
 `;
@@ -203,8 +203,8 @@ const BlueBox = styled.div`
     margin-bottom: 20px;
 
     img {
-        width: 40px;
-        height: 40px;
+        width: 100px;
+        height: 100px;
         margin-right: 10px;
     }
 

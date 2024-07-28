@@ -1,5 +1,5 @@
 import React from 'react'
-import styled, { createGlobalStyle } from 'styled-components';
+import styled from 'styled-components';
 
 export const Login = () => {
   const Rest_API_key = 'b36f8d550e5424c31723c5c5fa3373e8';
@@ -48,7 +48,7 @@ const LoginWrapper = styled.div`
 const Logo = styled.img`
 width: 8%;
 height: 8%;
-margin-top: 10%;
+margin-top: 13%;
 margin-bottom: 1%;
 `;
 
@@ -68,7 +68,7 @@ flex-direction: column;
 align-items: center;
 gap: 10px;
 /* width: 110%; */
-margin-bottom: 19%;
+margin-bottom: 15%;
 `;
 
 const KakaoButton = styled.button`
