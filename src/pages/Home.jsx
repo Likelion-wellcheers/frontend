@@ -34,7 +34,7 @@ export const Home = () => {
             <BannerTitle>유노유노후는 이런이런 서비스입니다</BannerTitle>
             <BannerButton themeColor={themeColor} onClick={handleSearchClick}>나만의 노후 지역 찾아보기</BannerButton>
           </BannerDesc>
-          <BannerImg src="/images/bannerImg.png" alt="이미지"></BannerImg>
+          <BannerImg src="/images/bannerImage.png" alt="이미지"></BannerImg>
         </Banner>
         <Section>
           <SectionContents>
