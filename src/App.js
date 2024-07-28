@@ -8,6 +8,7 @@ import { SearchHome } from './pages/searchHome/SearchHome';
 import { Signup } from './pages/signup/Signup';
 import { Search } from './pages/localnews/Search';
 import { Localinfo } from './pages/localnews/Localinfo';
+import { SearchMap } from './pages/searchHome/SearchMap';
 
 
 
@@ -19,11 +20,13 @@ const App = () => {
                   <Route path="login" element={<Login />} />
                   <Route path="mypage" element={<Mypage />} />
                   <Route path="searchhome" element={<SearchHome />} />
+                    <Route path="searchhome/searchmap" element={<SearchMap />}/>
                   <Route path="signup" element={<Signup />} />
                   <Route path="localnews" element={<Search />} />
                   <Route path="localinfo" element={<Localinfo />} />
                 </Route>
-            </Routes>
+            </Routes> 
+            
     );
 }
 

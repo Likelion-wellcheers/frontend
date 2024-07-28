@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react'
 import styled from 'styled-components'
 import { ThemeColorContext } from '../../context/context'
+import { useNavigate } from 'react-router-dom';
 
 export const SearchHome = () => {
   const tempQustion = ['인프라', '라이프스타일'];
@@ -8,6 +9,7 @@ export const SearchHome = () => {
   const tempSubQ = ['지역에 어떤 시설이 있으면 좋겠나요?', '나의 라이프스타일은 어떤가요?'];
   
   const themeColor = useContext(ThemeColorContext);
+  const navigate = useNavigate();
   //선택된 답들 담는 state
   /*형식{
   0: { 0: true, 1: false, 2: true },
@@ -24,6 +26,10 @@ export const SearchHome = () => {
       }
     }));
   };
+
+  const handleSubmit = () => {
+    navigate('/searchhome/searchmap');
+  }
 
   return (
     <>
@@ -69,7 +75,7 @@ export const SearchHome = () => {
           </FilterItem>)
         )}
 
-        <FilterSubmit themeColor={themeColor}>주거지 추천받기</FilterSubmit>
+        <FilterSubmit onClick={handleSubmit} themeColor={themeColor}>주거지 추천받기</FilterSubmit>
       </FilterContainer>
     </>
     
