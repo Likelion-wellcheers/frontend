@@ -52,55 +52,115 @@ export const Localinfo = () => {
             rating: 3,
             content: 'Review content 3',
         },
+        {
+          profile: '/images/profile.png',
+          username: 'User3',
+          location: 'Location3',
+          rating: 3,
+          content: 'Review content 3',
+      },
+      {
+        profile: '/images/profile.png',
+        username: 'User3',
+        location: 'Location3',
+        rating: 3,
+        content: 'Review content 3',
+    },
+    {
+      profile: '/images/profile.png',
+      username: 'User3',
+      location: 'Location3',
+      rating: 3,
+      content: 'Review content 3',
+  },
+  {
+    profile: '/images/profile.png',
+    username: 'User3',
+    location: 'Location3',
+    rating: 3,
+    content: 'Review content 3',
+},
+{
+  profile: '/images/profile.png',
+  username: 'User3',
+  location: 'Location3',
+  rating: 3,
+  content: 'Review content 3',
+},
+{
+  profile: '/images/profile.png',
+  username: 'User3',
+  location: 'Location3',
+  rating: 3,
+  content: 'Review content 3',
+},
     ];
 
     return (
         <PageWrapper>
-            <SectionTitle>
-                <LocalButton>{city} {district}</LocalButton>의 소식을 알아보세요!
-            </SectionTitle>
-            <SubTitle>
-                <Icon src='/images/icon2.png' alt='복지정책 아이콘' />
-                놓치면 안 될 복지정책
-            </SubTitle>
-            <Welfare banners={welfareBannerImages} />
-            <SubTitle>
-                <Icon src='/images/icon3.png' alt='매거진 아이콘' />
-                놓치면 안 될 매거진
-                <MoreButton onClick={() => alert('Go to Magazine')}>더보기</MoreButton>
-            </SubTitle>
-            <Magazinepart cards={cardNewsData} />
-            <SubTitle>
-                <Icon src='/images/icon4.png' alt='후기 아이콘' />
-                지역 후기
-            </SubTitle>
-            <HorizontalRule />
-            <Reviewpart reviews={reviewsData} />
+            <Bgimage />
+            <Content>
+                <SectionTitle>
+                    <LocalButton>{city} {district}</LocalButton>의 소식을 알아보세요!
+                </SectionTitle>
+                <SubTitle>
+                    <Icon src='/images/icon2.png' alt='복지정책 아이콘' />
+                    놓치면 안 될 복지정책
+                </SubTitle>
+                <Welfare banners={welfareBannerImages} />
+                <SubTitle>
+                    <Icon src='/images/icon3.png' alt='매거진 아이콘' />
+                    놓치면 안 될 매거진
+                    <MoreButton onClick={() => alert('Go to Magazine')}>더보기</MoreButton>
+                </SubTitle>
+                <Magazinepart cards={cardNewsData} />
+                <Reviewpart reviews={reviewsData} />
+            </Content>
         </PageWrapper>
     )
 }
 
 const PageWrapper = styled.div`
+  position: relative;
   max-width: 100%;
-  margin: 0 auto;
-  padding: 20px;
-  background-image: url('/images/background.jpg'); /* 큰 배경 이미지 추가 */
-  background-size: cover; /* 배경 이미지 사이즈 조정 */
-  background-position: center; /* 배경 위치 조정 */
+  overflow: hidden; /* 필요에 따라 조정 */
+  background-color: rgba(93, 95, 239, 1);
+  ;
+`;
+
+const Bgimage = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1000px; /* 필요에 따라 조정 */
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 4px 4px 4px 0px rgba(0, 0, 0, 0.12);
+  border-radius: 0px 0px 24px 24px;
+  z-index: 1;
+`;
+
+const Content = styled.div`
+  position: relative;
+  z-index: 2;
 `;
 
 const SectionTitle = styled.h2`
-  max-width: 1200px; /* 너비 1200px 설정 */
-  margin: 0 auto 20px auto; /* 가운데 정렬 */
+  max-width: 1200px;
+  margin: 0 auto 20px auto;
   display: flex;
   align-items: center;
+  font-size: 20px;
+  margin-bottom: 50px;
+  margin-top: 50px;
 `;
 
 const SubTitle = styled.h3`
-  max-width: 1200px; /* 너비 1200px 설정 */
-  margin: 20px auto; /* 가운데 정렬 */
+  max-width: 1200px;
+  margin: 40px auto;
   display: flex;
   align-items: center;
+  margin-bottom: 2%;
 `;
 
 const Icon = styled.img`
@@ -111,9 +171,11 @@ const Icon = styled.img`
 
 const MoreButton = styled.button`
   padding: 10px;
-  margin-left: 75%;
+  margin-left: 77%;
   border: none;
-  background-color: #007bff;
+  background: linear-gradient(247.34deg, #BCBDFF 7.5%, #5D5FEF 62.93%);
+
+  ;
   color: white;
   border-radius: 4px;
   cursor: pointer;
@@ -125,19 +187,14 @@ const MoreButton = styled.button`
 `;
 
 const LocalButton = styled.button`
-  background-color: blue;
+  background-color: rgba(93, 95, 239, 1);
   color: white;
-  padding: 10px 10px;
+  gap: 10px;
   border: none;
-  border-radius: 10px;
+  border-radius: 4px;
   font-size: 20px;
   font-weight: 900;
   white-space: nowrap;
+  margin-right: 10px;
+  padding: 4px 10px;
 `;
-
-const HorizontalRule = styled.hr`
-  border: 0;
-  border-top: 2px solid #eee;
-  margin: 20px 0;
-`;
-
