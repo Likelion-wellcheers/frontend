@@ -1,203 +1,302 @@
-import React, { useContext } from 'react'
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { ThemeColorContext } from '../../context/context';
 
 export const Mypage = () => {
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState('지역후기');
 
   // 임시 데이터
   const profile = {
-    imageUrl: 'https://via.placeholder.com/80',
-    name: '야채윤경님',
+    name: '야채윤경',
+    image: '/images/profile.png',
     age: 21,
-    location: '서울특별시 강남구',
+    location: '서울특별시 강남구'
   };
 
-  const reviews = [
-    {
-      title: '롯데캐슬 에듀포레',
-      score: 4.0,
-      text: 'dsssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss...',
-      date: '2024-07-25',
-    },
-    {
-      title: '롯데캐슬 에듀포레',
-      score: 4.0,
-      text: 'dsssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss...',
-      date: '2024-07-25',
-    },
+  const plans = [
+    { location: '서울시 동작구', date: '2024-07-26', content: '계획 한 줄만 보이게' },
+    { location: '서울시 동작구', date: '2024-07-26', content: '계획 한 줄만 보이게' },
+    { location: '서울시 동작구', date: '2024-07-26', content: '계획 한 줄만 보이게' },
   ];
 
-  const themeColor = useContext(ThemeColorContext);
+  const savedItems = [
+    { location: '서울특별시 동작구', image: '/images/cat1.png', count: 3 },
+    { location: '서울특별시 동작구', image: '/images/cat2.png', count: 3 },
+    { location: '서울특별시 동작구', image: '/images/cat1.png', count: 3 },
+  ];
+
+  const reviews = [
+    { location: '서울시 동작구', date: '2024-07-26', rating: 4.0, content: '어린이랑이런내용의리뷰글달았어요', image: '/images/cat3.png', type: '지역후기' },
+    { location: '서울시 동작구', date: '2024-07-26', rating: 4.0, content: '어린이랑이런내용의리뷰글달았어요', image: '/images/cat3.png', type: '지역후기' },
+    { location: '서울시 동작구', date: '2024-07-26', rating: 4.0, content: '어린이랑이런내용의리뷰글달았어요', image: '/images/cat3.png', type: '지역후기' },
+  ];
 
   return (
-    <MypageWrapper>
-      <Container themeColor={themeColor} />
-      <ProfileHeaderWrapper>
-        <ProfileHeader themeColor={themeColor}>
-          <ProfileImage src={profile.imageUrl} alt="Profile" />
-          <ProfileInfo>
-            <ProfileName>{profile.name}</ProfileName>
-            <ProfileDetails>{profile.age}세 | {profile.location}</ProfileDetails>
-            <EditButton>내 정보 수정</EditButton>
-          </ProfileInfo>
-        </ProfileHeader>
-      </ProfileHeaderWrapper>
-      <ContentWrapper>
-        <Content>
-          <ReviewsContainer>
-            {reviews.map((review, index) => (
-              <ReviewCard key={index}>
-                <ReviewBox>
-                  <ReviewTitle>{review.title}</ReviewTitle>
-                  <ReviewDivider />
-                  <ReviewScore>★ {review.score}</ReviewScore>
-                  <ReviewText>{review.text}</ReviewText>
-                  <ReviewDate>{review.date}</ReviewDate>
-                </ReviewBox>
-              </ReviewCard>
+    <Container>
+      <LeftCard>
+        <ProfileImage src={profile.image} alt="Profile" />
+        <Name>{profile.name}님</Name>
+        <ProfileDetail>
+          <div>{profile.age}세 |</div>
+          <div>{profile.location}</div>
+        </ProfileDetail>
+        <Button onClick={() => navigate('/editinfo')}>내 정보 수정</Button>
+      </LeftCard>
+      <RightCard>
+        <Section>
+          <SectionTitle>
+            <Icon src='/images/pencil.png' alt='연필 아이콘' />
+            <Textwrapper>나의 계획</Textwrapper>
+          </SectionTitle>
+          <Scrollable>
+            {plans.map((plan, index) => (
+              <PlanItem key={index}>
+                <div>{plan.location}</div>
+                <div>{plan.date}</div>
+                <div>{plan.content}</div>
+              </PlanItem>
             ))}
-          </ReviewsContainer>
-        </Content>
-        <SideBox />
-      </ContentWrapper>
-    </MypageWrapper>
-  )
-}
-
-const MypageWrapper = styled.div`
-  background-color: white;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
+          </Scrollable>
+        </Section>
+        <Section>
+          <SectionTitle>
+            <Icon src='/images/heart.png' alt='하트 아이콘' />
+            <Textwrapper>저장 목록</Textwrapper>
+          </SectionTitle>
+          {savedItems.slice(0, 3).map((item, index) => (
+            <SaveListItem key={index}>
+              <SaveListImage src={item.image} alt={item.location} />
+              <div>
+                <div>{item.location}</div>
+                <div>{item.count}개</div>
+              </div>
+            </SaveListItem>
+          ))}
+          <MoreButton onClick={() => navigate('/savelist')}>더보기</MoreButton>
+        </Section>
+        <Section>
+          <SectionTitle>
+            <Icon src='/images/talk.png' alt='말풍선 아이콘' />
+            <Textwrapper>나의 후기</Textwrapper>
+          </SectionTitle>
+          <Tabs>
+            <TabButton active={activeTab === '지역후기'} onClick={() => setActiveTab('지역후기')}>
+              지역후기
+            </TabButton>
+            <TabButton active={activeTab === '시설후기'} onClick={() => setActiveTab('시설후기')}>
+              시설후기
+            </TabButton>
+          </Tabs>
+          <Scrollable>
+            {reviews.filter(review => review.type === activeTab).map((review, index) => (
+              <ReviewItem key={index}>
+                <div>
+                  <div>{review.location}</div>
+                  <div>{review.date}</div>
+                  <div>{review.rating}★</div>
+                  <div>{review.content}</div>
+                </div>
+                <ReviewImage src={review.image} alt="Review" />
+              </ReviewItem>
+            ))}
+          </Scrollable>
+        </Section>
+      </RightCard>
+    </Container>
+  );
+};
 
 const Container = styled.div`
-  background-color: ${({ themeColor }) => themeColor.sub};
-  width: 100%;
-  height: 200px;
   display: flex;
-  justify-content: center;
-`;
-
-const ProfileHeaderWrapper = styled.div`
-  width: 80%;
-  display: flex;
-  justify-content: center;
-`;
-
-const ProfileHeader = styled.div`
-  background-color: ${({ themeColor }) => themeColor.main};
   padding: 20px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  color: white;
-  width: 80%;
-  height: 200px;
-  margin-top: -5%;
+  background: rgba(248, 246, 243, 1);
+  justify-content: center;
+  gap: 1%;
+`;
+
+const LeftCard = styled.div`
+  width: 293px;
+  height: 410px;
+  top: 132px;
+  left: 346px;
+  gap: 0px;
+  border-radius: 12px 12px 12px 12px;
+  border: 1px 0px 0px 0px;
+  opacity: 0px;
+  background: rgba(255, 255, 255, 1);
+  border: 1px solid rgba(238, 235, 232, 1);
+  box-shadow: 4px 4px 4px 0px rgba(0, 0, 0, 0.12);
+  text-align: center;
+`;
+
+const RightCard = styled.div`
+  width: 916px;
+  height: 1234px;
+  top: 132px;
+  left: 658px;
+  gap: 0px;
+  border-radius: 12px 12px 12px 12px;
+  border: 1px 0px 0px 0px;
+  opacity: 0px;
+  background: rgba(255, 255, 255, 1);
+  border: 1px solid rgba(238, 235, 232, 1);
+  box-shadow: 4px 4px 4px 0px rgba(0, 0, 0, 0.12);
 `;
 
 const ProfileImage = styled.img`
   border-radius: 50%;
-  width: 80px;
-  height: 80px;
-  margin-right: 20px;
+  width: 100px;
+  height: 100px;
+  margin-bottom: 20px;
+  margin-top: 30%;
+
+  border: 4px solid rgba(93, 95, 239, 1)
 `;
 
-const ProfileInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-`;
+const Name = styled.div`
+  font-family: Pretendard;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 30px;
+  text-align: center;
+  color: rgba(0, 0, 0, 1);
+`
 
-const ProfileName = styled.h2`
-  margin: 0;
-`;
-
-const ProfileDetails = styled.p`
-  margin: 5px 0;
-`;
-
-const EditButton = styled.button`
-  align-self: flex-end;
-  padding: 8px 12px;
-  background-color: white;
-  color: blue;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 10px;
-`;
-
-const ContentWrapper = styled.div`
+const ProfileDetail = styled.div`
   display: flex;
   justify-content: center;
+  font-family: Pretendard;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 27px;
+  color: rgba(97, 93, 103, 1);
+`
+
+const Button = styled.button`
   margin-top: 20px;
-  width: 80%;
+  padding: 10px 20px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #0056b3;
+  }
 `;
 
-const Content = styled.div`
+const Section = styled.div`
+  //margin-bottom: 20px;
+  margin: 5%;
+`;
+
+const SectionTitle = styled.h2`
   display: flex;
-  flex-direction: column;
-  width: 60%;
+  align-items: center;
+  justify-content: center;
+  //margin-bottom: 10px;
+  //background: rgba(244, 243, 255, 1);
+  //border: 1px solid rgba(193, 190, 255, 1);
+  width: Fill (900px)px;
+  height: Hug (52px)px;
+  padding: 8px 0px 8px 0px;
+  gap: 8px;
+  border-radius: 4px;
+  border: 1px 0px 0px 0px;
+  opacity: 0px;
+  background: rgba(244, 243, 255, 1);
+  border: 1px solid rgba(193, 190, 255, 1);
 `;
 
-const ReviewsContainer = styled.div`
-  margin-bottom: 20px;
-  max-height: 400px;
+const Icon = styled.img`
+  width: 25px;
+  height: 25px;
+  margin-right: 1px;
+`;
+
+const Textwrapper = styled.div`
+  width: auto;
+  height: 36px;
+  gap: 0px;
+  opacity: 0px;
+//styleName: Title_2;
+font-family: Pretendard;
+font-size: 20px;
+font-weight: 600;
+line-height: 36px;
+text-align: center;
+
+`
+
+const Scrollable = styled.div`
+  max-height: 150px;
   overflow-y: auto;
-`;
-
-const ReviewCard = styled.div`
-  background-color: white;
-  padding: 20px;
-  margin-bottom: 10px;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-`;
-
-const ReviewBox = styled.div`
-  color: blue;
-  border-radius: 10px;
+  border: 1px solid #eee;
   padding: 10px;
 `;
 
-const ReviewTitle = styled.h3`
-  margin: 0;
-  font-size: 18px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const ReviewDivider = styled.hr`
-  border: 0;
+const PlanItem = styled.div`
+  border-bottom: 1px solid #eee;
+  padding: 10px 0;
   
-  margin: 10px 0;
+  &:last-child {
+    border-bottom: none;
+  }
 `;
 
-const ReviewScore = styled.span`
-  color: #ffc107;
-  font-weight: bold;
+const SaveListItem = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+`;
+
+const SaveListImage = styled.img`
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  margin-right: 10px;
+`;
+
+const ReviewItem = styled.div`
+  border-bottom: 1px solid #eee;
+  padding: 10px 0;
+  display: flex;
+  align-items: center;
+
+  &:last-child {
+    border-bottom: none;
+  }
+`;
+
+const ReviewImage = styled.img`
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  margin-left: 10px;
+`;
+
+const Tabs = styled.div`
+  display: flex;
+  margin-bottom: 10px;
+`;
+
+const TabButton = styled.button`
+  flex: 1;
+  padding: 10px;
+  cursor: pointer;
+  background-color: ${props => props.active ? '#007BFF' : '#fff'};
+  color: ${props => props.active ? '#fff' : '#000'};
+  border: 1px solid #007BFF;
+  border-bottom: ${props => props.active ? 'none' : '1px solid #007BFF'};
+
+  &:hover {
+    background-color: ${props => props.active ? '#0056b3' : '#f1f1f1'};
+  }
+`;
+
+const MoreButton = styled(Button)`
   display: block;
-  margin-top: 10px;
-`;
-
-const ReviewText = styled.p`
-  margin: 10px 0;
-  word-wrap: break-word;
-  overflow: hidden;
-  text-overflow: ellipsis;
-`;
-
-const ReviewDate = styled.p`
-  margin-top: 10px;
-  font-size: 12px;
-  color: gray;
-`;
-
-const SideBox = styled.div`
-  background-color: #6363f7;
-  width: 40%;
-  border-radius: 10px;
-  margin-left: 20px;
+  margin: 0 auto;
 `;
