@@ -11,24 +11,26 @@ export const SearchMap = () => {
   // 현재 포커드 단계
   const [focusLevel, setFocusLevel] = useState('13');
 
+  //map 객체를 담기
+  const [mapIns, setMapIns] = useState({});
+
   useEffect(()=>{
       var container = document.getElementById('map');
       var mapOptions = {
-      center: new kakao.maps.LatLng(36.0904119, 128.03488),
-      level: 13
-    };
-
-    var map = new kakao.maps.Map(container, mapOptions);
-    
-  }, []);
+        center: new kakao.maps.LatLng(36.3504119, 127.3845475),
+        level: 13
+      }
+      var mapInstance =  new kakao.maps.Map(container, mapOptions);
+      setMapIns(mapInstance);   
+}, []);
 
 
   return (
     <>
-    <Container>
-      <MapModal coord={coord} setCoord={setCoord} focusLevel={focusLevel} setFocusLevel={setFocusLevel}/>
-      <MapContainer id="map"></MapContainer>
-    </Container>
+        <Container>
+          <MapModal mapIns={mapIns} coord={coord} setCoord={setCoord} focusLevel={focusLevel} setFocusLevel={setFocusLevel}/>
+          <MapContainer id="map"></MapContainer>
+        </Container>
   </>
   )
 };
@@ -44,4 +46,3 @@ const MapContainer = styled.div`
   width: 180%;
   height: 92vh;
 `
-
