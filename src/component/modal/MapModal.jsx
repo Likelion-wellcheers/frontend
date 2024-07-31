@@ -103,7 +103,7 @@ export const MapModal = ({mapIns, coord, setCoord, focusLevel, setFocusLevel}) =
     )};
 
     const handleCal = () => {
-        navigate('searchhome/searchmap/CalCost');
+        navigate('/searchhome/searchmap/CalCost');
     }
 
 // 모달 페이지 2개 중 상태에 따라 보여주기
