@@ -251,7 +251,7 @@ const Background = styled.div`
     display: flex;
     flex-direction: column;
     height: 170px;
-    padding: 103px 135px;
+    padding: 103px 0px;
     flex-direction: column;
     align-items: flex-start;
     border-bottom: 1px solid var(--Gray-03, #EEEBE8);
