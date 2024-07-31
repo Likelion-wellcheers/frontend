@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { Welfare } from './Welfare';
 import { Magazinepart } from './Magazinepart';
@@ -8,6 +8,7 @@ import { Reviewpart } from './Reviewpart';
 export const Localinfo = () => {
     const location = useLocation();
     const { city, district } = location.state;
+    const navigate = useNavigate();
 
     const welfareBannerImages = [
         '/images/welfare.png',
@@ -111,7 +112,7 @@ export const Localinfo = () => {
                 <SubTitle>
                     <Icon src='/images/icon3.png' alt='매거진 아이콘' />
                     놓치면 안 될 매거진
-                    <MoreButton onClick={() => alert('Go to Magazine')}>더보기</MoreButton>
+                    <MoreButton onClick={() => navigate('/moremagazine', { state: { city } })}>더보기</MoreButton>
                 </SubTitle>
                 <Magazinepart cards={cardNewsData} />
                 <Reviewpart reviews={reviewsData} />
