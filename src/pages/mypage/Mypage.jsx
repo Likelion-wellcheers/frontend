@@ -90,7 +90,7 @@ export const Mypage = () => {
               </SaveListItem>
             ))}
           </SaveList>
-          <MoreButton onClick={() => navigate('/savedlist')}>더보기</MoreButton>
+          <MoreButton onClick={() => navigate('/savelist')}>더보기</MoreButton>
         </Section>
         <Section>
           <SectionTitle>
