@@ -1,12 +1,16 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import styled from 'styled-components'
 import { ThemeColorContext } from '../../context/context'
 import { useNavigate } from 'react-router-dom';
+import { useRecoilState } from 'recoil';
+import { curPageRecoil } from '../../recoil/atom';
 
 export const SearchHome = () => {
   const tempQustion = ['인프라', '라이프스타일'];
   const tempAnswer = ['공원', '교통', '도서관', '마트', '목욕탕', '문화시설'];
   const tempSubQ = ['지역에 어떤 시설이 있으면 좋겠나요?', '나의 라이프스타일은 어떤가요?'];
+
+  const [curPage, setCurPage] = useRecoilState(curPageRecoil);
   
   const themeColor = useContext(ThemeColorContext);
   const navigate = useNavigate();
@@ -16,6 +20,7 @@ export const SearchHome = () => {
   1: { 0: false, 1: true, 2: false, 3: true }
   }*/
   const [selected, setSelected] = useState({});
+
 
   const handleClick = (qindex, aindex) => {
     setSelected(prevState => ({
