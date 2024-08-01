@@ -8,7 +8,7 @@ export const MapModal = ({mapIns, coord, setCoord, focusLevel, setFocusLevel}) =
     const navigate = useNavigate();
     // 0: 지역 선택 단계, 1: 인프라 선택 단계
     const [modalPage, setModalPage] = useState(0);
-    // place - 지역 , infra - 시설
+    // place - 지역 , Center - 시설
     const [place, setPlace] = useState([{
         name: '서울특별시 동작구',
         long: '37.5064393',
@@ -31,7 +31,7 @@ export const MapModal = ({mapIns, coord, setCoord, focusLevel, setFocusLevel}) =
         imageURL: '/images/filterbanner.png',
     }
     ])
-    const [infraList, setinfraList] = useState([{
+    const [centerList, setCenterList] = useState([{
         imageURL : '/images/filterbanner.png',
         title: '까망돌 도서관',
         subtitle: '서울 동작구 서달로 129'
@@ -53,8 +53,8 @@ export const MapModal = ({mapIns, coord, setCoord, focusLevel, setFocusLevel}) =
     const [selectedPlace, setSelectedPlace] = useState();
 
     // 사용자가 선택한 인프라 리스트
-    // infraList에서 해당하는 객체값이 추가로 들어감
-    const [selectedInfra, setSelectedInfra] = useState([]);
+    // CenterList에서 해당하는 객체값이 추가로 들어감
+    const [selectedCenter, setSelectedCenter] = useState([]);
     
     //인프라 페이지로 이동
     const handleClick = (idx) => {
@@ -79,16 +79,16 @@ export const MapModal = ({mapIns, coord, setCoord, focusLevel, setFocusLevel}) =
 
     // 담기 버튼 클릭 시
     const handlePut = (idx) => {
-        const selected = infraList[idx];
-        const isAlreadySelected = selectedInfra.find(infra => infra.title === selected.title);
+        const selected = centerList[idx];
+        const isAlreadySelected = selectedCenter.find(center => center.title === selected.title);
         // 이미 담겨있을 경우 취소
         if (isAlreadySelected) {
-            setSelectedInfra(prevState => 
-                prevState.filter(infra => infra.title !== selected.title)
+            setSelectedCenter(prevState => 
+                prevState.filter(center => center.title !== selected.title)
             );
             // 안담겨있을 경우 담기
         } else {
-            setSelectedInfra(prevState => [
+            setSelectedCenter(prevState => [
                 ...prevState,
                 selected
             ]);
@@ -98,12 +98,17 @@ export const MapModal = ({mapIns, coord, setCoord, focusLevel, setFocusLevel}) =
     // 담은 목록 중 클릭 시 해당 title 값에 대해 선택 취소
     // index로 삭제시 오류.. index 가 선택 순서에 따라 바뀌므로
     const handleDelete = (title) => {
-        setSelectedInfra(prevState => 
-            prevState.filter(infra => infra.title !== title)
+        setSelectedCenter(prevState => 
+            prevState.filter(center => center.title !== title)
     )};
 
     const handleCal = () => {
-        navigate('searchhome/searchmap/CalCost');
+        navigate('/searchhome/searchmap/CalCost');
+    }
+
+    const handleDetail = () =>{
+        var centerId = 1; // 임시 시설 아이디
+        navigate(`/searchhome/searchmap/centerdetail/${centerId}`);
     }
 
 // 모달 페이지 2개 중 상태에 따라 보여주기
@@ -133,63 +138,64 @@ if(!modalPage){
   )}
   else{
     return(
-        <InfraContainer>
-            <InfraContent>
-                <InfraContentDesc>
-                    <InfraBackBtn onClick={handleBack}>&lt; &nbsp; 다른지역 보기</InfraBackBtn>
-                    <InfraContentTitle>
+        <CenterContainer>
+            <CenterContent>
+                <CenterContentDesc>
+                    <CenterBackBtn onClick={handleBack}>&lt; &nbsp; 다른지역 보기</CenterBackBtn>
+                    <CenterContentTitle>
                         윤경님이 원하는<br/>
-                            <InfraContentPlace>{place[0].name}</InfraContentPlace> 이에요!
-                    </InfraContentTitle>
-                </InfraContentDesc>
-                <InfraList>
-                    <InfraListDesc>
-                        <InfraListDescCon>
-                        <InfraListTitle><svg xmlns="http://www.w3.org/2000/svg" width="20" height="21" viewBox="0 0 20 21" fill="none">
+                            <CenterContentPlace>{place[0].name}</CenterContentPlace> 이에요!
+                    </CenterContentTitle>
+                </CenterContentDesc>
+                <CenterList>
+                    <CenterListDesc>
+                        <CenterListDescCon>
+                        <CenterListTitle><svg xmlns="http://www.w3.org/2000/svg" width="20" height="21" viewBox="0 0 20 21" fill="none">
                         <path d="M10 20.5001C10.663 20.5001 11.2989 20.2367 11.7678 19.7679C12.2366 19.299 12.5 18.6632 12.5 18.0001H7.5C7.5 18.6632 7.76339 19.299 8.23223 19.7679C8.70107 20.2367 9.33696 20.5001 10 20.5001ZM11.2437 1.87387C11.2612 1.70006 11.242 1.52452 11.1875 1.35858C11.1329 1.19264 11.0442 1.03998 10.927 0.91044C10.8098 0.7809 10.6667 0.67736 10.5071 0.606498C10.3474 0.535635 10.1747 0.499023 10 0.499023C9.82532 0.499023 9.65258 0.535635 9.49292 0.606498C9.33325 0.67736 9.19022 0.7809 9.07303 0.91044C8.95584 1.03998 8.8671 1.19264 8.81254 1.35858C8.75798 1.52452 8.7388 1.70006 8.75625 1.87387C7.3434 2.16124 6.07328 2.92807 5.16096 4.04449C4.24863 5.16092 3.75018 6.55833 3.75 8.00012C3.75 9.37262 3.125 15.5001 1.25 16.7501H18.75C16.875 15.5001 16.25 9.37262 16.25 8.00012C16.25 4.97512 14.1 2.45012 11.2437 1.87387Z" fill="black"/>
-                        </svg>  &nbsp;원하는 시설을 담아보세요 <InfraListSubTitle> &nbsp;&#40;5개이하&#41;</InfraListSubTitle></InfraListTitle>
+                        </svg>  &nbsp;원하는 시설을 담아보세요 <CenterListSubTitle> &nbsp;&#40;5개이하&#41;</CenterListSubTitle></CenterListTitle>
 
-                        </InfraListDescCon>
+                        </CenterListDescCon>
                         
-                        <InfraListContents>
-                            {selectedInfra&&
-                                selectedInfra.map((infra, index) => (
-                            <InfraListContent
-                                key={index} onClick={()=> handleDelete(infra.title)}>
-                                {infra.title} &nbsp;X
-                            </InfraListContent>
+                        <CenterListContents>
+                            {selectedCenter&&
+                                selectedCenter.map((center, index) => (
+                            <CenterListContent
+                                key={index} onClick={()=> handleDelete(center.title)}>
+                                {center.title} &nbsp;X
+                            </CenterListContent>
                             ))}
-                        </InfraListContents>
-                    </InfraListDesc>
-                </InfraList>
+                        </CenterListContents>
+                    </CenterListDesc>
+                </CenterList>
                 <GoCalPageBtn onClick={handleCal}>담기 완료! 여가비용 계산하기</GoCalPageBtn>
-                <InfraCards>
-                {infraList &&
-                    infraList.map((card, i)=>{
-                        // isSelected는 각 카드에 대해, selectedInfra 안에 들어있는지 여부
+                <CenterCards>
+                {centerList &&
+                    centerList.map((card, i)=>{
+                        // isSelected는 각 카드에 대해, selectedCenter 안에 들어있는지 여부
                         // 이름으로 비교하기. 인덱스로 비교하면 오류
-                        const isSelected = selectedInfra.some(selectedInfra => selectedInfra.title === card.title);
+                        const isSelected = selectedCenter.some(selectedCenter => selectedCenter.title === card.title);
                         return(
-                        <InfraCard>
-                            <InfraCardImg src={card.imageURL} alt="시설사진"></InfraCardImg>
-                            <InfraCardDesc>
-                                <InfraCardDescCon>
-                                    <InfraCardTitle>{card.title}</InfraCardTitle>
-                                    <InfraCardSubTitle>{card.subtitle}</InfraCardSubTitle>
-                                </InfraCardDescCon>
-                                <InfraCardPutBtn key={i} onClick={()=>handlePut(i)}
+                        <CenterCard>
+                            <CenterCardImg onClick={handleDetail}
+                            src={card.imageURL} alt="시설사진"></CenterCardImg>
+                            <CenterCardDesc>
+                                <CenterCardDescCon>
+                                    <CenterCardTitle>{card.title}</CenterCardTitle>
+                                    <CenterCardSubTitle>{card.subtitle}</CenterCardSubTitle>
+                                </CenterCardDescCon>
+                                <CenterCardPutBtn key={i} onClick={()=>handlePut(i)}
                                     style={{
                                         background: isSelected ? "linear-gradient(247deg, #BCBDFF 7.5%, #5D5FEF 62.93%)" : "#F4F3FF",
                                         color: isSelected ?  "white" : '#5D5FEF' ,
                                         borderColor: isSelected ? "white" : '#5D5FEF'
                                       }}
-                                    >{isSelected ? "취소" : "담기"}</InfraCardPutBtn>
-                            </InfraCardDesc>    
-                        </InfraCard>)}
+                                    >{isSelected ? "취소" : "담기"}</CenterCardPutBtn>
+                            </CenterCardDesc>    
+                        </CenterCard>)}
                 )}
-                </InfraCards>
-            </InfraContent>
-        </InfraContainer>
+                </CenterCards>
+            </CenterContent>
+        </CenterContainer>
     )
   }
 }
@@ -287,7 +293,7 @@ const MapContentCardKey = styled.div`
 `
 
 // 아래부터 인프라 페이지 내용
-const InfraContainer = styled.div`
+const CenterContainer = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -297,7 +303,7 @@ const InfraContainer = styled.div`
     overflow-y: auto;
     z-index: 10;
 `
-const InfraContent = styled.div`
+const CenterContent = styled.div`
     display: flex;
     flex-direction: column;
     margin-top: 12px;
@@ -306,7 +312,7 @@ const InfraContent = styled.div`
     gap: 27px;
     margin-bottom: 30px;
 `
-const InfraContentDesc = styled.div`
+const CenterContentDesc = styled.div`
     display: flex;
     flex-direction: column;
     font-size: 20px;
@@ -314,7 +320,7 @@ const InfraContentDesc = styled.div`
     font-weight: 600;
     line-height: 150%;
 `
-const InfraBackBtn = styled.button`
+const CenterBackBtn = styled.button`
     width: 120px;
     font-size: 14px;
     font-style: normal;
@@ -329,10 +335,10 @@ const InfraBackBtn = styled.button`
     white-space: nowrap;
 `
 
-const InfraContentTitle = styled.div`
+const CenterContentTitle = styled.div`
     gap: 4px;
 `
-const InfraContentPlace = styled.div`
+const CenterContentPlace = styled.div`
     color: white;
     display: inline-flex;
     padding: 4px 12px;
@@ -347,7 +353,7 @@ const InfraContentPlace = styled.div`
     background: #5D5FEF;
     margin-top: 5px;
 `
-const InfraList = styled.div`
+const CenterList = styled.div`
     border-radius: 4px;
     border: 1px solid var(--Gray-02, #BBB8B8);
     background: #F8F8F8;
@@ -357,7 +363,7 @@ const InfraList = styled.div`
     gap: 10px;
 `
 
-const InfraListDescCon = styled.div`
+const CenterListDescCon = styled.div`
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -368,13 +374,13 @@ const InfraListDescCon = styled.div`
     align-self: flex-start;
 `
 
-const InfraListDesc = styled.div`
+const CenterListDesc = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
     
 `
-const InfraListTitle = styled.div`
+const CenterListTitle = styled.div`
     display: flex;
     align-items: center;
     font-size: 18px;
@@ -383,7 +389,7 @@ const InfraListTitle = styled.div`
     line-height: 150%;
 `
 
-const InfraListSubTitle = styled.div`
+const CenterListSubTitle = styled.div`
     display: inline-flex;
     color: var(--Gray-01, var(--kakao-logo, #615D67));
     font-size: 17px;
@@ -392,7 +398,7 @@ const InfraListSubTitle = styled.div`
     line-height: 150%;
 `
 
-const InfraListContents = styled.div`
+const CenterListContents = styled.div`
     margin-top: 15px;
     display: flex;
     flex-direction: row;
@@ -403,7 +409,7 @@ const InfraListContents = styled.div`
     gap: 12px;
     flex-wrap: wrap;
 `
-const InfraListContent = styled.div`
+const CenterListContent = styled.div`
     display: flex;
     padding: 4px 16px;
     justify-content: center;
@@ -433,41 +439,42 @@ const GoCalPageBtn = styled.button`
     border: none;
     cursor: pointer;
 `
-const InfraCards = styled.div`
+const CenterCards = styled.div`
     display: flex;
      flex-direction: column;
     justify-content: center;
     align-items: flex-start;
     gap: 29px;
 `
-const InfraCard = styled.div`
+const CenterCard = styled.div`
     height: 359px;
 `
-const InfraCardImg = styled.img`
+const CenterCardImg = styled.img`
     object-fit: cover;
     height: 280px;
     width: 100%;
     border-radius: 4px;
+    cursor: pointer;
 `
-const InfraCardDescCon = styled.div`
+const CenterCardDescCon = styled.div`
     display: flex;
     flex-direction: column;
     gap: 4px;
 `
 
-const InfraCardDesc = styled.div`
+const CenterCardDesc = styled.div`
     margin-top: 4px;
     display: flex;
     flex-direction: row;
     margin-left: 10px;
 `
-const InfraCardTitle= styled.div`
+const CenterCardTitle= styled.div`
     font-size: 20px;
     font-style: normal;
     font-weight: 600;
     line-height: 150%;
 `
-const InfraCardSubTitle = styled.div`
+const CenterCardSubTitle = styled.div`
     color: var(--Gray-01, #615D67);
     font-size: 14px;
     font-style: normal;
@@ -477,7 +484,7 @@ const InfraCardSubTitle = styled.div`
     white-space: nowrap;
 `
 
-const InfraCardPutBtn = styled.button`
+const CenterCardPutBtn = styled.button`
     justify-self: flex-end;
     margin-left: 210px;
     margin-top: 15px;
