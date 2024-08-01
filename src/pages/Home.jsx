@@ -31,7 +31,7 @@ export const Home = () => {
       <Banner themeColor={themeColor}> 
           <BannerDesc>
             <BannerSubTitle themeColor={themeColor}>맞춤형 노후 지역 추천 서비스</BannerSubTitle>
-            <BannerTitle>유노유노후는 이런이런 서비스입니다</BannerTitle>
+            <BannerTitle>당신은 당신의 <br />노후를 아시나요?</BannerTitle>
             <BannerButton themeColor={themeColor} onClick={handleSearchClick}>나만의 노후 지역 찾아보기</BannerButton>
           </BannerDesc>
           <BannerImg src="/images/bannerImage.png" alt="이미지"></BannerImg>
@@ -39,41 +39,45 @@ export const Home = () => {
         <Section>
           <SectionContents>
               <SectionDesc themeColor={themeColor}>
-                <SectionTitle>이런 지역은 <br/> 어때요?</SectionTitle>
+                <SectionTitle>이런 지역은 어때요?</SectionTitle>
                 <SectionSubTitle>오늘 추천 드리는 지역이에요</SectionSubTitle>
               </SectionDesc>
-              <SectionContent>
-                  <SectionContentImgContainer>
-                    <SectionContentImg src="" alt="거주지사진"></SectionContentImg>
-                  </SectionContentImgContainer>
-                  <SectionContentTitle>경상남도 통영시</SectionContentTitle>
-                  <SectionContentKeys>
-                    <SectionContentKey themeColor={themeColor}>#섬도시</SectionContentKey>
-                    <SectionContentKey themeColor={themeColor}>#나폴리</SectionContentKey>
-                    <SectionContentKey themeColor={themeColor}>#바다</SectionContentKey>
-                  </SectionContentKeys>
-              </SectionContent>
-                  
-              <SectionContent>
-              <SectionContentImg src="images/bannerImg.png" alt="거주지사진"></SectionContentImg>
-                  <SectionContentTitle>경기도 수원시</SectionContentTitle>
-                  <SectionContentKeys>
-                    <SectionContentKey themeColor={themeColor}>#서울축소판</SectionContentKey>
-                    <SectionContentKey themeColor={themeColor}>#수원화성</SectionContentKey>
-                    <SectionContentKey themeColor={themeColor}>#호수</SectionContentKey>
-                  </SectionContentKeys>
-              </SectionContent>
-              <SectionContent>
-              <SectionContentImg src="" alt="거주지사진"></SectionContentImg>
-                  <SectionContentTitle>전라남도 여수시</SectionContentTitle>
-                  <SectionContentKeys>
-                    <SectionContentKey themeColor={themeColor}>#밤바다</SectionContentKey>
-                    <SectionContentKey themeColor={themeColor}>#야경</SectionContentKey>
-                    <SectionContentKey themeColor={themeColor}>#케이블카</SectionContentKey>
-                  </SectionContentKeys>
-              </SectionContent>
-
+              <SectionContentContainer>
+                  <SectionContent>
+                      <SectionContentImgContainer>
+                        <SectionContentImg src="" alt="거주지사진"></SectionContentImg>
+                      </SectionContentImgContainer>
+                      <SectionContentTitle>경상남도 통영시</SectionContentTitle>
+                      <SectionContentKeys>
+                        <SectionContentKey themeColor={themeColor}>#섬도시</SectionContentKey>
+                        <SectionContentKey themeColor={themeColor}>#나폴리</SectionContentKey>
+                        <SectionContentKey themeColor={themeColor}>#바다</SectionContentKey>
+                      </SectionContentKeys>
+                  </SectionContent>
+                
+                <SectionContent>
+                <SectionContentImg src="images/bannerImg.png" alt="거주지사진"></SectionContentImg>
+                    <SectionContentTitle>경기도 수원시</SectionContentTitle>
+                    <SectionContentKeys>
+                      <SectionContentKey themeColor={themeColor}>#서울축소판</SectionContentKey>
+                      <SectionContentKey themeColor={themeColor}>#수원화성</SectionContentKey>
+                      <SectionContentKey themeColor={themeColor}>#호수</SectionContentKey>
+                    </SectionContentKeys>
+                </SectionContent>
+                <SectionContent>
+                <SectionContentImg src="" alt="거주지사진"></SectionContentImg>
+                    <SectionContentTitle>전라남도 여수시</SectionContentTitle>
+                    <SectionContentKeys>
+                      <SectionContentKey themeColor={themeColor}>#밤바다</SectionContentKey>
+                      <SectionContentKey themeColor={themeColor}>#야경</SectionContentKey>
+                      <SectionContentKey themeColor={themeColor}>#케이블카</SectionContentKey>
+                    </SectionContentKeys>
+                </SectionContent>
+              </SectionContentContainer>
           </SectionContents>
+          <SectionBackgroundImg id="1" src="/images/circle1.png"></SectionBackgroundImg>
+          <SectionBackgroundImg id="2" src="/images/circle2.png"></SectionBackgroundImg>
+          <SectionBackgroundImg id="3" src="/images/circle3.png"></SectionBackgroundImg>
         </Section>
         <ArticleContainer>
           <ArticleDescContainer>
@@ -117,28 +121,33 @@ const Banner = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  height: 560px;
+  height: 95vh;
   background-color: ${({themeColor})=>themeColor.sub};
-  padding: 49px;
-  gap: 140px;
+  padding-left: 5%;
+  padding-right: 3%;
+  gap: 50px;
+  overflow: hidden;
 `
 
 const BannerDesc = styled.div`
-  line-height: 380%;
+  line-height: 400%;
   width: 38%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   padding-left: 90px;
-  margin-bottom: 60px;
+  margin-bottom: 100px;
+  gap: 20px;
 `
 
 const BannerImg = styled.img`
   width: 40%;
-  width: 600px;
-  height: 520px;
+  width: 718px;
+  height: 718px;
   object-fit: cover;
   margin-right: 90px;
+  margin-top: 30%;
+  margin-left: 20px;
 `
 
 const BannerSubTitle = styled.div`
@@ -177,8 +186,9 @@ const BannerButton = styled.button`
 `
 
 const Section = styled.div`
+  position: relative;
   width: 100%;
-  height: 500px;
+  height: 100vh;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -191,36 +201,44 @@ const Section = styled.div`
   }
 `
 
-
 const SectionContents = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 16px;
   justify-content: center;
   flex-wrap: wrap;
+  align-items: center;
 `
 
 const SectionDesc = styled.div`
-  color: var(--White, #FFF);
   display: flex;
   width: 285px;
   height: 266px;
   flex-direction: column;
-  justify-content: space-between;
-  align-items: flex-start; 
-  padding: 28px;
+  justify-content: center;
+  gap: 20px;
+  align-items: center;
   box-sizing: border-box;
   border-radius: 8px;
-  background-color: ${({themeColor}) => themeColor.main};
 `
 
 const SectionTitle = styled.div`
   font-size: 32px;
   font-weight: 700;
+  white-space: nowrap;
 `
 const SectionSubTitle = styled.div`
   font-size: 18px;
   font-weight: 500;
+`
+
+const SectionContentContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 10%;
+  margin-bottom: 18%;
 `
 
 const SectionContent = styled.div`
@@ -231,6 +249,8 @@ const SectionContent = styled.div`
   width: 285px;
   height: 266px;
   gap: 8px;
+  background-color: white;
+  z-index: 10;
 `
 
 const SectionContentImgContainer = styled.div`
@@ -278,6 +298,21 @@ const SectionContentKey = styled.div`
   justify-content: center;
 `
 
+const SectionBackgroundImg = styled.img`
+  position: absolute;
+  &[id="1"] {
+    left: 62%;
+  }
+  &[id="2"] {
+    top: 40%;
+    left: -30%;
+  }
+  &[id="3"] {
+    top: 6%;
+    left: -5%;
+  }
+`
+
 const ArticleContainer = styled.div`
   display: flex;
   flex-direction: row;
@@ -285,7 +320,7 @@ const ArticleContainer = styled.div`
   position: relative;
   justify-content: center;
   align-items: center;
-  height: 720px;
+  height: 100vh;
   background-image: url("/images/background.png");
   background-size: 100% 470px;;
   background-repeat: no-repeat;
@@ -344,10 +379,10 @@ const ArticleSubTitle = styled.div`
 `
 
 const ArticleImg = styled.img`
-  width: 23vw;
-  height: 23vw;
+  width: 24vw;
+  height: 24vw;
   object-fit: cover;
-  
+  overflow: hidden;
 `
 const ArticleContents = styled.div`
   display: flex;
