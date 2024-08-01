@@ -43,7 +43,7 @@ export const Mypage = () => {
         <ProfileImage src={profile.image} alt="Profile" />
         <Name>{profile.name}님</Name>
         <ProfileDetail>
-          <div>{profile.age}세 |</div>
+          <div>{profile.age}세</div>
           <div>{profile.location}</div>
         </ProfileDetail>
         <Button onClick={() => navigate('/editinfo')}>
@@ -90,7 +90,7 @@ export const Mypage = () => {
               </SaveListItem>
             ))}
           </SaveList>
-          <MoreButton onClick={() => navigate('/savelist')}>더보기</MoreButton>
+          <MoreButton onClick={() => navigate('/savelist') }>더보기</MoreButton>
         </Section>
         <Section>
           <SectionTitle>
@@ -148,7 +148,6 @@ const LeftCard = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-around;
 `;
 
 
@@ -167,7 +166,7 @@ const ProfileImage = styled.img`
   width: 100px;
   height: 100px;
   margin-bottom: 20px;
-  margin-top: 30%;
+  margin-top: 20%;
   border: 4px solid rgba(93, 95, 239, 1);
 `;
 
@@ -183,20 +182,30 @@ const ProfileDetail = styled.div`
   display: flex;
   justify-content: center;
   font-size: 18px;
-  font-weight: 500;
+  font-weight: 540;
   line-height: 27px;
   color: rgba(97, 93, 103, 1);
+  margin-top: 2%;
+  gap: 8px;
 `;
 
 const Button = styled.button`
-  //background-color: #007BFF;
-  border: none;
-  border-radius: 5px;
+  border-radius: 4px;
   cursor: pointer;
-  //gap: 10px;
+  margin-top: 25%;
+  background:  rgba(248, 246, 243, 1);
+  border: 1px solid rgba(97, 93, 103, 1);
+  width: Hug (116px)px;
+  height: Hug (29px)px;
+  top: 461px;
+  left: 435px;
+  padding: 4px 12px 4px 12px;
+  gap: 5px;
+  display: flex;
+  align-items: center;
 
   &:hover {
-    background-color: #0056b3;
+    background-color: rgba(244, 243, 255, 1);
   }
 `;
 
