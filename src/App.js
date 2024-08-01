@@ -10,6 +10,13 @@ import { Search } from './pages/localnews/Search';
 import { Localinfo } from './pages/localnews/Localinfo';
 import { SearchMap } from './pages/searchHome/SearchMap';
 import { CalCost } from './pages/searchHome/CalCost';
+import { Editinfo } from './pages/mypage/Editinfo';
+import { Savelist } from './pages/mypage/Savelist';
+import { Eachmagazine } from './pages/localnews/Eachmagazine';
+import { Moremagazine } from './pages/localnews/Moremagazine';
+import { Detailsavelist } from './pages/mypage/Detailsavelist';
+import { CenterDetail } from './pages/searchHome/CenterDetail';
+import { PostReview } from './pages/searchHome/PostReview';
 
 
 
@@ -20,12 +27,19 @@ const App = () => {
                   <Route index element={<Home />} />
                   <Route path="login" element={<Login />} />
                   <Route path="mypage" element={<Mypage />} />
+                  <Route path="editinfo" element={<Editinfo />} />
+                  <Route path="savelist" element={<Savelist />} />
+                  <Route path="detailsavelist" element={<Detailsavelist />} />
                   <Route path="searchhome" element={<SearchHome />} />
-                    <Route path="searchhome/searchmap" element={<SearchMap />}/>
-                    <Route path="searchhome/searchmap/CalCost" element={<CalCost />}/>
+                  <Route path="searchhome/searchmap" element={<SearchMap />} />
+                  <Route path="searchhome/searchmap/centerdetail/:centerId" element={<CenterDetail />}/>
+                  <Route path="searchhome/searchmap/centerdetail/:centerId/postreview" element={<PostReview />} />
+                  <Route path="searchhome/searchmap/CalCost" element={<CalCost />}/>
                   <Route path="signup" element={<Signup />} />
                   <Route path="localnews" element={<Search />} />
                   <Route path="localinfo" element={<Localinfo />} />
+                  <Route path="eachmagazine" element={<Eachmagazine />} />
+                  <Route path="moremagazine" element={<Moremagazine />} />
                 </Route>
             </Routes> 
             

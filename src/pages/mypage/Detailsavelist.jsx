@@ -1,10 +1,11 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom'
 import styled from 'styled-components';
 
-export const Savelist = () => {
-
+export const Detailsavelist = () => {
   const navigate = useNavigate();
+  const locationState = useLocation();
+  const location = locationState.state?.location || '';
 
   const profile = {
     name: '야채윤경',
@@ -14,18 +15,16 @@ export const Savelist = () => {
   };
 
   const savedItems = [
-    { location: '서울특별시 동작구', image1: '/images/cat1.png', image2: '/images/cat2.png', count: 3 },
-    { location: '서울특별시 강남구', image1: '/images/cat1.png', image2: '/images/cat2.png', count: 5 },
-    { location: '서울특별시 마포구', image1: '/images/cat1.png', image2: '/images/cat2.png', count: 4 },
-    { location: '서울특별시 마포구', image1: '/images/cat1.png', image2: '/images/cat2.png', count: 4 },
-    { location: '서울특별시 마포구', image1: '/images/cat1.png', image2: '/images/cat2.png', count: 4 },
-    { location: '서울특별시 마포구', image1: '/images/cat1.png', image2: '/images/cat2.png', count: 4 },
-    { location: '서울특별시 마포구', image1: '/images/cat1.png', image2: '/images/cat2.png', count: 4 },
+    { location: '서울특별시 동작구', image1: '/images/cat1.png', name: '까망돌 도서관', locationDetails: '서울 동작구 서달로'},
+    { location: '서울특별시 강남구', image1: '/images/cat1.png', name: '까망돌 도서관', locationDetails: '서울 동작구 서달로'},
+    { location: '서울특별시 마포구', image1: '/images/cat1.png', name: '까망돌 도서관', locationDetails: '서울 동작구 서달로'},
+    { location: '서울특별시 마포구', image1: '/images/cat1.png', name: '까망돌 도서관', locationDetails: '서울 동작구 서달로'},
+    { location: '서울특별시 마포구', image1: '/images/cat1.png', name: '까망돌 도서관', locationDetails: '서울 동작구 서달로'},
+    { location: '서울특별시 마포구', image1: '/images/cat1.png', name: '까망돌 도서관', locationDetails: '서울 동작구 서달로'},
+    { location: '서울특별시 마포구', image1: '/images/cat1.png', name: '까망돌 도서관', locationDetails: '서울 동작구 서달로'}
   ];
 
-  const handleItemClick = (location) => {
-    navigate(`/detailsavelist`, { state: {location}});
-  };
+  const locationDetails = savedItems.filter(item => item.location === location);
 
   return (
     <Container>
@@ -41,31 +40,41 @@ export const Savelist = () => {
           내 정보 수정
         </Button>
       </LeftCard>
-      <Rightcard>
+      <RightCard>
         <Section>
           <SectionTitle>
             <Icon src='/images/heart.png' alt='하트 아이콘' />
             <TextWrapper>저장 목록</TextWrapper>
           </SectionTitle>
+          <LocationTitle>{location}</LocationTitle>
           <SaveList>
-            {savedItems.map((item, index) => (
-              <SaveListItem key={index} onClick={() => handleItemClick(item.location)}>
+            {locationDetails.map((item, index) => (
+              <SaveListItem key={index}>
                 <SaveListImageContainer>
                   <SaveListImage src={item.image1} alt={item.location} />
-                  <SaveListImage src={item.image2} alt={item.location} />
                 </SaveListImageContainer>
                 <div>
-                  <div>{item.location}</div>
-                  <div>{item.count}개</div>
+                  <div>{item.name}</div>
+                  <div>{item.locationDetails}</div>
                 </div>
               </SaveListItem>
             ))}
           </SaveList>
         </Section>
-      </Rightcard>
+      </RightCard>
     </Container>
   )
 }
+
+const LocationTitle = styled.div`
+  background-color: blue;
+  height: 5%;
+  justify-content: center;
+  text-align: center;
+  color: white;
+  padding: 10px;
+  margin: 10px 0;
+`;
 
 const Container = styled.div`
   display: flex;
@@ -125,11 +134,9 @@ const Button = styled.button`
   margin-top: 25%;
   background:  rgba(248, 246, 243, 1);
   border: 1px solid rgba(97, 93, 103, 1);
-  width: Hug (116px)px;
-  height: Hug (29px)px;
-  top: 461px;
-  left: 435px;
-  padding: 4px 12px 4px 12px;
+  width: 116px;
+  height: 29px;
+  padding: 4px 12px;
   gap: 5px;
   display: flex;
   align-items: center;
@@ -144,7 +151,7 @@ const SettingIcon = styled.img`
   height: 20px;
 `;
 
-const Rightcard = styled.div`
+const RightCard = styled.div`
   width: 916px;
   border-radius: 12px;
   background: rgba(255, 255, 255, 1);
@@ -187,8 +194,8 @@ const TextWrapper = styled.div`
 
 const SaveList = styled.div`
   display: flex;
-  justify-content: space-between;
   flex-wrap: wrap;
+  justify-content: space-between;
 `;
 
 const SaveListItem = styled.div`
@@ -198,8 +205,6 @@ const SaveListItem = styled.div`
   border-bottom: 1px solid #ddd;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  cursor: pointer;
 `;
 
 const SaveListImageContainer = styled.div`

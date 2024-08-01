@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import styled, { createGlobalStyle } from 'styled-components';
+import styled from 'styled-components';
 import { MapModal } from '../../component/modal/MapModal';
 
 const { kakao } = window;

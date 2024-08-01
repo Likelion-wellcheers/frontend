@@ -21,6 +21,8 @@ export const Nav = () => {
   const themeColor = useContext(ThemeColorContext);
   const [curPage, setCurPage] = useRecoilState(curPageRecoil);
 
+  const [isLogin, setIsLogin] = useState(true); //임시로 true로 해놓음
+
   //메뉴 클릭 시 해당 버튼에 대한 페이지로 이동하도록
   const handleClick = (buttonName) => {
     setCurPage(buttonName);
@@ -39,26 +41,30 @@ export const Nav = () => {
             </LogoContainer>
             유노유노후</MainButton>
           <Button  themeColor={themeColor}
-          $active={curPage === "/searchhome"}
+          $active={curPage === "/searchhome" || curPage === "/searchhome/searchmap"  || curPage.startsWith("/searchhome/searchmap/centerdetail") || curPage === "/searchhome/searchmap/centerdetail/:centerId/postreview" || curPage === "/searchhome/searchmap/CalCost"}
           onClick={()=>handleClick("/searchhome")}>
-            나만의 집찾기</Button>
-          <Button  themeColor={themeColor}
+            나의 노후 지역 찾기</Button>
+
+            <Button  themeColor={themeColor}
           $active={curPage === "/localnews"}
-          onClick={()=>handleClick("/localnews")}>
-            동네소식</Button>
+          onClick={()=>handleClick("/")}>
+            지역 Q&A</Button>
+
           <Button  themeColor={themeColor}
-          $active={curPage === "/mypage"}
-          onClick={()=>handleClick("/mypage")}>
-            마이페이지</Button>
-          <UserButtons>
-            <UserButton
+          $active={curPage === "/localnews" || curPage === "/Localinfo"  || curPage === "/eachmagazine" || curPage === "/moremagazine"}
+          onClick={()=>handleClick("/localnews")}>
+            지역생활</Button>
+
+          {isLogin ? (
+            <UserButton  themeColor={themeColor}
+            $active={curPage === "/mypage"}
+            onClick={()=>handleClick("/mypage")}>
+              마이페이지</UserButton>
+          ) : (
+          <UserButton
             onClick={()=>{handleClick("/login")}}
-            >로그인</UserButton>
-            <UserButtonDivide>|</UserButtonDivide>
-            <UserButton
-            onClick={()=>{handleClick("/signup")}}
-            >회원가입</UserButton>
-          </UserButtons>
+            >로그인</UserButton>)}
+          
         </Container>
       </OuterContainer>
       
@@ -69,6 +75,7 @@ export const Nav = () => {
 const OuterContainer = styled.div`
   display: flex;
   justify-content: center;
+  width: 100%;
 `
 
 const Container = styled.div`
@@ -78,12 +85,13 @@ const Container = styled.div`
   height: 64px;
   background-color: #FFFFFF;
   gap: 150px;
-  white-space: nowrap; //화면 줄여도 내부 텍스트 한줄로 유지
+  width: 80%;
 `
 
 const LogoContainer = styled.div`
   display: flex;
   margin-right: 1px;
+  
 `
 
 const Logo = styled.img`
@@ -91,6 +99,7 @@ const Logo = styled.img`
   height: 23.67px;
 `
 const MainButton = styled.button`
+  white-space: nowrap;
   display: flex;
   gap: 5px;
   font-size: 20px;
@@ -109,6 +118,7 @@ const Button = styled.button`
   background: none;
   border: none;
   cursor: pointer;
+  white-space: nowrap;
 
   &:after{
     content: '';
@@ -122,17 +132,6 @@ const Button = styled.button`
   }
 `
 
-const UserButtons = styled.div`
-  display: flex;
-  gap: 1px;
-  margin-left: 30px;
-`
-
-const UserButtonDivide = styled.div`
-  color: #615D67;
-  cursor: default;
-`
-
 const UserButton = styled.button`
   font-size: 13px;
   color: #615D67;
@@ -140,4 +139,5 @@ const UserButton = styled.button`
   background: none;
   border: none;
   cursor: pointer;
+  white-space: nowrap;
 `
