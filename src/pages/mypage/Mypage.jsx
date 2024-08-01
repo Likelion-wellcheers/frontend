@@ -43,7 +43,7 @@ export const Mypage = () => {
         <ProfileImage src={profile.image} alt="Profile" />
         <Name>{profile.name}님</Name>
         <ProfileDetail>
-          <div>{profile.age}세</div>
+          <div>{profile.age}세 |</div>
           <div>{profile.location}</div>
         </ProfileDetail>
         <Button onClick={() => navigate('/editinfo')}>
@@ -90,7 +90,7 @@ export const Mypage = () => {
               </SaveListItem>
             ))}
           </SaveList>
-          <MoreButton onClick={() => navigate('/savelist') }>더보기</MoreButton>
+          <MoreButton onClick={() => navigate('/savelist')}>더보기</MoreButton>
         </Section>
         <Section>
           <SectionTitle>
@@ -142,23 +142,12 @@ const LeftCard = styled.div`
   border: 1px solid rgba(238, 235, 232, 1);
   box-shadow: 4px 4px 4px 0px rgba(0, 0, 0, 0.12);
   text-align: center;
-  position: fixed; /* 고정 위치 */
+  position: fixed;
   top: 15%; 
   left: 7%; 
   display: flex;
   flex-direction: column;
   align-items: center;
-`;
-
-
-const RightCard = styled.div`
-  width: 916px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 1);
-  border: 1px solid rgba(238, 235, 232, 1);
-  box-shadow: 4px 4px 4px 0px rgba(0, 0, 0, 0.12);
-  margin-top: 33px;
-  margin-left: 23%;
 `;
 
 const ProfileImage = styled.img`
@@ -189,17 +178,30 @@ const ProfileDetail = styled.div`
   gap: 8px;
 `;
 
+const SettingIcon = styled.img`
+  width: 20px;
+  height: 20px;
+`;
+
+const RightCard = styled.div`
+  width: 916px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 1);
+  border: 1px solid rgba(238, 235, 232, 1);
+  box-shadow: 4px 4px 4px 0px rgba(0, 0, 0, 0.12);
+  margin-top: 33px;
+  margin-left: 23%;
+`;
+
 const Button = styled.button`
   border-radius: 4px;
   cursor: pointer;
   margin-top: 25%;
   background:  rgba(248, 246, 243, 1);
   border: 1px solid rgba(97, 93, 103, 1);
-  width: Hug (116px)px;
-  height: Hug (29px)px;
-  top: 461px;
-  left: 435px;
-  padding: 4px 12px 4px 12px;
+  width: 116px;
+  height: 29px;
+  padding: 4px 12px;
   gap: 5px;
   display: flex;
   align-items: center;
@@ -207,11 +209,6 @@ const Button = styled.button`
   &:hover {
     background-color: rgba(244, 243, 255, 1);
   }
-`;
-
-const SettingIcon = styled.img`
-  width: 20px;
-  height: 20px;
 `;
 
 const Section = styled.div`
@@ -244,12 +241,11 @@ const Scrollable = styled.div`
 
   &::-webkit-scrollbar {
     width: 8px;
-    border-radius: 10px;
   }
 
   &::-webkit-scrollbar-thumb {
     background: rgba(97, 93, 103, 1);
-    border-radius: 10px; 
+    border-radius: 10px;
   }
 
   &::-webkit-scrollbar-track {
@@ -296,19 +292,26 @@ const SaveListImage = styled.img`
 
 const Tabs = styled.div`
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
   margin-bottom: 10px;
+  background: rgba(238, 235, 232, 1);
+  border-radius: 4px;
+  padding: 5px;
+  gap: 5%;
 `;
 
 const TabButton = styled.button`
-  background: ${({ active }) => (active ? '#007BFF' : '#ddd')};
-  color: ${({ active }) => (active ? 'white' : 'black')};
+  background: ${({ active }) => (active ? 'rgba(255, 255, 255, 1)' : 'rgba(238, 235, 232, 1)')};
+  color: ${({ active }) => (active ? 'rgba(93, 95, 239, 1)' : 'rgba(97, 93, 103, 1)')};
   border: none;
   padding: 10px 20px;
+  box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.12);
   cursor: pointer;
+  font-weight: bold;
+  border-radius: 4px;
 
   &:hover {
-    background: ${({ active }) => (active ? '#0056b3' : '#ccc')};
+    background: ${({ active }) => (active ? '#ccc' : '#ccc')};
   }
 `;
 
@@ -372,8 +375,7 @@ const Content = styled.div`
 `;
 
 const ReviewImage = styled.img`
-  width: 50px;
-  height: 50px;
+  width: auto;
+  height: auto;
   object-fit: cover;
 `;
-
