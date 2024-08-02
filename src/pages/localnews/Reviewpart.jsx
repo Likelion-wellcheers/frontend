@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 export const Reviewpart = ({ reviews }) => {
@@ -12,11 +13,17 @@ export const Reviewpart = ({ reviews }) => {
         setCurrentIndex((currentIndex - 1 + reviews.length) % reviews.length);
     };
 
+    const navigate = useNavigate();
+
+    const isRequired = 1;
+    const title = "서울특별시 동작구";
+
     return (
         <ReviewWrapper>
             <SubTitle>
                 <Icon src='/images/icon4.png' alt='후기 아이콘' />
                 지역 후기
+                <Button onClick={() => navigate('/searchhome/searchmap/centerdetail/:centerId/postreview', { state: { title, isRequired } })}>작성하기</Button>
             </SubTitle>
             <HorizontalRule />
             <ArrowButton left onClick={handlePrev}>
@@ -24,7 +31,7 @@ export const Reviewpart = ({ reviews }) => {
             </ArrowButton>
             <ReviewList style={{ transform: `translateX(-${(currentIndex - 2) * (100 / 5)}%)` }}>
                 {reviews.map((review, index) => (
-                    <ReviewCard key={index} className={index === currentIndex - 2 || index === currentIndex + 2 ? 'hidden' : ''}>
+                    <ReviewCard onClick={() => navigate('/locreview', { state: { review } })} key={index} className={index === currentIndex - 2 || index === currentIndex + 2 ? 'hidden' : ''}>
                         <ReviewHeader>
                             <ProfileImage src={review.profile} alt={review.username} />
                             <ReviewInfo>
@@ -43,6 +50,24 @@ export const Reviewpart = ({ reviews }) => {
         </ReviewWrapper>
     );
 };
+
+const Button = styled.button`
+    margin-left: 83%;
+    padding: 10px;
+    border: none;
+    background: white;
+    color: black;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    height: fit-content;
+    //float: right;
+    cursor: pointer;
+
+  &:hover {
+    background-color: #f2f2f2;
+  }
+`
 
 const ReviewWrapper = styled.div`
     position: relative;

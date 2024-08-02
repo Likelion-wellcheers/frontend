@@ -2,14 +2,15 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components';
 
-export const PostReview = () => {
+export const PostReview = ({title, isRequired}) => {
     const { centerId } = useParams();
-
     const [rate, setRate] = useState(5);
 
     const handleRate = (idx) => {
         setRate(idx);
     }
+
+    const sentence = isRequired === 0 ? '시설의 사진을 첨부해주세요(필수)' : '파일 첨부';
 
   return (
     <>
@@ -17,7 +18,7 @@ export const PostReview = () => {
             <NavContainer>후기 작성</NavContainer>
             <PostContainer>
                 <PostTitle>
-                    <PostTitleContent>까망골 도서관
+                    <PostTitleContent>{title}
                         <PostTitleRating>
                             <svg xmlns="http://www.w3.org/2000/svg" width="222" height="104" viewBox="0 0 222 104" fill="none">
                                 <g filter="url(#filter0_d_789_9185)">
@@ -39,9 +40,9 @@ export const PostReview = () => {
                     </svg>
                     </PostTitleRating></PostTitleContent>
                 </PostTitle>
-                <PostTextArea placeholder='후기를 입력해주세요'></PostTextArea>
+                <PostTextArea placeholder='후기를 작성해 주세요'></PostTextArea>
                 <PostImgContainer>
-                    시설의 사진을 첨부해주세요(필수)
+                    {sentence}
                     <PostImgDesc> 
                         <PostImgIcon><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                         <path d="M3.9 12C3.9 10.29 5.29 8.9 7 8.9H11V7H7C4.24 7 2 9.24 2 12C2 14.76 4.24 17 7 17H11V15.1H7C5.29 15.1 3.9 13.71 3.9 12ZM8 13H16V11H8V13ZM17 7H13V8.9H17C18.71 8.9 20.1 10.29 20.1 12C20.1 13.71 18.71 15.1 17 15.1H13V17H17C19.76 17 22 14.76 22 12C22 9.24 19.76 7 17 7Z" fill="#615D67"/>
