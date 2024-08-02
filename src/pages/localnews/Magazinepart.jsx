@@ -1,7 +1,11 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 export const Magazinepart = ({ cards }) => {
+
+  const navigate=useNavigate();
+  
   return (
     <CardWrapper>
     {cards.map((card, index) => (
@@ -9,7 +13,7 @@ export const Magazinepart = ({ cards }) => {
         <CardImage src={card.image} alt={card.title} />
         <CardContent>
           <CardTitle>{card.title}</CardTitle>
-          <DetailButton onClick={() => alert('Show details for ' + card.title)}>상세보기</DetailButton>
+          <DetailButton onClick={() => navigate(`/eachmagazine`)}>상세보기</DetailButton>
         </CardContent>
       </Card>
     ))}
