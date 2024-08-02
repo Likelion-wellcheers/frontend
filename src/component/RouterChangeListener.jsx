@@ -11,7 +11,6 @@ const RouteChangeListener = () => {
   //페이지 변경 시
   useEffect(() => {
     setCurPage(router.pathname);
-    console.log(router.pathname);
   }, [router]);
 
   return null; 

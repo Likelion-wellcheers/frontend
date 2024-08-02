@@ -1,7 +1,7 @@
 import { useState } from "react";
 
-export const useForm = (initialValue = "") => {
-  const [value, setValue] = useState(initialValue);
+export const useForm = () => {
+  const [value, setValue] = useState("");
   const onChange = (e) => {
     setValue(e.target.value);
   };
