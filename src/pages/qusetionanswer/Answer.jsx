@@ -12,8 +12,8 @@ export const Answer = () => {
 
   // 임시 댓글 데이터
   const [comments, setComments] = useState([
-    { author: '야채윤', date: '2024-07-26', content: '이런이런이런이런이런이런', authorProfilePic: 'url_to_profile_image' },
-    { author: '김철수', date: '2024-07-27', content: '좋은 질문이에요!', authorProfilePic: 'url_to_profile_image' },
+    { author: '야채윤', date: '2024-07-26', content: '이런이런이런이런이런이런', authorProfilePic: '/images/profile.png' },
+    { author: '김철수', date: '2024-07-27', content: '좋은 질문이에요!', authorProfilePic: '/images/profile.png' },
   ]);
 
   const handleCommentSubmit = () => {
@@ -35,11 +35,9 @@ export const Answer = () => {
           <QuestionTitle>제목제목제목자리</QuestionTitle>
           <InfoRow>
             <AuthorInfo>
-              <ProfileImage src={question.authorProfilePic} alt="Profile" />
-              <div>
+              <ProfileImage src={question.profile} alt="Profile" />
                 <Author><strong>{question.author}</strong></Author>
                 <Date>{question.date}</Date>
-              </div>
             </AuthorInfo>
             <StatusContainer>
               <Content>{question.status}</Content>
@@ -51,21 +49,23 @@ export const Answer = () => {
           <ContentBox><div>{question.question}</div></ContentBox>
         </div>
       ) : (
-        <p>No question data available.</p>
+        <p>없음</p>
       )}
 
-      <h3>댓글</h3>
+      <TitleWrapper>
+                <TitleIcon src='/images/comment.png' alt='전구 아이콘'/>
+                <Titlemini>댓글</Titlemini>
+       </TitleWrapper>
       <CommentSection>
-        <CommentImage src="url_to_comment_image" alt="Comment" />
         <CommentBox>
           {comments.map((comment, index) => (
             <CommentContainer key={index}>
               <ProfileImage src={comment.authorProfilePic} alt="Profile" style={{ width: '30px' }} />
               <CommentContent>
-                <div>
+                <AuDa>
                   <Author><strong>{question.author}</strong></Author>
                   <Date>{question.date}</Date>
-                </div>
+                </AuDa>
                 <Content>{comment.content}</Content>
               </CommentContent>
             </CommentContainer>
@@ -74,21 +74,48 @@ export const Answer = () => {
       </CommentSection>
 
       <CommentInputContainer>
-        <input
-          type="file"
-          style={{ marginRight: '10px' }}
-        />
         <TextArea
           value={newComment}
           onChange={onChangeNewComment}
           placeholder="댓글을 남겨주세요..."
         />
-        <button onClick={handleCommentSubmit}>등록</button>
+        <input
+          type="file"
+          style={{ marginRight: '10px' }}
+        />
+        <Registerbutton onClick={handleCommentSubmit}>등록</Registerbutton>
       </CommentInputContainer>
       </ContentWrapper>
     </Container>
   );
 };
+
+const AuDa = styled.div`
+  display: flex;
+  gap: 1%;
+  margin-bottom: 2%;
+`
+
+const TitleWrapper = styled.div`
+    display: flex;
+    gap: 1%;
+    align-items: center;
+    margin-bottom: 1%; 
+`
+
+const TitleIcon = styled.img`
+    width: 2%;
+    height: 2%;
+`
+const Titlemini = styled.div`
+    font-weight: 600;
+    //styleName: Head_sb;
+    font-family: Pretendard;
+    font-size: 20px;
+    line-height: 30px;
+    text-align: left;
+`
+
 
 const ContentWrapper = styled.div`
   width: 80%;
@@ -96,14 +123,20 @@ const ContentWrapper = styled.div`
 `
 
 const Author = styled.div`
-
+  color: rgba(97, 93, 103, 1);
+  font-size: 16px;
+  font-weight: 600;
 `;
 
 const Date = styled.div`
-
+  color: rgba(187, 184, 184, 1);
+  font-size: 14px;
 `;
 
 const Content = styled.div`
+color: rgba(97, 93, 103, 1);
+font-size: 16px;
+font-weight: 600;
 
 `;
 
@@ -147,11 +180,13 @@ const InfoRow = styled.div`
 const AuthorInfo = styled.div`
   display: flex;
   align-items: center;
+  gap:1%;
+  width: 90%;
 `;
 
 const ProfileImage = styled.img`
   width: 40px;
-  border-radius: 50%;
+  border-radius: 4px;
   margin-right: 10px;
 `;
 
@@ -172,18 +207,30 @@ const ContentBox = styled.div`
   text-align: left;
   justify-content: left;
   color: black;
+  margin-top: 1%;
 `;
 
 const Button = styled.button`
-  margin-bottom: 20px;
   font-size: 18px;
   background: rgba(93, 95, 239, 1);
   border-radius: 4px;
   padding: 12px;
   color:rgba(255, 255, 255, 1);
   font-weight: 600;
-  margin-left: -68%;
   border: 0cap;
+`
+
+const Registerbutton = styled.button`
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+  border-radius: 4px;
+  padding: 12px;
+  color:rgba(255, 255, 255, 1);
+  font-weight: 600;
+  height: 30px;
+  border: 0cap;
+  background: linear-gradient(247.34deg, #BCBDFF 7.5%, #5D5FEF 62.93%);
 `
 
 const CommentSection = styled.div`
@@ -205,9 +252,11 @@ const CommentBox = styled.div`
 const CommentContainer = styled.div`
   border: 1px solid #ccc;
   padding: 10px;
-  margin: 5px 0;
   display: flex;
   align-items: flex-start;
+  padding-top: 2%;
+  padding-bottom: 2%;
+  background: rgba(248, 246, 243, 1);
 `;
 
 const CommentContent = styled.div`
@@ -219,10 +268,16 @@ const CommentInputContainer = styled.div`
   align-items: center;
   border: 1px solid #ccc;
   padding: 10px;
+  border: 1px solid rgba(187, 184, 184, 1);
+  background: rgba(244, 243, 255, 1);
+  border-radius: 4px;
+  margin-bottom: 5%;
 `;
 
 const TextArea = styled.textarea`
   flex: 1;
   height: 50px;
   margin-right: 10px;
+  background: rgba(244, 243, 255, 1);
+  border: 0cap;
 `;

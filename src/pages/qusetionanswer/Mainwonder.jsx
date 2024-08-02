@@ -279,8 +279,8 @@ const Boxbutton = styled.button`
   border-radius: 4px;
   width: 130px;
   height: 50px;
-  margin-top: -30px;
-  margin-right: 250px;
+  margin-top: -27px;
+  margin-right: 300px;
   position: absolute;
   font-weight: 600;
   font-size: 16px;
@@ -606,6 +606,7 @@ const AskWrapper = styled.div`
 
 const ContentWrapper = styled.div`
     margin-left: 13%;
+    margin-bottom: 10%;
 `
 
 const Container = styled.div`
