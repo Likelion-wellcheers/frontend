@@ -40,6 +40,7 @@ export const Nav = () => {
               <Logo src="/images/mainlogo.png" alt="logo"></Logo>
             </LogoContainer>
             유노유노후</MainButton>
+            
           <Button  themeColor={themeColor}
           $active={curPage === "/searchhome" || curPage === "/searchhome/searchmap"  || curPage.startsWith("/searchhome/searchmap/centerdetail") || curPage === "/searchhome/searchmap/centerdetail/:centerId/postreview" || curPage === "/searchhome/searchmap/CalCost"}
           onClick={()=>handleClick("/searchhome")}>
@@ -84,36 +85,36 @@ const Container = styled.div`
   justify-content: center;
   height: 64px;
   background-color: #FFFFFF;
-  gap: 150px;
+  gap: 12%;
   width: 80%;
 `
 
 const LogoContainer = styled.div`
   display: flex;
   margin-right: 1px;
-  
 `
 
 const Logo = styled.img`
-  width: 22px;
-  height: 23.67px;
+  width: 26px;
+  height: 26px;
+  padding-bottom: 5px;
 `
 const MainButton = styled.button`
   white-space: nowrap;
   display: flex;
   gap: 5px;
-  font-size: 20px;
+  font-size: 28px;
   font-family: 'GmarketSansMedium',  sans-serif;
   background: none;
   border: none;
-  margin-right: 40px;
   cursor: pointer;
   align-items: center;
+  justify-content: center;
 `
 
 const Button = styled.button`
   position: relative;
-  font-size: 17px;
+  font-size: 20px;
   font-family: 'GmarketSansMedium',  sans-serif;
   background: none;
   border: none;
@@ -126,14 +127,14 @@ const Button = styled.button`
     position: absolute;
     left: -20%;
     bottom: -20px;
-    width: 140%;
-    height: 2px;
+    width: 142%;
+    height: 2.4px;
     background-color: ${({themeColor})=> themeColor.main}; 
   }
 `
 
 const UserButton = styled.button`
-  font-size: 13px;
+  font-size: 20px;
   color: #615D67;
   font-family: 'GmarketSansMedium',  sans-serif;
   background: none;
