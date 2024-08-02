@@ -40,7 +40,7 @@ export const Home = () => {
           <SectionContents>
               <SectionDesc themeColor={themeColor}>
                 <SectionTitle>이런 지역은 어때요?</SectionTitle>
-                <SectionSubTitle>오늘 추천 드리는 지역이에요</SectionSubTitle>
+                <SectionSubTitle>오늘 추천드리는 지역이에요</SectionSubTitle>
               </SectionDesc>
               <SectionContentContainer>
                   <SectionContent>
