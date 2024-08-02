@@ -3,12 +3,14 @@ import styled from 'styled-components'
 import { ThemeColorContext } from '../../context/context';
 import Chart from 'chart.js/auto';
 import { useNavigate } from 'react-router-dom';
+import { useForm } from '../../hooks/useForm';
 
 export const CalCost = () => {
     const themeColor = useContext(ThemeColorContext);
     const navigate = useNavigate();
     // /recommend/mycart/{int:id}로 받아올 객체 예시
     // 백엔드에게 받아올 내용..
+
     const tempCart = {
         "id": 1,
         "center1": {
@@ -77,28 +79,29 @@ export const CalCost = () => {
         setSelected(updatedSelection);
     };
 
-    const [myBudget, setMyBudget] = useState(0); //생활비 비용
+    //const [myBudget, setMyBudget] = useState(0); //생활비 비용
     const [myleisureCost, setMyleisureCost] = useState(0); //생활비 바탕으로 계산한 여가 비용
     const [expectCost, setexpectCost] = useState(0); //예상 여가비용
 
+    const [inputBudget, onChangeBudget] = useForm("");
 
     //아래는 addPage 관련 내용
     //계산 클릭 시 아래 페이지 더보기
     const [addPage, setAddPage] = useState(false);
 
     const showAddPage = () => {
-        const inputBudgetValue = document.getElementById("inputBudget").value; // 사용자가 입력한 생활비
-
-        if(inputBudgetValue.length == 0){
+        if(inputBudget == ""){
             alert("생활비를 입력하세요!");
+            onChangeBudget({target : {value: ""}}); // 빈값으로
             return;
         }
-        else if(isNaN(inputBudgetValue) == true){
+        else if(typeof inputBudget === 'string'){
             alert("숫자 값으로 입력하세요!");
+            onChangeBudget({target : {value: ""}}); // 빈값으로
             return;
         }
 
-        setMyBudget(inputBudgetValue);
+        //setMyBudget(inputBudget);
         setAddPage(true);
         /*
         백으로부터 초과하는지와 적정 여가비용 가져오기
@@ -112,7 +115,7 @@ export const CalCost = () => {
         let barChart;
 
         if (addPage) {
-            const inputBudgetValue = myBudget;
+            //const inputBudget = myBudget;
             const chartEI = document.getElementById('bar-chart').getContext('2d');
 
             barChart = new Chart(chartEI, {
@@ -180,10 +183,10 @@ export const CalCost = () => {
                     <BudgetSubTitle>은퇴 후 예상되는 한 달 생활비를 입력해 주세요</BudgetSubTitle>
                 </BudgetTitleContainer>
                 <BudgetInputContainer>
-                    <BudgetInput id="inputBudget"></BudgetInput>
+                    <BudgetInput id="inputBudget" value={inputBudget} onChange={onChangeBudget}></BudgetInput>
                     <BudgetWon>원</BudgetWon>
                 </BudgetInputContainer>
-                <BudgetBtn onClick={(e)=>showAddPage(e)}>적정 여가비용<br/>
+                <BudgetBtn onClick={()=>showAddPage()}>적정 여가비용<br/>
                 확인하기</BudgetBtn>
             </BudgetContainer>
 

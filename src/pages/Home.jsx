@@ -40,7 +40,7 @@ export const Home = () => {
           <SectionContents>
               <SectionDesc themeColor={themeColor}>
                 <SectionTitle>이런 지역은 어때요?</SectionTitle>
-                <SectionSubTitle>오늘 추천 드리는 지역이에요</SectionSubTitle>
+                <SectionSubTitle>오늘 추천드리는 지역이에요</SectionSubTitle>
               </SectionDesc>
               <SectionContentContainer>
                   <SectionContent>
@@ -121,7 +121,7 @@ const Banner = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  height: 95vh;
+  height: 93vh;
   background-color: ${({themeColor})=>themeColor.sub};
   padding-left: 5%;
   padding-right: 3%;
@@ -199,6 +199,7 @@ const Section = styled.div`
   @media (max-width: 590px) {
     height: 1200px;
   }
+  overflow: hidden;
 `
 
 const SectionContents = styled.div`
@@ -337,7 +338,7 @@ const Article = styled.div`
   box-shadow: 4px 4px 4px 0px rgba(0, 0, 0, 0.12);
 
  &[id="article1"]{
-    top: 150%;
+    top: 156%;
  }
 
  &[id="article2"]{
@@ -345,7 +346,7 @@ const Article = styled.div`
  }
 
  &[id="article3"]{
-  top: 31%;
+  top: 33%;
   left: 64.5%;
  }
 `
