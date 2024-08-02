@@ -1,14 +1,20 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components'
+import sig from '../../constants/sig.json';
 
 const { kakao } = window;
 
-export const MapModal = ({mapIns, coord, setCoord, focusLevel, setFocusLevel}) => {
+export const MapModal = ({mymap, load}) => {
+    var marker = null;
+    var polygon = null;
+
     const navigate = useNavigate();
     // 0: 지역 선택 단계, 1: 인프라 선택 단계
     const [modalPage, setModalPage] = useState(0);
     // place - 지역 , Center - 시설
+    // const [marker, setMarker] = useState(null);
+    // const [polygon, setPolygon] = useState(null);
     const [place, setPlace] = useState([{
         name: '서울특별시 동작구',
         long: '37.5064393',
@@ -55,25 +61,107 @@ export const MapModal = ({mapIns, coord, setCoord, focusLevel, setFocusLevel}) =
     // 사용자가 선택한 인프라 리스트
     // CenterList에서 해당하는 객체값이 추가로 들어감
     const [selectedCenter, setSelectedCenter] = useState([]);
+
+
+    const temp_sigCD = "11590" // 임시 지역코드. 동작구 꺼
+    const temp_sigCD2 = "48220" // 통영
+    const temp_sigCD3 = "41590" // 화성시
+
+
+    //경도 위도 넘겨주면 마커 찍어주는 함수
+    const drawMarker = (lat, lng) => {
+        var imageSrc = '/images/marker.png', // 마커이미지의 주소입니다    
+        imageSize = new kakao.maps.Size(31, 42), // 마커이미지의 크기입니다
+        imageOption = {offset: new kakao.maps.Point(18, 30)};
+
+        // 지역 마커 찍기
+        var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption),
+        markerPosition = new kakao.maps.LatLng(lat, lng);  //임시 좌표
+
+        marker = new kakao.maps.Marker({
+            position: markerPosition, 
+            image: markerImage // 마커이미지 설정 
+        });
+        marker.setMap(mymap);
+    }
+
+    // 시군구 코드 넘겨주면 폴리곤 그려주는 함수
+    const drawPolygon = (data, sigCD) => {
+        var polygonList = getPolygon(data, sigCD);
+    
+        var polygonPath = [];
+
+        polygonList.forEach(element => {
+            polygonPath.push(new kakao.maps.LatLng(element[1], element[0]))
+        });
+
+            polygon = new kakao.maps.Polygon({
+            path: polygonPath, // 그려질 다각형의 좌표 배열입니다
+            strokeWeight: 1, // 선의 두께입니다
+            strokeColor: '#b62c91', // 선의 색깔입니다
+            strokeOpacity: 0.8, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+            strokeStyle: 'longdash', // 선의 스타일입니다
+            fillColor: '#f89ef8', // 채우기 색깔입니다
+            fillOpacity: 0.3 // 채우기 불투명도 입니다
+        });
+        polygon.setMap(mymap);
+    }   
+
+    const moveFocus = (lat, lng) => {
+        var moveLatLon = new kakao.maps.LatLng(lat, lng);
+        mymap.setCenter(moveLatLon);
+    }
+
+
+    // 시군구 코드를 넘겨주면 해당하는 폴리곤 리스트 반환
+    const getPolygon = (data, sig_cd) => {
+        // features 배열에서 조건에 맞는 객체를 찾음
+        const feature = data.features.find(
+          (feature) => feature.properties.SIG_CD === sig_cd
+        );
+        // 조건에 맞는 객체가 없으면 null 반환
+        if (!feature) {
+          return null;
+        }
+        // 객체가 존재할 경우 coordinates 반환
+        return feature.geometry.coordinates[0][0];
+      }
+
+
+      useEffect(()=>{
+        if(load && mymap && modalPage == 0){
+            // 지역 추천에서 폴리곤과 마커 그리기
+            drawMarker(37.5064393, 126.963687);
+            drawPolygon(sig, temp_sigCD);
+        }
+      }, [load, mymap, modalPage]);
+
     
     //인프라 페이지로 이동
     const handleClick = (idx) => {
         // 지도 확대하기 + 이동하기 (포커스)
-        // mapIns : 지도창에서 가져온 지도 객체
+        // map : 지도창에서 가져온 지도 객체
         setSelectedPlace(idx);
-        var level = mapIns.getLevel();
-        mapIns.setLevel(level - 8); 
+        var level = mymap.getLevel();
+        mymap.setLevel(4); 
         setModalPage(1);
 
-        var moveLatLon = new kakao.maps.LatLng(place[idx].long, place[idx].lat);
-        mapIns.setCenter(moveLatLon);
+        moveFocus(place[idx].long, place[idx].lat)
+
+        marker.setMap(null);
+        polygon.setMap(null);
+
+        // 시설 마커들 그리기!
+        drawMarker(37.50415, 126.9570);
     }
+
 
     // 지역 페이지 이동 (뒤로가기)
     const handleBack = () => {
-        if(mapIns){
+        if(mymap){
             setModalPage(0);
-            mapIns.setLevel(13);
+            moveFocus(36.3504119, 127.3845475)
+            mymap.setLevel(12);
         }
     }
 
