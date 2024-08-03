@@ -6,29 +6,31 @@ const { kakao } = window;
 
 
 export const SearchMap = () => {
-  //현재 포커스할 위도 경도
-  const [coord, setCoord] = useState(('36.0904119', '128.03488'))
-  // 현재 포커드 단계
-  const [focusLevel, setFocusLevel] = useState('13');
-
   //map 객체를 담기
-  const [mapIns, setMapIns] = useState({});
+  const [mymap, setMymap] = useState({});
+  const [load, setLoad] = useState(false); // 지도 로드 여부..
 
   useEffect(()=>{
-      var container = document.getElementById('map');
-      var mapOptions = {
-        center: new kakao.maps.LatLng(36.3504119, 127.3845475),
-        level: 13
+    // MapModal 에 넘겨주기 전에 instance가 완전히 생성되었는지 확인해야함.
+      const createMapInstance = async() => {
+        var mapContainer = document.getElementById('map');
+        var mapOptions = {
+          center: new kakao.maps.LatLng(36.3504119, 127.3845475),
+          level: 12
+        }
+        var map =  await new kakao.maps.Map(mapContainer, mapOptions);
+        setMymap(map);
       }
-      var mapInstance =  new kakao.maps.Map(container, mapOptions);
-      setMapIns(mapInstance);   
+      createMapInstance();
+      setLoad(true); // 로드 되었는지에 따라 자식 컴포넌트에서 비동기적으로 실행되도록
+
 }, []);
 
 
   return (
     <>
         <Container>
-          <MapModal mapIns={mapIns} coord={coord} setCoord={setCoord} focusLevel={focusLevel} setFocusLevel={setFocusLevel}/>
+          <MapModal mymap={mymap} load={load} />
           <MapContainer id="map"></MapContainer>
         </Container>
   </>
