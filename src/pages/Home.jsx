@@ -1,9 +1,10 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import styled, { createGlobalStyle, keyframes } from 'styled-components'
 import { ThemeColorContext } from '../context/context'
 import { useRecoilState } from 'recoil';
 import { curPageRecoil } from '../recoil/atom';
+import { fetchHome } from '../apis/recommend';
 
 
 const HomeStyle = createGlobalStyle`
@@ -19,11 +20,22 @@ export const Home = () => {
   const themeColor = useContext(ThemeColorContext);
   const navigate = useNavigate();
   const [curPage, setCurPage] = useRecoilState(curPageRecoil);
+  const [magData, setMagData] = useState([]);
+  const [regData, setRegData] = useState([]);
 
   const handleSearchClick = () => {
     setCurPage("searchhome");
     navigate("/searchhome");
   }
+
+  useEffect(()=>{
+    const getHome = async() => {
+      const result = await fetchHome();
+      setMagData(result.magazine_list);
+      setRegData(result.region_list);
+    }
+    getHome();
+  },[]);
 
   return (
     <>
@@ -42,51 +54,48 @@ export const Home = () => {
                 <SectionTitle>이런 지역은 어때요?</SectionTitle>
                 <SectionSubTitle>오늘 추천드리는 지역이에요</SectionSubTitle>
               </SectionDesc>
+
               <SectionContentContainer>
-                  <SectionContent>
-                      <SectionContentImgContainer>
-                        <SectionContentImg src="" alt="거주지사진"></SectionContentImg>
-                      </SectionContentImgContainer>
-                      <SectionContentTitle>경상남도 통영시</SectionContentTitle>
-                      <SectionContentKeys>
+              {regData.map((data)=>(
+                <SectionContent>
+                  <SectionContentImgContainer>
+                    <SectionContentImg src={data.thumnail || "/images/default.png"} alt="거주지사진"></SectionContentImg>
+                  </SectionContentImgContainer>
+                  <SectionContentTitle>{data.city} {data.gugoon}</SectionContentTitle>
+                  <SectionContentKeys>
                         <SectionContentKey themeColor={themeColor}>#섬도시</SectionContentKey>
                         <SectionContentKey themeColor={themeColor}>#나폴리</SectionContentKey>
                         <SectionContentKey themeColor={themeColor}>#바다</SectionContentKey>
-                      </SectionContentKeys>
-                  </SectionContent>
-                
-                <SectionContent>
-                <SectionContentImg src="images/bannerImg.png" alt="거주지사진"></SectionContentImg>
-                    <SectionContentTitle>경기도 수원시</SectionContentTitle>
-                    <SectionContentKeys>
-                      <SectionContentKey themeColor={themeColor}>#서울축소판</SectionContentKey>
-                      <SectionContentKey themeColor={themeColor}>#수원화성</SectionContentKey>
-                      <SectionContentKey themeColor={themeColor}>#호수</SectionContentKey>
-                    </SectionContentKeys>
+                  </SectionContentKeys>
                 </SectionContent>
-                <SectionContent>
-                <SectionContentImg src="" alt="거주지사진"></SectionContentImg>
-                    <SectionContentTitle>전라남도 여수시</SectionContentTitle>
-                    <SectionContentKeys>
-                      <SectionContentKey themeColor={themeColor}>#밤바다</SectionContentKey>
-                      <SectionContentKey themeColor={themeColor}>#야경</SectionContentKey>
-                      <SectionContentKey themeColor={themeColor}>#케이블카</SectionContentKey>
-                    </SectionContentKeys>
-                </SectionContent>
+              ))}
               </SectionContentContainer>
+
           </SectionContents>
           <SectionBackgroundImg id="1" src="/images/circle1.png"></SectionBackgroundImg>
           <SectionBackgroundImg id="2" src="/images/circle2.png"></SectionBackgroundImg>
           <SectionBackgroundImg id="3" src="/images/circle3.png"></SectionBackgroundImg>
         </Section>
+
         <ArticleContainer>
           <ArticleDescContainer>
             <ArticleDesc>
               <ArticleTitle>매거진을 확인해 보세요!</ArticleTitle>
               <ArticleSubTitle>다양한 지역의 소식을 알아보세요</ArticleSubTitle>
             </ArticleDesc>
+
+              {magData.map((data, idx)=>{
+                <Article id={idx}>
+                  <ArticleImg src={data.thumnail || "/images/filterbanner.png"}></ArticleImg>
+                  <ArticleContents>
+                    <ArticleContentTitle>{data.name}</ArticleContentTitle>
+                    <ArticleContentBtn themeColor={themeColor}>상세보기</ArticleContentBtn>
+                  </ArticleContents>
+                </Article>
+              })}
+
             <Article id="article1">
-                <ArticleImg src="/images/bannerImg.png"></ArticleImg>
+                <ArticleImg src="/images/default.png"></ArticleImg>
                 <ArticleContents>
                   <ArticleContentTitle>카드뉴스제목</ArticleContentTitle>
                   <ArticleContentBtn themeColor={themeColor}>상세보기</ArticleContentBtn>
