@@ -43,18 +43,15 @@ export const Nav = () => {
             
           <Button  themeColor={themeColor}
           $active={curPage === "/searchhome" || curPage === "/searchhome/searchmap"  || curPage.startsWith("/searchhome/searchmap/centerdetail") || curPage === "/searchhome/searchmap/centerdetail/:centerId/postreview" || curPage === "/searchhome/searchmap/CalCost"}
-          onClick={()=>handleClick("/searchhome")}>
-            나의 노후 지역 찾기</Button>
+          onClick={()=>handleClick("/searchhome")}>나의 노후 지역 찾기</Button>
 
             <Button  themeColor={themeColor}
-          $active={curPage === "/localnews"}
-          onClick={()=>handleClick("/")}>
-            지역 Q&A</Button>
+          $active={curPage === "/mainwonder" || curPage === "/woderwrite" || curPage === "/answer" || curPage === "/question"}
+          onClick={()=>handleClick("/mainwonder")}>지역 Q&A</Button>
 
           <Button  themeColor={themeColor}
           $active={curPage === "/localnews" || curPage === "/Localinfo"  || curPage === "/eachmagazine" || curPage === "/moremagazine"}
-          onClick={()=>handleClick("/localnews")}>
-            지역생활</Button>
+          onClick={()=>handleClick("/localnews")}>지역생활</Button>
 
           {isLogin ? (
             <UserButton  themeColor={themeColor}
@@ -87,6 +84,7 @@ const Container = styled.div`
   background-color: #FFFFFF;
   gap: 12%;
   width: 80%;
+  z-index: 999;
 `
 
 const LogoContainer = styled.div`
@@ -125,9 +123,9 @@ const Button = styled.button`
     content: '';
     display: ${props => (props.$active ? 'block' : 'none')};
     position: absolute;
-    left: -20%;
-    bottom: -20px;
-    width: 142%;
+    left: -18%;
+    bottom: -18px;
+    width: 139%;
     height: 2.4px;
     background-color: ${({themeColor})=> themeColor.main}; 
   }
