@@ -25,6 +25,7 @@ import { Locreview } from './pages/localnews/Locreview';
 import { Reviewing } from './pages/searchHome/Reviewing';
 import KakaoLogin from './pages/login/KakaoLogin';
 import Test from './pages/login/Test';
+import { ReviewCenter } from './pages/searchHome/ReviewCenter';
 
 
 
@@ -43,6 +44,7 @@ const App = () => {
                   <Route path="searchhome" element={<SearchHome />} />
                   <Route path="searchhome/searchmap" element={<SearchMap />} />
                   <Route path="searchhome/searchmap/centerdetail/:centerId" element={<CenterDetail />}/>
+                  <Route path="searchhome/searchmap/centerdetail/:centerId/reviewcenter" element={<ReviewCenter />}/>
                   <Route path="searchhome/searchmap/centerdetail/:centerId/postreview" element={<Reviewing />} />
                   <Route path="searchhome/searchmap/CalCost" element={<CalCost />}/>
                   <Route path="signup" element={<Signup />} />

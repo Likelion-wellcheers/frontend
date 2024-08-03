@@ -2,12 +2,17 @@ import React, { useContext, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { ThemeColorContext } from '../../context/context';
 import Chart from 'chart.js/auto';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useForm } from '../../hooks/useForm';
+import { fetchCartId } from '../../apis/recommend';
 
 export const CalCost = () => {
     const themeColor = useContext(ThemeColorContext);
     const navigate = useNavigate();
+    const location = useLocation();
+    const  { selected_center } = location.state || {}; //선택된 목록
+    const dataLabel = ['center1_id', 'center2_id', 'center3_id', 'center4_id', 'center5_id'];
+    const [cart, setCart] = useState({}); // 해당 카트 아이디의 카트
     // /recommend/mycart/{int:id}로 받아올 객체 예시
     // 백엔드에게 받아올 내용..
 
@@ -90,12 +95,12 @@ export const CalCost = () => {
     const [addPage, setAddPage] = useState(false);
 
     const showAddPage = () => {
-        if(inputBudget == ""){
+        if(inputBudget === ""){
             alert("생활비를 입력하세요!");
             onChangeBudget({target : {value: ""}}); // 빈값으로
             return;
         }
-        else if(typeof inputBudget === 'string'){
+        else if(isNaN(Number(inputBudget))){
             alert("숫자 값으로 입력하세요!");
             onChangeBudget({target : {value: ""}}); // 빈값으로
             return;
@@ -111,6 +116,24 @@ export const CalCost = () => {
     useEffect(()=>{
         // 차트 그리기
         // 적정 금액 초과시
+
+        const getCartId = async(selection) => {
+            const result = await fetchCartId(selection);
+            setCart('받아온 데이터', result);
+        }
+
+        console.log(selected_center);
+        const centerData = {}
+        // 백엔드에 카트 생성 위해 보낼 데이터 만들기
+        if(selected_center){
+            selected_center.map((center, idx)=>(
+                centerData[dataLabel[idx]] = center.id
+            ))
+            console.log('가공한데이터임', centerData);
+        }
+        //getCartId();
+        
+        
         var tempLeisureCost = 400000; //임시 내 여가 비용
         let barChart;
 
@@ -186,7 +209,7 @@ export const CalCost = () => {
                     <BudgetInput id="inputBudget" value={inputBudget} onChange={onChangeBudget}></BudgetInput>
                     <BudgetWon>원</BudgetWon>
                 </BudgetInputContainer>
-                <BudgetBtn onClick={()=>showAddPage()}>적정 여가비용<br/>
+                <BudgetBtn onClick={()=>showAddPage()}>적정 여가비용 <br/>
                 확인하기</BudgetBtn>
             </BudgetContainer>
 
@@ -426,7 +449,7 @@ const BudgetWon = styled.div`
 const BudgetBtn = styled.div`
     color: var(--White, #FFF);
     text-align: center;
-    font-size: 16px;
+    font-size: 18px;
     font-style: normal;
     font-weight: 700;
     line-height: 150%;
@@ -460,7 +483,7 @@ const AddDescContainer = styled.div`
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    gap: 80px;
+    gap: 30px;
     flex-shrink: 0;
     border-radius: 100px;
     background: var(--Main, #5D5FEF);
@@ -495,8 +518,10 @@ const AddDesc = styled.div`
     font-weight: 600;
     line-height: 150%; 
     white-space: nowrap;
+    margin-left: 15%;
 `
 const AddDescCost = styled.div`
+    justify-self: flex-end;
     display: flex;
     padding: 12px 24px;
     justify-content: center;
@@ -612,7 +637,7 @@ const AddPlanQuestion = styled.div`
 `
 const AddPlanAnswer = styled.textarea`
     display: flex;
-    width: 90%;
+    width: 87.5%;
     height: 126px;
     padding: 16px 24px;
     flex-direction: column;
@@ -634,6 +659,7 @@ const AddPlanAnswer = styled.textarea`
     outline:none;
     }
     margin-top: 5px;
+    resize: none;
 `
 const AddPlanSaveBtn = styled.button`
     color: var(--White, #FFF);
@@ -659,7 +685,7 @@ const AddPlanSaveBtn = styled.button`
 const GotoQnaContainer = styled.div`
     margin-top: 30px;
     display: flex;
-    width: 1084px;
+    width: 80%;
     height: 40px;
     padding: 24px 32px;
     flex-direction: row;

@@ -72,10 +72,10 @@ export const SearchHome = () => {
       result?.map(element => (
         localIds.push(element.city_code)
       ));
-      console.log(localIds);
+      navigate('/searchhome/searchmap', {state: {city_cd : localIds}});
     }
     postSelected();
-    navigate('/searchhome/searchmap', {state: {city_cd : localIds}});
+   
   }
 
 
