@@ -2,6 +2,17 @@ import axios from "axios";
 
 const baseURL = 'https://wellcheers.p-e.kr'
 
+export const fetchHome = async () => {
+    try{
+        const response = await axios.get(`${baseURL}/recommend/home/`);
+        console.log(response.data);
+        return response.data;
+    }
+    catch(e){
+        console.log(e);
+    }
+}
+
 // 필터링 리스트 불러오기
 export const fetchFilterList = async () => {
     try{
