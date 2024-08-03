@@ -1,40 +1,34 @@
-import React from 'react'
+import React from 'react';
 import styled from 'styled-components';
 
-export const Login = () => {
-  const Rest_API_key = 'b36f8d550e5424c31723c5c5fa3373e8';
-  const Redirect_uri = '<http://localhost:3000/kakaologin>';
-  const kakaoURL = `https://kauth.kakao.com/oauth/authorize?client_id=${Rest_API_key}&redirect_uri=${Redirect_uri}&response_type=code`;
+const Rest_API_key = 'b36f8d550e5424c31723c5c5fa3373e8';
+const Redirect_uri = 'https://youknowhoknow.netlify.app/kakaologin'; // 실제 Redirect URI로 변경
+const kakaoURL = `https://kauth.kakao.com/oauth/authorize?client_id=${Rest_API_key}&redirect_uri=${Redirect_uri}&response_type=code`;
 
+export const Login = () => {
   const handleLogin = () => {
     window.location.href = kakaoURL;
   };
 
-return (
-  <Wrapper>
-    <LoginWrapper>
-          {/* <GlobalStyle /> */}
-    <Logo src="/images/mainlogo.png" alt="Logo" />
-    <Title>간편하게 가입하고<br />유노유노후와 집을 찾아보세요!</Title>
-    <BtnWrapper>
-      <KakaoButton onClick={handleLogin}>
-        <img src="/images/kakaologo.png" alt="Kakao" />
-        <div>카카오로 시작하기</div>
-      </KakaoButton>
-    </BtnWrapper>
-    </LoginWrapper>
-  </Wrapper>
-);
+  return (
+    <Wrapper>
+      <LoginWrapper>
+        <Logo src="/images/mainlogo.png" alt="Logo" />
+        <Title>간편하게 가입하고<br />유노유노후와 집을 찾아보세요!</Title>
+        <BtnWrapper>
+          <KakaoButton onClick={handleLogin}>
+            <img src="/images/kakaologo.png" alt="Kakao" />
+            <div>카카오로 시작하기</div>
+          </KakaoButton>
+        </BtnWrapper>
+      </LoginWrapper>
+    </Wrapper>
+  );
 };
 
-// const GlobalStyle = createGlobalStyle`
-//   body {
-//     background-color: #F4F3FF; 
-//   }
-// `;
-
+// 스타일 컴포넌트
 const Wrapper = styled.div`
-  //justify-content: center;
+  justify-content: center;
 `;
 
 const LoginWrapper = styled.div`
@@ -46,51 +40,47 @@ const LoginWrapper = styled.div`
 `;
 
 const Logo = styled.img`
-width: 8%;
-height: 8%;
-margin-top: 13%;
-margin-bottom: 1%;
+  width: 8%;
+  height: 8%;
+  margin-top: 13%;
+  margin-bottom: 1%;
 `;
-
 
 const Title = styled.h1`
-font-size: 20px;
-font-weight: 900;
-text-align: center;
-margin-bottom: 30px;
-line-height: 1.5;
+  font-size: 20px;
+  font-weight: 900;
+  text-align: center;
+  margin-bottom: 30px;
+  line-height: 1.5;
 `;
 
-
 const BtnWrapper = styled.div`
-display: flex;
-flex-direction: column;
-align-items: center;
-gap: 10px;
-/* width: 110%; */
-margin-bottom: 15%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15%;
 `;
 
 const KakaoButton = styled.button`
-display: flex;
-align-items: center;
-justify-content: center;
-width: 70%;
-background: #ffe812;
-color: #3c1e1e;
-padding: 2%;
-border: none;
-border-radius: 5px;
-font-size: 16px;
-font-weight: bold;
-cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 70%;
+  background: #ffe812;
+  color: #3c1e1e;
+  padding: 2%;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
 
-img {
-  width: 4%;
-  height: auto;
-  padding-right: 3%;
-  //margin-right: 3%;
-  //margin-left: 29%
-}
-
+  img {
+    width: 4%;
+    height: auto;
+    padding-right: 3%;
+  }
 `;
+
+export default Login;

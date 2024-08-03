@@ -23,6 +23,8 @@ import { Answer } from './pages/qusetionanswer/Answer';
 import { Question } from './pages/qusetionanswer/Question';
 import { Locreview } from './pages/localnews/Locreview';
 import { Reviewing } from './pages/searchHome/Reviewing';
+import KakaoLogin from './pages/login/KakaoLogin';
+import Test from './pages/login/Test';
 
 
 
@@ -32,6 +34,8 @@ const App = () => {
                 <Route path="/" element={<Layout />} >
                   <Route index element={<Home />} />
                   <Route path="login" element={<Login />} />
+                  <Route path="kakaologin" element={<KakaoLogin />} />
+                  <Route path="test" element={<Test />} />
                   <Route path="mypage" element={<Mypage />} />
                   <Route path="editinfo" element={<Editinfo />} />
                   <Route path="savelist" element={<Savelist />} />
