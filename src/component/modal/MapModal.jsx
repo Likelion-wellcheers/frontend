@@ -2,71 +2,23 @@ import React, { useEffect, useState, useContext } from 'react'
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components'
 import sig from '../../constants/sig.json';
+import { fetchCityInfo, fetchCenters } from '../../apis/recommend';
 
 const { kakao } = window;
 
-export const MapModal = ({mymap, load}) => {
-    var marker = null;
-    var polygon = null;
-
+export const MapModal = ({mymap, load, cityCodes}) => {
     const navigate = useNavigate();
-    // 0: 지역 선택 단계, 1: 인프라 선택 단계
-    const [modalPage, setModalPage] = useState(0);
-    // place - 지역 , Center - 시설
-    // const [marker, setMarker] = useState(null);
-    // const [polygon, setPolygon] = useState(null);
-    const [place, setPlace] = useState([{
-        name: '서울특별시 동작구',
-        long: '37.5064393',
-        lat: '126.963687',
-        key: ['중앙대', '대학가', '한강'],
-        imageURL: '/images/filterbanner.png',
-    },
-    {
-        name: '경상남도 통영시',
-        long: '37.5064393',
-        lat: '126.963687',
-        key: ['섬도시', '나폴리', '바다'],
-        imageURL: '/images/filterbanner.png',
-    },
-    {
-        name: '경기도 화성시',
-        long: '37.5064393',
-        lat: '126.963687',
-        key: ['섬도시', '나폴리', '바다'],
-        imageURL: '/images/filterbanner.png',
-    }
-    ])
-    const [centerList, setCenterList] = useState([{
-        imageURL : '/images/filterbanner.png',
-        title: '까망돌 도서관',
-        subtitle: '서울 동작구 서달로 129'
-    },{
-        imageURL : '/images/filterbanner.png',
-        title: '초원떡볶이',
-        subtitle: '서울 동작구 서달로 129'
-    },{
-        imageURL : '/images/filterbanner.png',
-        title: '준호떡볶이',
-        subtitle: '서울 동작구 서달로 129'
-    },{
-        imageURL : '/images/filterbanner.png',
-        title: '은희떡볶이',
-        subtitle: '서울 동작구 서달로 129'
-    }])
-
-    // 사용자가 선택한 지역의 id값
-    const [selectedPlace, setSelectedPlace] = useState();
-
-    // 사용자가 선택한 인프라 리스트
+    const [modalPage, setModalPage] = useState(0); // 0: 지역 선택 단계, 1: 인프라 선택 단계
+    const [cityCds, setCityCds] = useState([]); 
+    const [citys, setCitys] = useState({}); // 지역 정보들 모음
+    const [cityName, setCityName] = useState([]);
+    const [centers, setCenters] = useState({}) // 선택한 지역에 해당하는 시설들
+    const [selectedPlace, setSelectedPlace] = useState();  // 사용자가 선택한 지역의 city_code값
+    const [selectedCenter, setSelectedCenter] = useState([]); // 사용자가 선택한 인프라 리스트
     // CenterList에서 해당하는 객체값이 추가로 들어감
-    const [selectedCenter, setSelectedCenter] = useState([]);
 
-
-    const temp_sigCD = "11590" // 임시 지역코드. 동작구 꺼
-    const temp_sigCD2 = "48220" // 통영
-    const temp_sigCD3 = "41590" // 화성시
-
+    var marker;
+    var polygon;
 
     //경도 위도 넘겨주면 마커 찍어주는 함수
     const drawMarker = (lat, lng) => {
@@ -129,30 +81,67 @@ export const MapModal = ({mymap, load}) => {
 
 
       useEffect(()=>{
-        if(load && mymap && modalPage == 0){
-            // 지역 추천에서 폴리곤과 마커 그리기
-            drawMarker(37.5064393, 126.963687);
-            drawPolygon(sig, temp_sigCD);
+        // 시티코드로 지역 정보 불러오고, 마커 생성하는 함수
+        const getCity = async (city_code) => {
+            const result = await fetchCityInfo(city_code); 
+            // result 에는 지역코드: {} 형태로 지역정보 들어가있음
+
+            setCitys((prevState)=>({
+                ...prevState,
+                [city_code]: result
+            }));
+
+            drawMarker(result.latitude, result.longtitude);
+            drawPolygon(sig, String(city_code));
+
+            console.log('폴리곤', polygon); //존재
+            return polygon, marker;
         }
-      }, [load, mymap, modalPage]);
+
+        // 지도 로드 완료 시 진행하도록
+        if(load && mymap && modalPage == 0){
+            if (cityCodes && cityCodes.length > 0) {
+            
+            // 시티코드 값을 통해 지역 정보 데이터를 불러오고, 지도에 표시하기
+            cityCodes.map(element => {
+                getCity(element);
+                console.log('2폴리곤',polygon); 
+            })
+        }}
+        
+      }, [load, mymap]);
 
     
     //인프라 페이지로 이동
-    const handleClick = (idx) => {
+    const handleClick = (city_code, cityName, gugoonName, lat, lng) => {
+        setCityName([cityName, gugoonName]);
         // 지도 확대하기 + 이동하기 (포커스)
         // map : 지도창에서 가져온 지도 객체
-        setSelectedPlace(idx);
-        var level = mymap.getLevel();
+        if (marker) {
+            marker.setMap(null);
+            marker = null;
+        }
+        if (polygon) {
+            polygon.setMap(null);
+            polygon = null;
+        }
+
+
+        setSelectedPlace(city_code);
+
+        const getCenterInfo = async(city_code) => {
+            const result = await fetchCenters(city_code);
+            setCenters(result);
+            console.log('센터들 상태', result);
+            setModalPage(1);
+        }
+        getCenterInfo(city_code);
+
         mymap.setLevel(4); 
-        setModalPage(1);
-
-        moveFocus(place[idx].long, place[idx].lat)
-
-        marker.setMap(null);
-        polygon.setMap(null);
+        moveFocus(lat, lng);
 
         // 시설 마커들 그리기!
-        drawMarker(37.50415, 126.9570);
+        //drawMarker(37.50415, 126.9570);
     }
 
 
@@ -166,13 +155,14 @@ export const MapModal = ({mymap, load}) => {
     }
 
     // 담기 버튼 클릭 시
-    const handlePut = (idx) => {
-        const selected = centerList[idx];
-        const isAlreadySelected = selectedCenter.find(center => center.title === selected.title);
+    const handlePut = (id, idx) => {
+        // centers 배열의 idx 값을 기준으로 선택됐는지 여부 확인
+        const selected = centers[idx];
+        const isAlreadySelected = selectedCenter.find(center => center.id === id);
         // 이미 담겨있을 경우 취소
         if (isAlreadySelected) {
             setSelectedCenter(prevState => 
-                prevState.filter(center => center.title !== selected.title)
+                prevState.filter(center => center.id !== selected.id)
             );
             // 안담겨있을 경우 담기
         } else {
@@ -185,17 +175,16 @@ export const MapModal = ({mymap, load}) => {
 
     // 담은 목록 중 클릭 시 해당 title 값에 대해 선택 취소
     // index로 삭제시 오류.. index 가 선택 순서에 따라 바뀌므로
-    const handleDelete = (title) => {
+    const handleDelete = (id) => {
         setSelectedCenter(prevState => 
-            prevState.filter(center => center.title !== title)
+            prevState.filter(center => center.id !== id)
     )};
 
     const handleCal = () => {
-        navigate('/searchhome/searchmap/CalCost');
+        navigate('/searchhome/searchmap/CalCost', {state: {selected_center : selectedCenter}});
     }
 
-    const handleDetail = () =>{
-        var centerId = 1; // 임시 시설 아이디
+    const handleDetail = (centerId) =>{
         navigate(`/searchhome/searchmap/centerdetail/${centerId}`);
     }
 
@@ -206,15 +195,15 @@ if(!modalPage){
          <MapContent>
             <MapContentTitle>이런 지역을 추천드려요!</MapContentTitle>
             <MapContentCards>
-                {place.map((location, idx)=> (
-                    <MapContentCard onClick={()=> handleClick(idx)}>
-                        <MapContentCardImg src={location.imageURL}></MapContentCardImg>
+                {Object.values(citys).map((location)=> (
+                    <MapContentCard onClick={()=> handleClick(location.city_code, location.city, location.gugoon, location.latitude, location.longtitude)}>
+                        <MapContentCardImg src={location.thumbnail || "/images/filterbanner.png"}></MapContentCardImg>
                         <MapContentCardDesc>
-                            <MapContentCardTitle>{location.name}</MapContentCardTitle>
+                            <MapContentCardTitle>{location.city} {location.gugoon}</MapContentCardTitle>
                             <MapContentCardKeys>
-                                <MapContentCardKey>#{location.key[0]}</MapContentCardKey>
-                                <MapContentCardKey>#{location.key[1]}</MapContentCardKey>
-                                <MapContentCardKey>#{location.key[2]}</MapContentCardKey>
+                                <MapContentCardKey>#{location.lstyle_id[0]}</MapContentCardKey>
+                                <MapContentCardKey>#{location.infra_id[0]}</MapContentCardKey>
+                                <MapContentCardKey>#{location.hobby_id[0]}</MapContentCardKey>
                             </MapContentCardKeys>
                         </MapContentCardDesc>
                     </MapContentCard>
@@ -224,7 +213,7 @@ if(!modalPage){
     </MapContainer>
    
   )}
-  else{
+  else if(modalPage){
     return(
         <CenterContainer>
             <CenterContent>
@@ -232,7 +221,7 @@ if(!modalPage){
                     <CenterBackBtn onClick={handleBack}>&lt; &nbsp; 다른지역 보기</CenterBackBtn>
                     <CenterContentTitle>
                         윤경님이 원하는<br/>
-                            <CenterContentPlace>{place[0].name}</CenterContentPlace> 이에요!
+                            <CenterContentPlace>{cityName[0]} {cityName[1]}</CenterContentPlace> 이에요!
                     </CenterContentTitle>
                 </CenterContentDesc>
                 <CenterList>
@@ -248,8 +237,8 @@ if(!modalPage){
                             {selectedCenter&&
                                 selectedCenter.map((center, index) => (
                             <CenterListContent
-                                key={index} onClick={()=> handleDelete(center.title)}>
-                                {center.title} &nbsp;X
+                                key={center.id} onClick={()=> handleDelete(center.id)}>
+                                {center.name} &nbsp;X
                             </CenterListContent>
                             ))}
                         </CenterListContents>
@@ -257,21 +246,20 @@ if(!modalPage){
                 </CenterList>
                 <GoCalPageBtn onClick={handleCal}>담기 완료! 여가비용 계산하기</GoCalPageBtn>
                 <CenterCards>
-                {centerList &&
-                    centerList.map((card, i)=>{
+                {centers &&
+                    centers.map((center, idx)=>{
                         // isSelected는 각 카드에 대해, selectedCenter 안에 들어있는지 여부
-                        // 이름으로 비교하기. 인덱스로 비교하면 오류
-                        const isSelected = selectedCenter.some(selectedCenter => selectedCenter.title === card.title);
+                        const isSelected = selectedCenter.some(selectedCenter => selectedCenter.name === center.name);
                         return(
                         <CenterCard>
-                            <CenterCardImg onClick={handleDetail}
-                            src={card.imageURL} alt="시설사진"></CenterCardImg>
+                            <CenterCardImg onClick={()=>handleDetail(center.id)}
+                            src={center.thumnail || "/images/filterbanner.png"} alt="시설사진"></CenterCardImg>
                             <CenterCardDesc>
                                 <CenterCardDescCon>
-                                    <CenterCardTitle>{card.title}</CenterCardTitle>
-                                    <CenterCardSubTitle>{card.subtitle}</CenterCardSubTitle>
+                                    <CenterCardTitle>{center.name}</CenterCardTitle>
+                                    <CenterCardSubTitle>{center.address}</CenterCardSubTitle>
                                 </CenterCardDescCon>
-                                <CenterCardPutBtn key={i} onClick={()=>handlePut(i)}
+                                <CenterCardPutBtn key={idx} onClick={()=>handlePut(center.id, idx)}
                                     style={{
                                         background: isSelected ? "linear-gradient(247deg, #BCBDFF 7.5%, #5D5FEF 62.93%)" : "#F4F3FF",
                                         color: isSelected ?  "white" : '#5D5FEF' ,
@@ -294,6 +282,9 @@ const MapContainer = styled.div`
     background: #FFF;
     overflow-y: auto;
     z-index: 10;
+    display: flex;
+    justify-content: center;
+    padding-bottom: 20px;
 `
 
 const MapContent = styled.div`
@@ -316,14 +307,15 @@ const MapContentTitle = styled.div`
   font-weight: 600;
   line-height: 150%;
   border-bottom: 4px solid #5D5FEF;
-  margin-bottom: 38px;
-  margin-left: 45px;
+  margin-bottom: 26px;
+  margin-left: 1px;
 `
 
 const MapContentCards = styled.div`
   display: flex;
   flex-direction: column;
   gap: 32px;
+  padding-bottom: 35px;
 `
 const MapContentCard = styled.div`
   border-radius: 8px;
@@ -516,7 +508,7 @@ const GoCalPageBtn = styled.button`
     line-height: 150%; 
     display: flex;
     height: 48px;
-    width: 100%;
+    width: 430px;
     padding: 4px 12px;
     justify-content: center;
     align-items: center;
@@ -540,7 +532,7 @@ const CenterCard = styled.div`
 const CenterCardImg = styled.img`
     object-fit: cover;
     height: 280px;
-    width: 100%;
+    width: 430px;
     border-radius: 4px;
     cursor: pointer;
 `
@@ -548,6 +540,7 @@ const CenterCardDescCon = styled.div`
     display: flex;
     flex-direction: column;
     gap: 4px;
+    width: 340px;
 `
 
 const CenterCardDesc = styled.div`
@@ -555,12 +548,14 @@ const CenterCardDesc = styled.div`
     display: flex;
     flex-direction: row;
     margin-left: 10px;
+    width: 100%;
 `
 const CenterCardTitle= styled.div`
     font-size: 20px;
     font-style: normal;
     font-weight: 600;
     line-height: 150%;
+    white-space: nowrap;
 `
 const CenterCardSubTitle = styled.div`
     color: var(--Gray-01, #615D67);
@@ -569,12 +564,10 @@ const CenterCardSubTitle = styled.div`
     font-weight: 500;
     line-height: 150%;
     width: 100%;
-    white-space: nowrap;
 `
 
 const CenterCardPutBtn = styled.button`
     justify-self: flex-end;
-    margin-left: 210px;
     margin-top: 15px;
     font-size: 16px;
     font-style: normal;
@@ -593,3 +586,4 @@ const CenterCardPutBtn = styled.button`
     border: 1px solid #5D5FEF;
     cursor: pointer;
 `
+

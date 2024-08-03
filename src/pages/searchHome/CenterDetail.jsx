@@ -1,36 +1,43 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import styled from 'styled-components'
+import { fetchCenterInfo } from '../../apis/recommend';
 
 export const CenterDetail = () => {
     //InfoSecondTitle 은 없을 수도 있음!!! (군/구가 없을 수도 있음)
     const navigate = useNavigate();
-
-    const tempFirst = "서울특별시"
-    const tempSecond = "동작구"
+    const [centerInfo, setCenterInfo] = useState({});
+    const [like, setLike] = useState(false);
 
     const { centerId } = useParams();
 
     const handlePost = () => {
-        console.log(centerId);
-        navigate('postreview');
+        navigate('reviewcenter', {state: {center_name : centerInfo.name}});
     }
 
-  return (
+    useEffect(()=>{
+        const getCenterDetail = async() => {
+            const result = await fetchCenterInfo(centerId);
+            setCenterInfo(result);
+        }
+        getCenterDetail();
+    },[])
 
+    if(centerInfo){
+  return (
     <>
         <Container>
             <InfoContainer>
                 <InfoContent>
                     <InfoTitle>
                         <InfoTitleImg src="/images/mainlogo.png"></InfoTitleImg>
-                        <InfoFirstTitle>&nbsp;&nbsp;{tempFirst}</InfoFirstTitle>
+                        <InfoFirstTitle>&nbsp;&nbsp;{centerInfo.city}</InfoFirstTitle>
                         
-                        {tempSecond && (
+                        {centerInfo.gugoon && (
                             <><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28" fill="none">
                                     <path fill-rule="evenodd" clip-rule="evenodd" d="M9.67374 6.17472C10.1294 5.7191 10.868 5.7191 11.3237 6.17472L18.3237 13.1747C18.7793 13.6303 18.7793 14.369 18.3237 14.8246L11.3237 21.8246C10.868 22.2802 10.1294 22.2802 9.67374 21.8246C9.21813 21.369 9.21813 20.6303 9.67374 20.1747L15.8488 13.9997L9.67374 7.82463C9.21813 7.36902 9.21813 6.63033 9.67374 6.17472Z" fill="#BBB8B8"/>
                                 </svg>
-                                <InfoSecondTitle>{tempSecond}</InfoSecondTitle></>)}
+                                <InfoSecondTitle>{centerInfo.name}</InfoSecondTitle></>)}
                     </InfoTitle>
                     <InfoPart>
                         <InfoImgList>
@@ -42,31 +49,27 @@ export const CenterDetail = () => {
                             </InfoImgRems>
                         </InfoImgList>
                         <InfoTextContainer>
-                            <InfoTextTitle>까망돌 도서관</InfoTextTitle>
+                            <InfoTextTitle>{centerInfo.name}</InfoTextTitle>
                             <InfoTextLine></InfoTextLine>
-                            <InfoTextAdd>서울 동작구 서달로 129</InfoTextAdd>
+                            <InfoTextAdd>{centerInfo.address}</InfoTextAdd>
                             <InfotextPhoneLabel><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
                             <path d="M19.4293 14.1325L15.0543 12.2575C14.8674 12.1778 14.6597 12.161 14.4624 12.2096C14.2652 12.2582 14.089 12.3696 13.9605 12.527L12.023 14.8942C8.98232 13.4605 6.53524 11.0134 5.10156 7.97269L7.46875 6.03519C7.62644 5.90694 7.73804 5.73081 7.78668 5.53345C7.83531 5.3361 7.81832 5.12828 7.73828 4.94144L5.86328 0.566443C5.77543 0.36504 5.62007 0.200601 5.42397 0.101481C5.22787 0.00236139 5.00332 -0.0252267 4.78906 0.0234739L0.726562 0.960974C0.519988 1.00868 0.335682 1.12499 0.203725 1.29093C0.0717677 1.45687 -4.75863e-05 1.66264 2.36571e-08 1.87465C2.36571e-08 11.8942 8.12109 19.9996 18.125 19.9996C18.3371 19.9998 18.5429 19.928 18.709 19.796C18.875 19.6641 18.9913 19.4797 19.0391 19.2731L19.9766 15.2106C20.025 14.9953 19.9968 14.7698 19.8969 14.5731C19.797 14.3763 19.6317 14.2205 19.4293 14.1325Z" fill="#615D67"/>
                             </svg>전화번호</InfotextPhoneLabel>
-                            <InfoTextPhone>02-815-3701</InfoTextPhone>
+                            <InfoTextPhone>010-1111-2222</InfoTextPhone>
                             <InfoTextTimeLabel>
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
                             <path d="M9.99297 1.66699C5.39297 1.66699 1.66797 5.40033 1.66797 10.0003C1.66797 14.6003 5.39297 18.3337 9.99297 18.3337C14.6013 18.3337 18.3346 14.6003 18.3346 10.0003C18.3346 5.40033 14.6013 1.66699 9.99297 1.66699ZM12.743 13.9253L9.16797 10.342V5.83366H10.8346V9.65866L13.9263 12.7503L12.743 13.9253Z" fill="#615D67"/>
                             </svg>운영시간</InfoTextTimeLabel>
                             <InfoTextTimeContent>
-                                <InfoTextTime>일  09:00 - 17:00</InfoTextTime>
-                                <InfoTextTime>월</InfoTextTime>
-                                <InfoTextTime>화</InfoTextTime>
-                                <InfoTextTime>수</InfoTextTime>
-                                <InfoTextTime>목</InfoTextTime>
-                                <InfoTextTime>금</InfoTextTime>
-                                <InfoTextTime>토</InfoTextTime>
+                                {['일', '월', '화', '수', '목', '금', '토'].map((day)=>(
+                                    <InfoTextTime>{day} {centerInfo.time}</InfoTextTime>
+                                ))}
                             </InfoTextTimeContent>
                             <InfoTextCostLabel>
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
                             <path d="M10.0013 1.66699C5.4013 1.66699 1.66797 5.40033 1.66797 10.0003C1.66797 14.6003 5.4013 18.3337 10.0013 18.3337C14.6013 18.3337 18.3346 14.6003 18.3346 10.0003C18.3346 5.40033 14.6013 1.66699 10.0013 1.66699ZM11.1763 15.0753V16.667H8.9513V15.0587C7.5263 14.7587 6.31797 13.842 6.2263 12.2253H7.85964C7.94297 13.1003 8.54297 13.7837 10.068 13.7837C11.7013 13.7837 12.068 12.967 12.068 12.4587C12.068 11.767 11.7013 11.117 9.84297 10.6753C7.7763 10.1753 6.35964 9.32533 6.35964 7.61699C6.35964 6.18366 7.51797 5.25033 8.9513 4.94199V3.33366H11.1763V4.95866C12.7263 5.33366 13.5013 6.50866 13.5513 7.78366H11.918C11.8763 6.85866 11.3846 6.22533 10.068 6.22533C8.81797 6.22533 8.06797 6.79199 8.06797 7.59199C8.06797 8.29199 8.60964 8.75033 10.293 9.18366C11.9763 9.61699 13.7763 10.342 13.7763 12.442C13.768 13.967 12.6263 14.8003 11.1763 15.0753Z" fill="#615D67"/>
                             </svg>이용료</InfoTextCostLabel>
-                            <InfoTextCost>무료</InfoTextCost>
+                            <InfoTextCost>{centerInfo.cost}</InfoTextCost>
                             <InfoTextSaveBtn><svg xmlns="http://www.w3.org/2000/svg" width="25" height="24" viewBox="0 0 25 24" fill="none">
                                     <path d="M17 3C15.26 3 13.59 3.81 12.5 5.09C11.41 3.81 9.74 3 8 3C4.92 3 2.5 5.42 2.5 8.5C2.5 12.28 5.9 15.36 11.05 20.04L12.5 21.35L13.95 20.03C19.1 15.36 22.5 12.28 22.5 8.5C22.5 5.42 20.08 3 17 3ZM12.6 18.55L12.5 18.65L12.4 18.55C7.64 14.24 4.5 11.39 4.5 8.5C4.5 6.5 6 5 8 5C9.54 5 11.04 5.99 11.57 7.36H13.44C13.96 5.99 15.46 5 17 5C19 5 20.5 6.5 20.5 8.5C20.5 11.39 17.36 14.24 12.6 18.55Z" fill="#5D5FEF"/>
                                     </svg>&nbsp;저장하기</InfoTextSaveBtn>
@@ -111,7 +114,7 @@ export const CenterDetail = () => {
             </ReviewContainer>
         </Container>
     </>
-  )
+  )}
 }
 
 const Container = styled.div`
