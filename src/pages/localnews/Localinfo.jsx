@@ -7,119 +7,33 @@ import { Reviewpart } from './Reviewpart';
 
 export const Localinfo = () => {
     const location = useLocation();
-    const { city, district } = location.state;
+    const { city, district, city_codes } = location.state;
     const navigate = useNavigate();
 
-    const welfareBannerImages = [
-        '/images/welfare.png',
-        '/images/welfare2.png',
-        '/images/welfare3.png',
-    ];
-    
-    const cardNewsData = [
-        {
-            image: '/images/magazine1.png',
-            title: 'Card News 1',
-        },
-        {
-            image: '/images/magazine2.png',
-            title: 'Card News 2',
-        },
-        {
-            image: '/images/magazine3.png',
-            title: 'Card News 3',
-        },
-    ];
-    
-    const reviewsData = [
-        {
-            profile: '/images/profile.png',
-            username: 'User1',
-            location: 'Location1',
-            rating: 5,
-            content: 'Review content 1',
-        },
-        {
-            profile: '/images/profile.png',
-            username: 'User2',
-            location: 'Location2',
-            rating: 4,
-            content: 'Review content 2',
-        },
-        {
-            profile: '/images/profile.png',
-            username: 'User3',
-            location: 'Location3',
-            rating: 3,
-            content: 'Review content 3',
-        },
-        {
-          profile: '/images/profile.png',
-          username: 'User3',
-          location: 'Location3',
-          rating: 3,
-          content: 'Review content 3',
-      },
-      {
-        profile: '/images/profile.png',
-        username: 'User3',
-        location: 'Location3',
-        rating: 3,
-        content: 'Review content 3',
-    },
-    {
-      profile: '/images/profile.png',
-      username: 'User3',
-      location: 'Location3',
-      rating: 3,
-      content: 'Review content 3',
-  },
-  {
-    profile: '/images/profile.png',
-    username: 'User3',
-    location: 'Location3',
-    rating: 3,
-    content: 'Review content 3',
-},
-{
-  profile: '/images/profile.png',
-  username: 'User3',
-  location: 'Location3',
-  rating: 3,
-  content: 'Review content 3',
-},
-{
-  profile: '/images/profile.png',
-  username: 'User3',
-  location: 'Location3',
-  rating: 3,
-  content: 'Review content 3',
-},
-    ];
-
     return (
-        <PageWrapper>
-            <Bgimage />
-            <Content>
-                <SectionTitle>
-                    <LocalButton>{city} {district}</LocalButton>의 소식을 알아보세요!
-                </SectionTitle>
-                <SubTitle>
-                    <Icon src='/images/icon2.png' alt='복지정책 아이콘' />
-                    놓치면 안 될 복지정책
-                </SubTitle>
-                <Welfare banners={welfareBannerImages} />
-                <SubTitle>
-                    <Icon src='/images/icon3.png' alt='매거진 아이콘' />
-                    놓치면 안 될 매거진
-                    <MoreButton onClick={() => navigate('/moremagazine', { state: { city } })}>더보기</MoreButton>
-                </SubTitle>
-                <Magazinepart cards={cardNewsData} />
-                <Reviewpart reviews={reviewsData} />
-            </Content>
-        </PageWrapper>
+      <PageWrapper>
+      <Bgimage />
+      <Content>
+          <SectionTitle>
+              <LocalButton>{city} {district}</LocalButton>의 소식을 알아보세요!
+          </SectionTitle>
+          <SubTitle>
+              <Icon src='/images/icon2.png' alt='복지정책 아이콘' />
+              놓치면 안 될 복지정책
+          </SubTitle>
+          <Welfare city_codes={city_codes} />
+          <SubTitle>
+              <Icon src='/images/icon3.png' alt='매거진 아이콘' />
+              놓치면 안 될 매거진
+              <MoreButton onClick={() => navigate('/moremagazine', { state: { city } })}>더보기</MoreButton>
+          </SubTitle>
+          <Magazinepart city_codes={city_codes} />
+          <Reviewpart city_codes={city_codes} />
+      </Content>
+      </PageWrapper>
     )
 }
+
 
 const PageWrapper = styled.div`
   position: relative;

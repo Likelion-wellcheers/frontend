@@ -3,7 +3,22 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 export const Search = () => {
-    const [cities, setCities] = useState([]);
+    const [cities] = useState([
+        '서울특별시', '부산광역시', '대구광역시', '인천광역시', '광주광역시', '대전광역시', 
+        '울산광역시', '수원시', '성남시', '의정부시', '안양시', '부천시', '광명시', 
+        '평택시', '동두천시', '안산시', '고양시', '과천시', '구리시', '남양주시', 
+        '오산시', '시흥시', '군포시', '의왕시', '하남시', '용인시', '파주시', 
+        '이천시', '안성시', '김포시', '화성시', '광주시', '양주시', '포천시', 
+        '여주시', '경기도', '춘천시', '원주시', '강릉시', '동해시', '태백', 
+        '속초시', '삼척시', '강원도', '청주시', '충주시', '제천시', '충청북도', 
+        '천안시', '공주시', '보령시', '아산시', '서산시', '논산시', '계룡시', 
+        '당진시', '충청남도', '전주시', '군산시', '익산시', '정읍시', '남원시', 
+        '김제시', '전라북도', '목포시', '여수시', '순천시', '나주시', '광양시', 
+        '전라남도', '포항시', '경주시', '김천시', '안동시', '구미시', '영주시', 
+        '영천시', '상주시', '문경시', '경산시', '경상북도', '창원시', '진주시', 
+        '통영시', '사천시', '김해시', '밀양시', '거제시', '양산시', '경상남도', 
+        '제주시', '서귀포시'
+    ]);
     const [districts, setDistricts] = useState([]);
     const [selectedCity, setSelectedCity] = useState('');
     const [selectedDistrict, setSelectedDistrict] = useState('');
@@ -12,23 +27,32 @@ export const Search = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // 나중에 패치해야 됨
-        setCities(['서울특별시', '부산광역시', '전라남도 여수시', '제주특별자치도 서귀포시', '고양시']);
-    }, []);
-
-    useEffect(() => {
         if (selectedCity) {
-            // 나중에 패치해야 됨
-            const cityDistricts = {
-                '서울특별시': ['강남구', '강동구', '강북구', '강서구'],
-                '부산광역시': ['해운대구', '수영구', '연제구'],
-                '전라남도 여수시': ['여서동', '문수동', '미평동'],
-                '제주특별자치도 서귀포시': ['서귀동', '송산동', '정방동']
-            };
-            setDistricts(cityDistricts[selectedCity] || []);
-            setSelectedDistrict('');
+            fetch('https://wellcheers.p-e.kr/account/region/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ city: selectedCity }),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    const combinedData = data.gugoon.map((gugoon, index) => ({
+                        name: gugoon,
+                        city_code: data.city_codes[index],
+                    }));
+                    setDistricts(combinedData);
+                    if (data.gugoon.length === 0) {
+                        console.log('City codes:', data.city_codes); // city_codes 확인
+                        navigate('/Localinfo', { state: { city_codes: data.city_codes } });
+                    }
+                    setSelectedDistrict('');
+                })
+                .catch((error) => {
+                    console.error('Error fetching districts:', error);
+                });
         }
-    }, [selectedCity]);
+    }, [selectedCity, navigate]);
 
     const handleCitySelect = (city) => {
         setSelectedCity(city);
@@ -40,7 +64,10 @@ export const Search = () => {
         setShowDistrictDropdown(false);
 
         if (selectedCity && district) {
-            navigate('/Localinfo', { state: { city: selectedCity, district } });
+            const selectedCityCode = districts.find(d => d.name === district)?.city_code;
+            console.log('Selected district:', district);
+            console.log('Selected city_code:', selectedCityCode); // 선택된 district와 city_code 확인
+            navigate('/Localinfo', { state: { city: selectedCity, district: district, city_codes: [selectedCityCode] } });
         }
     };
 
@@ -57,43 +84,42 @@ export const Search = () => {
                     <Title>궁금하신 지역을 검색해 보세요!</Title>
                 </SearchHeader>
                 <DropdownWrapper>
-                <DropdownContainer>
-                    <DropdownButton onClick={() => setShowCityDropdown(!showCityDropdown)}>
-                        {selectedCity || '시'}
-                    </DropdownButton>
-                    {showCityDropdown && (
-                        <DropdownMenu>
-                            {cities.map((city, index) => (
-                                <DropdownItem key={index} onClick={() => handleCitySelect(city)}>
-                                    {city}
-                                </DropdownItem>
-                            ))}
-                        </DropdownMenu>
-                    )}
-                </DropdownContainer>
-                <DropdownContainer>
-                    <DropdownButton
-                        onClick={() => setShowDistrictDropdown(!showDistrictDropdown)}
-                        disabled={!selectedCity}
-                    >
-                        {selectedDistrict || '구'}
-                    </DropdownButton>
-                    {showDistrictDropdown && (
-                        <DropdownMenu>
-                            {districts.map((district, index) => (
-                                <DropdownItem key={index} onClick={() => handleDistrictSelect(district)}>
-                                    {district}
-                                </DropdownItem>
-                            ))}
-                        </DropdownMenu>
-                    )}
-                </DropdownContainer>
+                    <DropdownContainer>
+                        <DropdownButton onClick={() => setShowCityDropdown(!showCityDropdown)}>
+                            {selectedCity || '시'}
+                        </DropdownButton>
+                        {showCityDropdown && (
+                            <DropdownMenu>
+                                {cities.map((city, index) => (
+                                    <DropdownItem key={index} onClick={() => handleCitySelect(city)}>
+                                        {city}
+                                    </DropdownItem>
+                                ))}
+                            </DropdownMenu>
+                        )}
+                    </DropdownContainer>
+                    <DropdownContainer>
+                        <DropdownButton
+                            onClick={() => setShowDistrictDropdown(!showDistrictDropdown)}
+                            disabled={!selectedCity}
+                        >
+                            {selectedDistrict || '구'}
+                        </DropdownButton>
+                        {showDistrictDropdown && (
+                            <DropdownMenu>
+                                {districts.map((district, index) => (
+                                    <DropdownItem key={index} onClick={() => handleDistrictSelect(district.name)}>
+                                        {district.name}
+                                    </DropdownItem>
+                                ))}
+                            </DropdownMenu>
+                        )}
+                    </DropdownContainer>
                 </DropdownWrapper>
             </SearchContainer>
         </SearchWrapper>
     );
 };
-
 
 const SearchWrapper = styled.div`
     padding-top: 2%;
@@ -236,4 +262,6 @@ const Button3 = styled(FloatingButton)`
 const DropdownWrapper = styled.div`
     display: flex;
     gap: 5%; 
-`
+`;
+
+export default Search;
