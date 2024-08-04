@@ -45,11 +45,11 @@ export const SearchHome = () => {
         [name]:newArray
       };}
   }))
-  console.log(postSelect);
   };
 
   // 버튼 하나 클릭 시
   const handleClick = (name, id, qindex) => {
+    console.log(selected);
     //선택하면 체크 표시 되도록
     setSelected(prevState => ({
       ...prevState,
@@ -64,6 +64,12 @@ export const SearchHome = () => {
 
   // 버튼 클릭 완료
   const handleSubmit = () => {
+    // 선택 안했을 시 예외처리
+    if(selected.constructor === Object
+      && Object.keys(selected).length === 0) {
+      alert('1개 이상 선택해주세요!');
+      return;
+    }
     const localIds = []; // searchmap으로 citycode 담아 보내줄 것임
 
     const postSelected = async () =>{
@@ -206,7 +212,7 @@ export const SearchHome = () => {
 
 const Banner = styled.div`
   height: 352px;
-  background-image: url('images/filterbanner.png');
+  background-image: url('/images/filterimage.png');
   background-repeat: no-repeat;
   background-position: center center;
   background-size: 100% 352px;
