@@ -12,11 +12,11 @@ const KakaoLogin = () => {
     console.log('인가 코드:', code); // 인가 코드 확인
 
     if (code) {
-      const postCode = async () => {
+      const postCode = async (code) => {
         try {
           const response = await axios.post(`${baseURL}/account/kakao/callback/`, 
-            { code }, // 요청 본문에 인가 코드 포함
-  
+            code , // 요청 본문에 인가 코드 포함
+      
           );
 
           // 응답에서 accessToken과 refreshToken 추출
@@ -35,7 +35,7 @@ const KakaoLogin = () => {
           }
         }
       };
-      postCode();
+      postCode(code);
     }
   }, [navigate]);
 
