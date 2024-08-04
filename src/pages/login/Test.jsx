@@ -1,48 +1,62 @@
 import React, { useEffect, useState } from 'react';
-import { getUserInfo } from './Getuserinfo';
+import axios from 'axios';
+
+const baseURL = 'https://wellcheers.p-e.kr'; // 백엔드 URL
 
 const Test = () => {
-    const [userName, setUserName] = useState('');
-    const [userEmail, setUserEmail] = useState('');
-    const [userNickname, setUserNickname] = useState('');
-    const [userCity, setUserCity] = useState('');
-    const [userGugoon, setUserGugoon] = useState('');
+  const [userInfo, setUserInfo] = useState(null);
+  const [error, setError] = useState(null);
 
-    useEffect(() => {
-        const fetchUserProfile = async () => {
-            try {
-                const data = await getUserInfo();
-                console.log(data);
-                setUserName(data.username);
-                setUserEmail(data.email);
-                setUserNickname(data.nickname);
-                setUserCity(data.city);
-                setUserGugoon(data.gugoon);
-            } catch (error) {
-                console.error('사용자 정보 가져오기 실패', error);
-            }
-        };
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      const accessToken = localStorage.getItem('access');
 
-        if (localStorage.getItem('access') && userName === '') {
-            fetchUserProfile();
+      if (!accessToken) {
+        setError('Access token is missing');
+        return;
+      }
+
+      try {
+        const response = await axios({
+          method: 'get',
+          url: `${baseURL}/account/mypage/`,
+          headers: {
+            Authorization: `Bearer ${accessToken}`
+          }
+        });
+
+        setUserInfo(response.data);
+      } catch (error) {
+        console.error('유저 정보 가져오기 중 에러 발생', error);
+        setError('Failed to fetch user info');
+        if (error.response) {
+          console.error('Error response:', error.response);
         }
-    }, [userName]);
+      }
+    };
 
-    return (
-        <div>
-            {userName ? (
-                <div>
-                    <h1>{userName}님, 환영합니다!</h1>
-                    <p>이메일: {userEmail}</p>
-                    <p>닉네임: {userNickname}</p>
-                    <p>도시: {userCity}</p>
-                    <p>구/군: {userGugoon}</p>
-                </div>
-            ) : (
-                <p>로그인하세요.</p>
-            )}
-        </div>
-    );
+    fetchUserInfo();
+  }, []);
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
+  if (!userInfo) {
+    return <div>유저 정보 로딩 중...</div>;
+  }
+
+  return (
+    <div>
+      <h1>유저 정보</h1>
+      <p>이름: {userInfo.username}</p>
+      <p>닉네임: {userInfo.nickname}</p>
+      <p>도시: {userInfo.city}</p>
+      <p>구/군: {userInfo.gugoon}</p>
+      <p>지역 ID: {userInfo.region_id}</p>
+      <img src={userInfo.profileimage_url} alt="프로필 이미지" />
+    </div>
+  );
 };
 
 export default Test;
