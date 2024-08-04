@@ -33,7 +33,7 @@ const KakaoLogin = () => {
           localStorage.setItem('refresh', refreshToken);
 
           // / 페이지로 이동
-          navigate('/');
+          navigate('/test');
         } catch (error) {
           console.error('인가 코드 전송 중 에러 발생', error);
           if (error.response) {
