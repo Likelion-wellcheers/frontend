@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { fetchMagazines } from '../../apis/news';
 
 export const Magazinepart = ({ city_codes }) => {
   const [cards, setCards] = useState([]);
@@ -8,19 +9,11 @@ export const Magazinepart = ({ city_codes }) => {
 
   useEffect(() => {
     if (city_codes) {
-      fetch(`https://yourapi.com/issue/${city_codes}/getmagazine/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          setCards(data);
-        })
-        .catch((error) => {
-          console.error('Error fetching magazine data:', error);
-        });
+      const getMagazines = async () => {
+        const data = await fetchMagazines(city_codes);
+        setCards(data);
+      };
+      getMagazines();
     }
   }, [city_codes]);
 
