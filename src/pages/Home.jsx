@@ -92,7 +92,7 @@ export const Home = () => {
                     <ArticleContentBtn themeColor={themeColor}>상세보기</ArticleContentBtn>
                   </ArticleContents>
                 </Article>
-              })}
+              })} 
 
             <Article id="article1">
                 <ArticleImg src="/images/default.png"></ArticleImg>
