@@ -25,12 +25,12 @@ const KakaoLogin = () => {
             }
           });
 
-          // 응답에서 accessToken과 refreshToken 추출
-          const { accessToken, refreshToken } = response.data;
+          // 응답에서 internal_access_token과 internal_refresh_token 추출
+          const { internal_access_token, internal_refresh_token } = response.data;
 
           // localStorage에 토큰 저장
-          localStorage.setItem('access', accessToken);
-          localStorage.setItem('refresh', refreshToken);
+          localStorage.setItem('access', internal_access_token);
+          localStorage.setItem('refresh', internal_refresh_token);
 
           // / 페이지로 이동
           navigate('/test');
