@@ -12,10 +12,10 @@ const KakaoLogin = () => {
     console.log('인가 코드:', code); // 인가 코드 확인
 
     if (code) {
-      const postCode = async () => {
-        const body = JSON.stringify({ code }); // body를 JSON 문자열로 변환
+      const getCode = async () => {
         try {
-          const response = await axios.post(`${baseURL}/account/kakao/callback/`, body, {
+          const response = await axios.get(`${baseURL}/account/kakao/callback/`, {
+            params: { code },
             headers: {
               'Content-Type': 'application/json', // JSON 형식으로 데이터 전송
             },
@@ -37,7 +37,7 @@ const KakaoLogin = () => {
           }
         }
       };
-      postCode();
+      getCode();
     }
   }, [navigate]);
 
