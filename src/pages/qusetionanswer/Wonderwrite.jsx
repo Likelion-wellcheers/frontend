@@ -10,6 +10,7 @@ export const Wonderwrite = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { question } = location.state || {};
+  const [newTitle, onChangeNewTitle] = useForm("");
   const [newComment, onChangeNewComment] = useForm("");
 
 
@@ -27,49 +28,47 @@ export const Wonderwrite = () => {
             </svg></SubTitle_2></SubTitle>
         <Title>동네 주민들과 궁금한 점을 물어보세요</Title>
       </MaintitleWrapper>
-  <Icongroup>
-    <Button1 /><Button2 />
-    <Icon1 src='/images/wonder_icon.png' alt='궁금 아이콘' />
-    <Icon2 src='/images/search_icon.png' alt='돋보기 아이콘' />
-  </Icongroup>
+      <Icongroup>
+        <Button1 /><Button2 />
+        <Icon1 src='/images/wonder_icon.png' alt='궁금 아이콘' />
+        <Icon2 src='/images/search_icon.png' alt='돋보기 아이콘' />
+      </Icongroup>
 
       <ContentWrapper>
-      <TitleWrapper>
-                <Titlemini>제목</Titlemini>
-       </TitleWrapper>
-      <CommentInputContainer>
-      <TextArea
-          value={newComment}
-          onChange={onChangeNewComment}
-          placeholder="댓글을 남겨주세요..."
-        />
-      </CommentInputContainer>
+          <TitleWrapper>
+                    <Titlemini>제목</Titlemini>
+          </TitleWrapper>
+          <CommentInputContainer>
+          <TextArea
+              value={newTitle}
+              onChange={onChangeNewTitle}
+              placeholder="댓글을 남겨주세요..."
+            />
+          </CommentInputContainer>
       </ContentWrapper>
 
       <ContentWrapper>
-      <TitleWrapper>
-                <Titlemini>내용</Titlemini>
-       </TitleWrapper>
-      <CommentInputContainer>
-      <ContentArea
-          value={newComment}
-          onChange={onChangeNewComment}
-          placeholder="댓글을 남겨주세요..."
-        />
-      </CommentInputContainer>
+          <TitleWrapper>
+                    <Titlemini>내용</Titlemini>
+          </TitleWrapper>
+          <CommentInputContainer>
+              <ContentArea
+                  value={newComment}
+                  onChange={onChangeNewComment}
+                  placeholder="댓글을 남겨주세요..."
+                />
+          </CommentInputContainer>
       </ContentWrapper>
       
 
       <Addfile>
-      <input
-          type="file"
-          style={{ marginRight: '10px' }}
-      />
-              <Registerbutton onClick={handleCommentSubmit}>등록</Registerbutton>
+        <input
+            type="file"
+            style={{ marginRight: '10px' }}
+        />
+              <Registerbutton onClick={handleCommentSubmit}>업로드</Registerbutton>
       </Addfile>
 
-
-      <Divider />
   </Container>
   )
 }
@@ -78,8 +77,8 @@ const Addfile = styled.div`
   border-bottom: 1px black;
   display: flex;
   margin-bottom: 1%;
-  width: 100%;
-  margin-left: 10%;
+  width: 80%;
+  justify-content: space-between;
 `
 
 const ContentWrapper=styled.div`
@@ -87,7 +86,6 @@ const ContentWrapper=styled.div`
   flex-direction: column;
   justify-content: center;
   width: 80%;
-  margin-left: 10%;
 `
 
 const Registerbutton = styled.button`
@@ -105,20 +103,8 @@ const Registerbutton = styled.button`
   border: 0cap;
   background: linear-gradient(247.34deg, #BCBDFF 7.5%, #5D5FEF 62.93%);
   margin-bottom: 5%;
-  margin-left: 54%;
+  cursor: pointer;
 `
-const ContentBox = styled.div`
-  margin-bottom: 20px;
-  height: fit-content;
-  padding: 3%;
-  background: rgba(244, 243, 255, 1);
-  border: 1px solid rgba(187, 184, 184, 1);
-  border-radius: 4px;
-  text-align: left;
-  justify-content: left;
-  color: black;
-  margin-top: 1%;
-`;
 
 
 const CommentInputContainer = styled.div`
@@ -158,7 +144,10 @@ const Titlemini = styled.div`
 `
 
 const Container = styled.div`
-    //width: 80%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 `
 
 const MaintitleWrapper = styled.div`
@@ -253,11 +242,6 @@ const Icon2 = styled(FloatingIcon)`
   left: 65%;  
 ;`
 
-const AuDa = styled.div`
-  display: flex;
-  gap: 1%;
-  margin-bottom: 2%;
-`
 
 const TitleWrapper = styled.div`
     display: flex;
@@ -266,123 +250,10 @@ const TitleWrapper = styled.div`
     margin-bottom: 1%; 
 `
 
-const TitleIcon = styled.img`
-    width: 2%;
-    height: 2%;
-`
-/*
-const Titlemini = styled.div`
-    font-weight: 600;
-    //styleName: Head_sb;
-    font-family: Pretendard;
-    font-size: 20px;
-    line-height: 30px;
-    text-align: left;
-`
-
-
-const ContentWrapper = styled.div`
-  width: 80%;
-  margin-left: 10%;
-`
-*/
-const Author = styled.div`
-  color: rgba(97, 93, 103, 1);
-  font-size: 16px;
-  font-weight: 600;
-`;
-
-const Date = styled.div`
-  color: rgba(187, 184, 184, 1);
-  font-size: 14px;
-`;
-
-const Content = styled.div`
-color: rgba(97, 93, 103, 1);
-font-size: 16px;
-font-weight: 600;
-
-`;
-
-const Status = styled.div`
-
-`;
-
 
 const Divider = styled.hr`
   width: 100%;
   margin: 20px 0;
 `;
 
-const QuestionTitle = styled.h2`
-  font-family: Pretendard;
-  font-size: 24px;
-  font-weight: 600;
-`;
 
-const InfoRow = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-`;
-
-const AuthorInfo = styled.div`
-  display: flex;
-  align-items: center;
-  gap:1%;
-  width: 90%;
-`;
-
-const ProfileImage = styled.img`
-  width: 40px;
-  border-radius: 4px;
-  margin-right: 10px;
-`;
-
-const StatusContainer = styled.button`
-  text-align: right;
-  background: rgba(238, 235, 232, 1);
-  border: 1px solid rgba(238, 235, 232, 1);
-  box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.12);
-`;
-
-const Button = styled.button`
-  font-size: 18px;
-  background: rgba(93, 95, 239, 1);
-  border-radius: 4px;
-  padding: 12px;
-  color:rgba(255, 255, 255, 1);
-  font-weight: 600;
-  border: 0cap;
-`
-
-const CommentSection = styled.div`
-  display: flex;
-  align-items: flex-start;
-  margin-bottom: 20px;
-`;
-
-const CommentImage = styled.img`
-  width: 40px;
-  border-radius: 50%;
-  margin-right: 10px;
-`;
-
-const CommentBox = styled.div`
-  width: 100%;
-`;
-
-const CommentContainer = styled.div`
-  border: 1px solid #ccc;
-  padding: 10px;
-  display: flex;
-  align-items: flex-start;
-  padding-top: 2%;
-  padding-bottom: 2%;
-  background: rgba(248, 246, 243, 1);
-`;
-
-const CommentContent = styled.div`
-  flex: 1;
-`;
