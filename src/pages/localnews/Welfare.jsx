@@ -1,34 +1,54 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
-export const Welfare = ({banners = []}) => {
-
+export const Welfare = ({ city_codes }) => {
+    const [banners, setBanners] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
 
+    useEffect(() => {
+        if (city_codes) {
+            fetch(`https://yourapi.com/issue/${city_codes}/welfare/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    const images = data.map((item) => item.image ? item.image : '/images/default.png'); // use a default image if image is null
+                    setBanners(images);
+                })
+                .catch((error) => {
+                    console.error('Error fetching welfare data:', error);
+                });
+        }
+    }, [city_codes]);
+
     const handleNext = () => {
-      setCurrentIndex((currentIndex + 1) % banners.length);
-    };
-  
-    const handlePrev = () => {
-      setCurrentIndex((currentIndex - 1 + banners.length) % banners.length);
+        setCurrentIndex((currentIndex + 1) % banners.length);
     };
 
-  return (
-    <Wrapper>
-        <ArrowButton left onClick={handlePrev}>
-          <ArrowImage src='/images/leftarrow.png' alt='Previous' />
-        </ArrowButton>
-        <Banner style={{ transform: `translateX(-${currentIndex * 100 / 3}%)` }}>
-        {banners.map((banner, index) => (
-            <BannerImage key={index} src={banner} alt={`Banner ${index + 1}`} />
-        ))}
-        </Banner>
-        <ArrowButton right onClick={handleNext}>
+    const handlePrev = () => {
+        setCurrentIndex((currentIndex - 1 + banners.length) % banners.length);
+    };
+
+    return (
+        <Wrapper>
+            <ArrowButton left onClick={handlePrev}>
+                <ArrowImage src='/images/leftarrow.png' alt='Previous' />
+            </ArrowButton>
+            <Banner style={{ transform: `translateX(-${currentIndex * 100 / 3}%)` }}>
+                {banners.map((banner, index) => (
+                    <BannerImage key={index} src={banner} alt={`Banner ${index + 1}`} />
+                ))}
+            </Banner>
+            <ArrowButton right onClick={handleNext}>
                 <ArrowImage src='/images/arrowbtn.png' alt='Next' />
-        </ArrowButton>
-    </Wrapper>
-  )
-}
+            </ArrowButton>
+        </Wrapper>
+    );
+};
+
 
 const Wrapper = styled.div`
   display: flex;
