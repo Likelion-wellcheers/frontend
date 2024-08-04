@@ -82,8 +82,15 @@ export const fetchCenterReview = async (center_id) => {
 
 export const fetchCartId = async (selection) => {
     try{
-        const response = await axios.post(`${baseURL}/recommend/mycart/`, selection);
+        const accessToken = localStorage.getItem("access");
+        const response = await axios.post(`${baseURL}/recommend/mycart/`, 
+            {body: selection}, 
+            {headers : {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            }});
         console.log(response.data);
+        console.log('액세스', accessToken);
         return response.data;
     }
     catch(e){
