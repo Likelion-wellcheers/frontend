@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 const Rest_API_key = 'b36f8d550e5424c31723c5c5fa3373e8';
-const Redirect_uri = 'http://localhost:3000/kakaologin'; // 실제 Redirect URI로!
+const Redirect_uri = 'https://youknowhoknow.netlify.app/kakaologin'; // 실제 Redirect URI로!
 const kakaoURL = `https://kauth.kakao.com/oauth/authorize?client_id=${Rest_API_key}&redirect_uri=${Redirect_uri}&response_type=code`;
 
 export const Login = () => {
