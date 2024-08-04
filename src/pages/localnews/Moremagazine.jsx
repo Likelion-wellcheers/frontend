@@ -1,56 +1,35 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 export const Moremagazine = () => {
     const location = useLocation();
-    const { city } = location.state;
+    const { city_codes } = location.state; // get city_codes from the location state
     const navigate = useNavigate();
+    const [magazines, setMagazines] = useState([]);
 
-    const handleCardClick = (city, index) => {
-        navigate(`/eachmagazine`);
+    useEffect(() => {
+    
+        if (city_codes) {
+          fetch('https://yourapi.com/issue/${city_codes}/getmagazine/', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              setMagazines(data);
+            })
+            .catch((error) => {
+              console.error('Error fetching magazine data:', error);
+            });
+        }
+      }, [city_codes]);
+
+    const handleCardClick = (id) => {
+        navigate(`/eachmagazine`, { state: { id } });
     };
-
-    const magazines = [
-        {
-            index: 1,
-            city: "서울특별시",
-            title: "서울특별시 동작구 흑석동 주민의 이야기를 들어봤어요!",
-            date: "2024-08-07",
-            image: "https://via.placeholder.com/150", // 임시 이미지
-        },
-        {
-            index: 2,
-            city: "서울특별시",
-            title: "서울특별시 동작구 매력적인 동네 탐방!",
-            date: "2024-08-04",
-            image: "https://via.placeholder.com/150", // 임시 이미지
-        },
-        {
-            index: 3,
-            city: "서울특별시",
-            title: "노후 생활에 적합한 지역",
-            date: "2024-08-01",
-            image: "https://via.placeholder.com/150", // 임시 이미지
-        },
-        {
-            index: 3,
-            city: "서울특별시",
-            title: "노후 생활에 적합한 지역",
-            date: "2024-08-01",
-            image: "https://via.placeholder.com/150", // 임시 이미지
-        },
-        {
-            index: 3,
-            city: "서울특별시",
-            title: "노후 생활에 적합한 지역",
-            date: "2024-08-01",
-            image: "https://via.placeholder.com/150", // 임시 이미지
-        },
-        // 추가 매거진 데이터...
-    ];
-
-    const filteredMagazines = magazines.filter(magazine => magazine.city === city);
 
     return (
         <Container>
@@ -71,14 +50,14 @@ export const Moremagazine = () => {
                 <LittleTitle>놓치면 안 될 매거진</LittleTitle>
             </Titlewrapper>
             <MagazineGrid>
-                {filteredMagazines.map((magazine) => (
+                {magazines.map((magazine) => (
                     <MagazineCard
-                        key={magazine.index}
-                        onClick={() => handleCardClick(city, magazine.index)}
+                        key={magazine.id}
+                        onClick={() => handleCardClick(magazine.id)}
                     >
-                        <MagazineImage src={magazine.image} alt={magazine.title} />
-                        <MagazineTitle>{magazine.title}</MagazineTitle>
-                        <MagazineDate>{magazine.date}</MagazineDate>
+                        <MagazineImage src={magazine.image || '/images/default.png'} alt={magazine.content} />
+                        <MagazineTitle>{magazine.content}</MagazineTitle>
+                        <MagazineDate>{new Date(magazine.created_at).toLocaleDateString()}</MagazineDate>
                     </MagazineCard>
                 ))}
             </MagazineGrid>

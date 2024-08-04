@@ -16,11 +16,7 @@ const KakaoLogin = () => {
         try {
           const response = await axios.post(`${baseURL}/account/kakao/callback/`, 
             { code }, // 요청 본문에 인가 코드 포함
-            {
-              headers: {
-                'Content-Type': 'application/json', // JSON 형식으로 데이터 전송
-              },
-            }
+  
           );
 
           // 응답에서 accessToken과 refreshToken 추출
