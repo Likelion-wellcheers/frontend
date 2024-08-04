@@ -21,7 +21,7 @@ const KakaoLogin = () => {
               'Content-Type': 'application/json', // JSON 형식으로 데이터 전송
             },
             data: {
-              code: code // 요청 본문에 인가 코드 포함
+              'code': code // 요청 본문에 인가 코드 포함
             }
           });
 
