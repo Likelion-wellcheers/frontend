@@ -14,10 +14,16 @@ const KakaoLogin = () => {
     if (code) {
       const postCode = async (code) => {
         try {
-          const response = await axios.post(`${baseURL}/account/kakao/callback/`, 
-            code , // 요청 본문에 인가 코드 포함
-      
-          );
+          const response = await axios({
+            method: 'post',
+            url: `${baseURL}/account/kakao/callback/`,
+            headers: {
+              'Content-Type': 'application/json', // JSON 형식으로 데이터 전송
+            },
+            data: {
+              code: code // 요청 본문에 인가 코드 포함
+            }
+          });
 
           // 응답에서 accessToken과 refreshToken 추출
           const { accessToken, refreshToken } = response.data;
