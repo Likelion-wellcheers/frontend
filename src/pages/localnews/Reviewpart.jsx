@@ -1,9 +1,29 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
-export const Reviewpart = ({ reviews }) => {
+export const Reviewpart = ({ city_codes }) => {
+    const [reviews, setReviews] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (city_codes) {
+            fetch(`https://yourapi.com/issue/${city_codes}/review`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    setReviews(data);
+                })
+                .catch((error) => {
+                    console.error('Error fetching reviews:', error);
+                });
+        }
+    }, [city_codes]);
 
     const handleNext = () => {
         setCurrentIndex((currentIndex + 1) % reviews.length);
@@ -12,8 +32,6 @@ export const Reviewpart = ({ reviews }) => {
     const handlePrev = () => {
         setCurrentIndex((currentIndex - 1 + reviews.length) % reviews.length);
     };
-
-    const navigate = useNavigate();
 
     const isRequired = 1;
     const title = "서울특별시 동작구";
@@ -33,11 +51,11 @@ export const Reviewpart = ({ reviews }) => {
                 {reviews.map((review, index) => (
                     <ReviewCard onClick={() => navigate('/locreview', { state: { review } })} key={index} className={index === currentIndex - 2 || index === currentIndex + 2 ? 'hidden' : ''}>
                         <ReviewHeader>
-                            <ProfileImage src={review.profile} alt={review.username} />
+                            <ProfileImage src={review.image ? review.image : '/images/profile.png'} alt={review.user_id} />
                             <ReviewInfo>
-                                <Username>{review.username}</Username>
-                                <Location>{review.location}</Location>
-                                <Rating>{'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}</Rating>
+                                <Username>{review.user_id}</Username>
+                                <Location>{review.city} {review.gugoon}</Location>
+                                <Rating>{'★'.repeat(review.score)}{'☆'.repeat(5 - review.score)}</Rating>
                             </ReviewInfo>
                         </ReviewHeader>
                         <Content>{review.content}</Content>

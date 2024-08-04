@@ -1,25 +1,43 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
-export const Magazinepart = ({ cards }) => {
+export const Magazinepart = ({ city_codes }) => {
+  const [cards, setCards] = useState([]);
+  const navigate = useNavigate();
 
-  const navigate=useNavigate();
-  
+  useEffect(() => {
+    if (city_codes) {
+      fetch(`https://yourapi.com/issue/${city_codes}/getmagazine/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setCards(data);
+        })
+        .catch((error) => {
+          console.error('Error fetching magazine data:', error);
+        });
+    }
+  }, [city_codes]);
+
   return (
     <CardWrapper>
-    {cards.map((card, index) => (
-      <Card key={index}>
-        <CardImage src={card.image} alt={card.title} />
-        <CardContent>
-          <CardTitle>{card.title}</CardTitle>
-          <DetailButton onClick={() => navigate(`/eachmagazine`)}>상세보기</DetailButton>
-        </CardContent>
-      </Card>
-    ))}
-  </CardWrapper>
-  )
-}
+      {cards.map((card, index) => (
+        <Card key={index}>
+          <CardImage src={card.image ? card.image : '/images/default.png'} alt={card.content} />
+          <CardContent>
+            <CardTitle>{card.content}</CardTitle>
+            <DetailButton onClick={() => navigate(`/eachmagazine`)}>상세보기</DetailButton>
+          </CardContent>
+        </Card>
+      ))}
+    </CardWrapper>
+  );
+};
 
 const CardWrapper = styled.div`
   display: flex;
