@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import styled from 'styled-components'
-import { fetchCenterInfo } from '../../apis/recommend';
+import { fetchCenterInfo, fetchCenterReview } from '../../apis/recommend';
 
 export const CenterDetail = () => {
     //InfoSecondTitle 은 없을 수도 있음!!! (군/구가 없을 수도 있음)
     const navigate = useNavigate();
     const [centerInfo, setCenterInfo] = useState({});
-    const [like, setLike] = useState(false);
+    const [centerReview, setCenterReview] = useState({});
+    const [like, setLike] = useState(0);
 
     const { centerId } = useParams();
 
@@ -15,12 +16,26 @@ export const CenterDetail = () => {
         navigate('reviewcenter', {state: {center_name : centerInfo.name}});
     }
 
+    const parseDate = (date) => {
+        return (date.substr(0, 10));
+    }
+
+    const handleLike = () => {
+        setLike(!like);
+    }
+
     useEffect(()=>{
+        var center_id = parseInt(centerId);
         const getCenterDetail = async() => {
-            const result = await fetchCenterInfo(centerId);
+            const result = await fetchCenterInfo(center_id);
             setCenterInfo(result);
         }
+        const getCenterReview = async() => {
+            const result = await fetchCenterReview(center_id);
+            setCenterReview(result);
+        }
         getCenterDetail();
+        getCenterReview();
     },[])
 
     if(centerInfo){
@@ -70,9 +85,14 @@ export const CenterDetail = () => {
                             <path d="M10.0013 1.66699C5.4013 1.66699 1.66797 5.40033 1.66797 10.0003C1.66797 14.6003 5.4013 18.3337 10.0013 18.3337C14.6013 18.3337 18.3346 14.6003 18.3346 10.0003C18.3346 5.40033 14.6013 1.66699 10.0013 1.66699ZM11.1763 15.0753V16.667H8.9513V15.0587C7.5263 14.7587 6.31797 13.842 6.2263 12.2253H7.85964C7.94297 13.1003 8.54297 13.7837 10.068 13.7837C11.7013 13.7837 12.068 12.967 12.068 12.4587C12.068 11.767 11.7013 11.117 9.84297 10.6753C7.7763 10.1753 6.35964 9.32533 6.35964 7.61699C6.35964 6.18366 7.51797 5.25033 8.9513 4.94199V3.33366H11.1763V4.95866C12.7263 5.33366 13.5013 6.50866 13.5513 7.78366H11.918C11.8763 6.85866 11.3846 6.22533 10.068 6.22533C8.81797 6.22533 8.06797 6.79199 8.06797 7.59199C8.06797 8.29199 8.60964 8.75033 10.293 9.18366C11.9763 9.61699 13.7763 10.342 13.7763 12.442C13.768 13.967 12.6263 14.8003 11.1763 15.0753Z" fill="#615D67"/>
                             </svg>이용료</InfoTextCostLabel>
                             <InfoTextCost>{centerInfo.cost}</InfoTextCost>
-                            <InfoTextSaveBtn><svg xmlns="http://www.w3.org/2000/svg" width="25" height="24" viewBox="0 0 25 24" fill="none">
-                                    <path d="M17 3C15.26 3 13.59 3.81 12.5 5.09C11.41 3.81 9.74 3 8 3C4.92 3 2.5 5.42 2.5 8.5C2.5 12.28 5.9 15.36 11.05 20.04L12.5 21.35L13.95 20.03C19.1 15.36 22.5 12.28 22.5 8.5C22.5 5.42 20.08 3 17 3ZM12.6 18.55L12.5 18.65L12.4 18.55C7.64 14.24 4.5 11.39 4.5 8.5C4.5 6.5 6 5 8 5C9.54 5 11.04 5.99 11.57 7.36H13.44C13.96 5.99 15.46 5 17 5C19 5 20.5 6.5 20.5 8.5C20.5 11.39 17.36 14.24 12.6 18.55Z" fill="#5D5FEF"/>
-                                    </svg>&nbsp;저장하기</InfoTextSaveBtn>
+                            <InfoTextSaveBtn onClick={handleLike}>
+                                {like ? (<svg xmlns="http://www.w3.org/2000/svg" width="25" height="24" viewBox="0 0 25 24" fill="none">
+                                        <path d="M12.5 21.35L11.05 20.03C5.9 15.36 2.5 12.28 2.5 8.5C2.5 5.42 4.92 3 8 3C9.74 3 11.41 3.81 12.5 5.09C13.59 3.81 15.26 3 17 3C20.08 3 22.5 5.42 22.5 8.5C22.5 12.28 19.1 15.36 13.95 20.04L12.5 21.35Z" fill="#5D5FEF"/>
+                                        </svg>) : (<svg xmlns="http://www.w3.org/2000/svg" width="25" height="24" viewBox="0 0 25 24" fill="none">
+                                        <path d="M17 3C15.26 3 13.59 3.81 12.5 5.09C11.41 3.81 9.74 3 8 3C4.92 3 2.5 5.42 2.5 8.5C2.5 12.28 5.9 15.36 11.05 20.04L12.5 21.35L13.95 20.03C19.1 15.36 22.5 12.28 22.5 8.5C22.5 5.42 20.08 3 17 3ZM12.6 18.55L12.5 18.65L12.4 18.55C7.64 14.24 4.5 11.39 4.5 8.5C4.5 6.5 6 5 8 5C9.54 5 11.04 5.99 11.57 7.36H13.44C13.96 5.99 15.46 5 17 5C19 5 20.5 6.5 20.5 8.5C20.5 11.39 17.36 14.24 12.6 18.55Z" 
+                                        fill="#5D5FEF"/>
+                                        </svg>)}
+                                &nbsp;저장하기</InfoTextSaveBtn>
                         </InfoTextContainer>
                     </InfoPart>
                 </InfoContent>
@@ -86,29 +106,30 @@ export const CenterDetail = () => {
                         <ReviewPostBtn onClick={handlePost}>작성하기</ReviewPostBtn>
                     </ReviewDesc>
                     <ReviewPostList>
-
+                    {centerReview.length ? centerReview.map((review)=>(
                         <ReviewPost>
-                            <ReviewWriterImg></ReviewWriterImg>
-                            <ReviewText>
-                                <ReviewProfile>
-                                    <ReviewWriter>야채윤겅</ReviewWriter>
-                                    <ReviewDate>2024-07-26</ReviewDate>
-                                </ReviewProfile>
-                                <ReviewRating>
-                                    <ReviewRatingIcon>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="13" viewBox="0 0 12 13" fill="none">
-                                        <path d="M2.70799 12.0826C2.41849 12.2311 2.08999 11.9709 2.14849 11.6386L2.77099 8.09113L0.12874 5.57413C-0.11801 5.33862 0.0102401 4.90813 0.34099 4.86163L4.01449 4.33963L5.65249 1.09437C5.80024 0.801875 6.19999 0.801875 6.34774 1.09437L7.98574 4.33963L11.6592 4.86163C11.99 4.90813 12.1182 5.33862 11.8707 5.57413L9.22924 8.09113L9.85174 11.6386C9.91024 11.9709 9.58174 12.2311 9.29224 12.0826L5.99899 10.3906L2.70799 12.0826Z" fill="#5D5FEF"/>
-                                        </svg>
-                                    </ReviewRatingIcon>
-                                    <ReviewRatingNum>4.0</ReviewRatingNum>
-                                </ReviewRating>
-                                <ReviewTextContent>이런이런이런이달았어요</ReviewTextContent>
-                                <ReviewTextImgs>
+                        <ReviewWriterImg>{review?.profileimage || "/images/mainlogo.png"}</ReviewWriterImg>
+                        <ReviewText>
+                            <ReviewProfile>
+                                <ReviewWriter>{review?.nickname}</ReviewWriter>
+                                <ReviewDate>{parseDate(review?.created_at)}</ReviewDate>
+                            </ReviewProfile>
+                            <ReviewRating>
+                                <ReviewRatingIcon>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="13" viewBox="0 0 12 13" fill="none">
+                                    <path d="M2.70799 12.0826C2.41849 12.2311 2.08999 11.9709 2.14849 11.6386L2.77099 8.09113L0.12874 5.57413C-0.11801 5.33862 0.0102401 4.90813 0.34099 4.86163L4.01449 4.33963L5.65249 1.09437C5.80024 0.801875 6.19999 0.801875 6.34774 1.09437L7.98574 4.33963L11.6592 4.86163C11.99 4.90813 12.1182 5.33862 11.8707 5.57413L9.22924 8.09113L9.85174 11.6386C9.91024 11.9709 9.58174 12.2311 9.29224 12.0826L5.99899 10.3906L2.70799 12.0826Z" fill="#5D5FEF"/>
+                                    </svg>
+                                </ReviewRatingIcon>
+                                <ReviewRatingNum>{review?.score}</ReviewRatingNum>
+                            </ReviewRating>
+                            <ReviewTextContent>{review?.content}</ReviewTextContent>
+                            <ReviewTextImgs>
+                    
+                            </ReviewTextImgs> 
+                        </ReviewText>
+                    </ReviewPost>
+                     )) : <NoReview>첫 후기를 달아주세요!</NoReview>}
                         
-                                </ReviewTextImgs> 
-                            </ReviewText>
-                        </ReviewPost>
-
                     </ReviewPostList>
                 </ReviewContent>
             </ReviewContainer>
@@ -136,7 +157,7 @@ const InfoContainer = styled.div`
     padding-top: 1.2%;
 `
 const InfoContent = styled.div`
-    width: 83%;
+    width: 84%;
     height: 80vh;
 
 `
@@ -367,6 +388,15 @@ const ReviewDesc = styled.div`
 const ReviewIcon = styled.div`
     
 `
+const NoReview = styled.div`
+    color: var(--Gray-01, #615D67);
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 25%;
+`
+
 const ReviewPostBtn = styled.div`
     display: flex;
     width: 64px;

@@ -5,11 +5,14 @@ import Chart from 'chart.js/auto';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useForm } from '../../hooks/useForm';
 import { fetchCartId } from '../../apis/recommend';
+import { useRecoilState } from 'recoil';
+import { curPageRecoil } from '../../recoil/atom';
 
 export const CalCost = () => {
     const themeColor = useContext(ThemeColorContext);
     const navigate = useNavigate();
     const location = useLocation();
+    const [curPage, setCurPage] = useRecoilState(curPageRecoil);
     const  { selected_center } = location.state || {}; //선택된 목록
     const dataLabel = ['center1_id', 'center2_id', 'center3_id', 'center4_id', 'center5_id'];
     const [cart, setCart] = useState({}); // 해당 카트 아이디의 카트
@@ -127,11 +130,12 @@ export const CalCost = () => {
         // 백엔드에 카트 생성 위해 보낼 데이터 만들기
         if(selected_center){
             selected_center.map((center, idx)=>(
-                centerData[dataLabel[idx]] = center.id
+                centerData[dataLabel[idx]] = parseInt(center.id)
             ))
             console.log('가공한데이터임', centerData);
+            console.log();
         }
-        //getCartId();
+        getCartId();
         
         
         var tempLeisureCost = 400000; //임시 내 여가 비용
@@ -172,6 +176,8 @@ export const CalCost = () => {
     const isExtraCost = true; //초과했는지 여부. 임시로 정함
 
     const handleGotoQna = () => {
+        setCurPage('/mainwonder');
+        navigate('/mainwonder')
         //아직 경로 안나옴
     }
 
