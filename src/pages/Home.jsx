@@ -86,7 +86,7 @@ export const Home = () => {
 
               {magData.map((data, idx)=>{
                 <Article id={idx}>
-                  <ArticleImg src={data.thumnail || "/images/filterbanner.png"}></ArticleImg>
+                  <ArticleImg src={data.thumnail || "/images/default.png"}></ArticleImg>
                   <ArticleContents>
                     <ArticleContentTitle>{data.name}</ArticleContentTitle>
                     <ArticleContentBtn themeColor={themeColor}>상세보기</ArticleContentBtn>

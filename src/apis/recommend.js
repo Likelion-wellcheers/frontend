@@ -50,7 +50,6 @@ export const fetchCityInfo = async (city_code) => {
 export const fetchCenters = async (city_code) => {
     try{
         const response = await axios.get(`${baseURL}/recommend/${city_code}/center/`);
-        console.log(response.data);
         return response.data;
     }
     catch(e){
@@ -62,6 +61,18 @@ export const fetchCenterInfo = async (center_id) => {
     try{
         const response = await axios.get(`${baseURL}/recommend/center/${center_id}/`);
         console.log(response.data);
+        return response.data;
+    }
+    catch(e){
+        console.log(e);
+    }
+}
+
+//시설 후기
+export const fetchCenterReview = async (center_id) => {
+    try{
+        const response = await axios.get(`${baseURL}/recommend/center/${center_id}/review/`);
+        console.log('시설리뷰', response.data);
         return response.data;
     }
     catch(e){

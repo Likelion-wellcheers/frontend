@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react'
+import React, { useEffect, useState, useContext, useRef } from 'react'
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components'
 import sig from '../../constants/sig.json';
@@ -9,32 +9,36 @@ const { kakao } = window;
 export const MapModal = ({mymap, load, cityCodes}) => {
     const navigate = useNavigate();
     const [modalPage, setModalPage] = useState(0); // 0: 지역 선택 단계, 1: 인프라 선택 단계
-    const [cityCds, setCityCds] = useState([]); 
     const [citys, setCitys] = useState({}); // 지역 정보들 모음
     const [cityName, setCityName] = useState([]);
     const [centers, setCenters] = useState({}) // 선택한 지역에 해당하는 시설들
     const [selectedPlace, setSelectedPlace] = useState();  // 사용자가 선택한 지역의 city_code값
     const [selectedCenter, setSelectedCenter] = useState([]); // 사용자가 선택한 인프라 리스트
-    // CenterList에서 해당하는 객체값이 추가로 들어감
+    const [infrakeys, setInfrakeys] = useState([]);
 
-    var marker;
-    var polygon;
+    const markerRefs = useRef();
+    const polygonRefs = useRef();
+    // CenterList에서 해당하는 객체값이 추가로 들어감
+    const shuffle = (array) => {
+        array.sort(() => Math.random() - 0.5);
+      }
 
     //경도 위도 넘겨주면 마커 찍어주는 함수
     const drawMarker = (lat, lng) => {
         var imageSrc = '/images/marker.png', // 마커이미지의 주소입니다    
         imageSize = new kakao.maps.Size(31, 42), // 마커이미지의 크기입니다
-        imageOption = {offset: new kakao.maps.Point(18, 30)};
+        imageOption = {offset: new kakao.maps.Point(15, 28)};
 
         // 지역 마커 찍기
         var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption),
         markerPosition = new kakao.maps.LatLng(lat, lng);  //임시 좌표
 
-        marker = new kakao.maps.Marker({
+        const marker = new kakao.maps.Marker({
             position: markerPosition, 
             image: markerImage // 마커이미지 설정 
         });
         marker.setMap(mymap);
+        markerRefs.current.push(marker);
     }
 
     // 시군구 코드 넘겨주면 폴리곤 그려주는 함수
@@ -47,7 +51,7 @@ export const MapModal = ({mymap, load, cityCodes}) => {
             polygonPath.push(new kakao.maps.LatLng(element[1], element[0]))
         });
 
-            polygon = new kakao.maps.Polygon({
+        const polygon = new kakao.maps.Polygon({
             path: polygonPath, // 그려질 다각형의 좌표 배열입니다
             strokeWeight: 1, // 선의 두께입니다
             strokeColor: '#b62c91', // 선의 색깔입니다
@@ -57,7 +61,22 @@ export const MapModal = ({mymap, load, cityCodes}) => {
             fillOpacity: 0.3 // 채우기 불투명도 입니다
         });
         polygon.setMap(mymap);
+        polygonRefs.current.push(polygon);
     }   
+
+    const clearMarkers = () => {
+        if (markerRefs.current) {
+            markerRefs.current.forEach(marker => marker.setMap(null));
+            markerRefs.current = []; 
+        }
+    };
+
+    const clearPolygons = () => {
+        if (polygonRefs.current) {
+            polygonRefs.current.forEach(polygon => polygon.setMap(null));
+            polygonRefs.current = []; 
+        }
+    };
 
     const moveFocus = (lat, lng) => {
         var moveLatLon = new kakao.maps.LatLng(lat, lng);
@@ -81,9 +100,24 @@ export const MapModal = ({mymap, load, cityCodes}) => {
 
 
       useEffect(()=>{
-        // 시티코드로 지역 정보 불러오고, 마커 생성하는 함수
+        if (!markerRefs.current) {
+            markerRefs.current = [];
+        }
+        if (!polygonRefs.current) {
+            polygonRefs.current = [];
+        }
+    
+        // 시티코드로 지역 정보를 하나하나 불러오고, 마커와 폴리곤 생성하는 함수
+        clearPolygons();
         const getCity = async (city_code) => {
             const result = await fetchCityInfo(city_code); 
+            console.log(result);
+
+            // 키들을 합쳐서 하나의 인프라 키들로, 랜덤으로 섞어서 씀.
+            const keyList = result.infraname.concat(result.lifename, result.hobbyname);
+            shuffle(keyList);
+            result["infrakeys"] = keyList;
+
             // result 에는 지역코드: {} 형태로 지역정보 들어가있음
 
             setCitys((prevState)=>({
@@ -91,25 +125,22 @@ export const MapModal = ({mymap, load, cityCodes}) => {
                 [city_code]: result
             }));
 
+            console.log(result);
+
             drawMarker(result.latitude, result.longtitude);
             drawPolygon(sig, String(city_code));
-
-            console.log('폴리곤', polygon); //존재
-            return polygon, marker;
         }
 
         // 지도 로드 완료 시 진행하도록
         if(load && mymap && modalPage == 0){
             if (cityCodes && cityCodes.length > 0) {
-            
             // 시티코드 값을 통해 지역 정보 데이터를 불러오고, 지도에 표시하기
             cityCodes.map(element => {
                 getCity(element);
-                console.log('2폴리곤',polygon); 
             })
+
         }}
-        
-      }, [load, mymap]);
+      }, [load, mymap, modalPage]);
 
     
     //인프라 페이지로 이동
@@ -117,37 +148,33 @@ export const MapModal = ({mymap, load, cityCodes}) => {
         setCityName([cityName, gugoonName]);
         // 지도 확대하기 + 이동하기 (포커스)
         // map : 지도창에서 가져온 지도 객체
-        if (marker) {
-            marker.setMap(null);
-            marker = null;
-        }
-        if (polygon) {
-            polygon.setMap(null);
-            polygon = null;
-        }
-
-
         setSelectedPlace(city_code);
 
         const getCenterInfo = async(city_code) => {
             const result = await fetchCenters(city_code);
             setCenters(result);
-            console.log('센터들 상태', result);
+            if(result.length){
+                console.log('센터존재');
+                result.map((center)=>(
+                    drawMarker(center.latitude, center.longtitude)
+                ));
+            }
             setModalPage(1);
         }
         getCenterInfo(city_code);
-
         mymap.setLevel(4); 
         moveFocus(lat, lng);
 
-        // 시설 마커들 그리기!
-        //drawMarker(37.50415, 126.9570);
+        console.log(centers);
+        clearMarkers();
+        // 시설 마커들 그리기
+    
     }
-
 
     // 지역 페이지 이동 (뒤로가기)
     const handleBack = () => {
         if(mymap){
+            clearMarkers();
             setModalPage(0);
             moveFocus(36.3504119, 127.3845475)
             mymap.setLevel(12);
@@ -197,13 +224,13 @@ if(!modalPage){
             <MapContentCards>
                 {Object.values(citys).map((location)=> (
                     <MapContentCard onClick={()=> handleClick(location.city_code, location.city, location.gugoon, location.latitude, location.longtitude)}>
-                        <MapContentCardImg src={location.thumbnail || "/images/filterbanner.png"}></MapContentCardImg>
+                        <MapContentCardImg src={location.thumbnail || "/images/default.png"}></MapContentCardImg>
                         <MapContentCardDesc>
                             <MapContentCardTitle>{location.city} {location.gugoon}</MapContentCardTitle>
                             <MapContentCardKeys>
-                                <MapContentCardKey>#{location.lstyle_id[0]}</MapContentCardKey>
-                                <MapContentCardKey>#{location.infra_id[0]}</MapContentCardKey>
-                                <MapContentCardKey>#{location.hobby_id[0]}</MapContentCardKey>
+                                {location.infrakeys[0] && <MapContentCardKey>#{location.infrakeys[0]}</MapContentCardKey>}
+                                {location.infrakeys[1] &&<MapContentCardKey>#{location.infrakeys[1]}</MapContentCardKey>}
+                                {location.infrakeys[2] &&<MapContentCardKey>#{location.infrakeys[2]}</MapContentCardKey>}
                             </MapContentCardKeys>
                         </MapContentCardDesc>
                     </MapContentCard>
@@ -253,7 +280,7 @@ if(!modalPage){
                         return(
                         <CenterCard>
                             <CenterCardImg onClick={()=>handleDetail(center.id)}
-                            src={center.thumnail || "/images/filterbanner.png"} alt="시설사진"></CenterCardImg>
+                            src={center.thumnail || "/images/default.png"} alt="시설사진"></CenterCardImg>
                             <CenterCardDesc>
                                 <CenterCardDescCon>
                                     <CenterCardTitle>{center.name}</CenterCardTitle>
@@ -357,7 +384,7 @@ const MapContentCardKeys = styled.div`
   margin-top: 5px;
 `
 const MapContentCardKey = styled.div`
-  width: 60px;
+  width: 90px;
   font-size: 15px;
     font-style: normal;
     font-weight: 500;
@@ -370,6 +397,8 @@ const MapContentCardKey = styled.div`
   color: #5D5FEF;
   display: flex;
   justify-content: center;
+  white-space: nowrap;
+  
 `
 
 // 아래부터 인프라 페이지 내용
