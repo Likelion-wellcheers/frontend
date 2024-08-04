@@ -1,19 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { fetchMagazines } from '../../apis/news';
 
 export const Magazinepart = ({ city_codes }) => {
   const [cards, setCards] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
+    
     if (city_codes) {
-      const getMagazines = async () => {
-        const data = await fetchMagazines(city_codes);
-        setCards(data);
-      };
-      getMagazines();
+      fetch('https://yourapi.com/issue/${city_codes}/getmagazine/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setCards(data);
+        })
+        .catch((error) => {
+          console.error('Error fetching magazine data:', error);
+        });
     }
   }, [city_codes]);
 
@@ -24,7 +32,7 @@ export const Magazinepart = ({ city_codes }) => {
           <CardImage src={card.image ? card.image : '/images/default.png'} alt={card.content} />
           <CardContent>
             <CardTitle>{card.content}</CardTitle>
-            <DetailButton onClick={() => navigate(`/eachmagazine`)}>상세보기</DetailButton>
+            <DetailButton onClick={() => navigate('/eachmagazine')}>상세보기</DetailButton>
           </CardContent>
         </Card>
       ))}
