@@ -25,7 +25,7 @@ export const Localinfo = () => {
           <SubTitle>
               <Icon src='/images/icon3.png' alt='매거진 아이콘' />
               놓치면 안 될 매거진
-              <MoreButton onClick={() => navigate('/moremagazine', { state: { city } })}>더보기</MoreButton>
+              <MoreButton onClick={() => navigate('/moremagazine', { state: { city_codes } })}>더보기</MoreButton>
           </SubTitle>
           <Magazinepart city_codes={city_codes} />
           <Reviewpart city_codes={city_codes} />

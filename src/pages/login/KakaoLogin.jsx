@@ -12,14 +12,16 @@ const KakaoLogin = () => {
     console.log('인가 코드:', code); // 인가 코드 확인
 
     if (code) {
-      const getCode = async () => {
+      const postCode = async () => {
         try {
-          const response = await axios.get(`${baseURL}/account/kakao/callback/`, {
-            params: { code },
-            headers: {
-              'Content-Type': 'application/json', // JSON 형식으로 데이터 전송
-            },
-          });
+          const response = await axios.post(`${baseURL}/account/kakao/callback/`, 
+            { code }, // 요청 본문에 인가 코드 포함
+            {
+              headers: {
+                'Content-Type': 'application/json', // JSON 형식으로 데이터 전송
+              },
+            }
+          );
 
           // 응답에서 accessToken과 refreshToken 추출
           const { accessToken, refreshToken } = response.data;
@@ -28,7 +30,7 @@ const KakaoLogin = () => {
           localStorage.setItem('access', accessToken);
           localStorage.setItem('refresh', refreshToken);
 
-          // /test 페이지로 이동
+          // / 페이지로 이동
           navigate('/');
         } catch (error) {
           console.error('인가 코드 전송 중 에러 발생', error);
@@ -37,7 +39,7 @@ const KakaoLogin = () => {
           }
         }
       };
-      getCode();
+      postCode();
     }
   }, [navigate]);
 
