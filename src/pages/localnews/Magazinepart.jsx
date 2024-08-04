@@ -9,7 +9,7 @@ export const Magazinepart = ({ city_codes }) => {
   useEffect(() => {
     
     if (city_codes) {
-      fetch('https://yourapi.com/issue/${city_codes}/getmagazine/', {
+      fetch(`https://wellcheers.p-e.kr/issue/${city_codes}/getmagazine/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

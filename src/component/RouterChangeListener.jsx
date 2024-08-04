@@ -1,21 +1,35 @@
+// components/RouteChangeListener.jsx
 import React, { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
+import { isLoginState } from '../recoil/isLoginState';
 import { curPageRecoil } from '../recoil/atom';
 
-//경로 바뀔때 실행할 로직
 const RouteChangeListener = () => {
-  const router = useLocation();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [isLogin, setIsLogin] = useRecoilState(isLoginState);
   const [curPage, setCurPage] = useRecoilState(curPageRecoil);
-  //recoil로 로그인 상태 저장
 
-  //페이지 변경 시
+  const checkTokenExpiration = () => {
+    const token = localStorage.getItem('accessToken'); 
+    if (!token || token === 'expired') {
+      return false;
+    }
+    return true;
+  };
+
   useEffect(() => {
-    setCurPage(router.pathname);
-    //토큰 만료 시 로그아웃
-  }, [router]);
+    setCurPage(location.pathname);
 
-  return null; 
+    if (!checkTokenExpiration()) {
+      setIsLogin(false);
+      //alert('로그인 페이지로 이동합니다');
+      navigate('/login');
+    }
+  }, [location, navigate, setCurPage, setIsLogin]);
+
+  return null;
 };
 
 export default RouteChangeListener;

@@ -7,7 +7,7 @@ export const Welfare = ({ city_codes }) => {
 
     useEffect(() => {
         if (city_codes) {
-            fetch(`https://yourapi.com/issue/${city_codes}/welfare/`, {
+            fetch(`https://wellcheers.p-e.kr/issue/${city_codes}/welfare/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
