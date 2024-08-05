@@ -15,6 +15,7 @@ export const MapModal = ({mymap, load, cityCodes}) => {
     const [selectedPlace, setSelectedPlace] = useState();  // 사용자가 선택한 지역의 city_code값
     const [selectedCenter, setSelectedCenter] = useState([]); // 사용자가 선택한 인프라 리스트
     const [infrakeys, setInfrakeys] = useState([]);
+    const [cityCode, setCityCode] = useState();
 
     const markerRefs = useRef();
     const polygonRefs = useRef();
@@ -110,22 +111,17 @@ export const MapModal = ({mymap, load, cityCodes}) => {
         // 시티코드로 지역 정보를 하나하나 불러오고, 마커와 폴리곤 생성하는 함수
         clearPolygons();
         const getCity = async (city_code) => {
-            const result = await fetchCityInfo(city_code); 
-            console.log(result);
+            const result = await fetchCityInfo(city_code); // result 에는 지역코드: {} 형태로 지역정보 들어가있음
 
             // 키들을 합쳐서 하나의 인프라 키들로, 랜덤으로 섞어서 씀.
             const keyList = result.infraname.concat(result.lifename, result.hobbyname);
             shuffle(keyList);
             result["infrakeys"] = keyList;
 
-            // result 에는 지역코드: {} 형태로 지역정보 들어가있음
-
             setCitys((prevState)=>({
                 ...prevState,
                 [city_code]: result
             }));
-
-            console.log(result);
 
             drawMarker(result.latitude, result.longtitude);
             drawPolygon(sig, String(city_code));
@@ -154,7 +150,6 @@ export const MapModal = ({mymap, load, cityCodes}) => {
             const result = await fetchCenters(city_code);
             setCenters(result);
             if(result.length){
-                console.log('센터존재');
                 result.map((center)=>(
                     drawMarker(center.latitude, center.longtitude)
                 ));
@@ -165,10 +160,9 @@ export const MapModal = ({mymap, load, cityCodes}) => {
         mymap.setLevel(4); 
         moveFocus(lat, lng);
 
-        console.log(centers);
+        setCityCode(city_code);
         clearMarkers();
         // 시설 마커들 그리기
-    
     }
 
     // 지역 페이지 이동 (뒤로가기)
@@ -208,7 +202,7 @@ export const MapModal = ({mymap, load, cityCodes}) => {
     )};
 
     const handleCal = () => {
-        navigate('/searchhome/searchmap/CalCost', {state: {selected_center : selectedCenter}});
+        navigate('/searchhome/searchmap/CalCost', {state: {selected_center : selectedCenter, city_code: cityCode}});
     }
 
     const handleDetail = (centerId) =>{

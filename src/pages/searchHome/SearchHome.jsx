@@ -49,7 +49,6 @@ export const SearchHome = () => {
 
   // 버튼 하나 클릭 시
   const handleClick = (name, id, qindex) => {
-    console.log(selected);
     //선택하면 체크 표시 되도록
     setSelected(prevState => ({
       ...prevState,

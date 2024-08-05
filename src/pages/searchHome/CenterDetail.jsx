@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import styled from 'styled-components'
-import { fetchCenterInfo, fetchCenterReview } from '../../apis/recommend';
+import { fetchCenterInfo, fetchCenterReview, fetchLikeCenter } from '../../apis/recommend';
 
 export const CenterDetail = () => {
     //InfoSecondTitle 은 없을 수도 있음!!! (군/구가 없을 수도 있음)
@@ -9,6 +9,7 @@ export const CenterDetail = () => {
     const [centerInfo, setCenterInfo] = useState({});
     const [centerReview, setCenterReview] = useState({});
     const [like, setLike] = useState(0);
+    const [likeInfo, setLikeInfo] = useState({});
 
     const { centerId } = useParams();
 
@@ -21,7 +22,23 @@ export const CenterDetail = () => {
     }
 
     const handleLike = () => {
+        var likeData = {};
+        if(like === 0){
+            likeData = {
+                "like" : 1
+            }
+        }
+        else{
+            likeData = {
+                "like" : 0
+            }
+        }
         setLike(!like);
+        const getCenterLike = async(centerId, likeData) =>{
+            const result = await fetchLikeCenter(centerId, likeData);
+            setLikeInfo(result);
+        } 
+        getCenterLike(parseInt(centerId));
     }
 
     useEffect(()=>{
@@ -38,7 +55,7 @@ export const CenterDetail = () => {
         getCenterReview();
     },[])
 
-    if(centerInfo){
+if(centerInfo){
   return (
     <>
         <Container>
@@ -56,11 +73,11 @@ export const CenterDetail = () => {
                     </InfoTitle>
                     <InfoPart>
                         <InfoImgList>
-                            <InfoImgRepres></InfoImgRepres>
+                            <InfoImgRepres src={centerInfo.thumnail?.[0] || "/images/centerDefault.jpg"}></InfoImgRepres>
                             <InfoImgRems>
-                                <InfoImg></InfoImg>
-                                <InfoImg></InfoImg>
-                                <InfoImg></InfoImg>
+                                <InfoImg src={centerInfo.thumnail?.[1] || "/images/centerDefault.jpg"}></InfoImg>
+                                <InfoImg src={centerInfo.thumnail?.[2] || "/images/centerDefault.jpg"}></InfoImg>
+                                <InfoImg src={centerInfo.thumnail?.[3] || "/images/centerDefault.jpg"}></InfoImg>
                             </InfoImgRems>
                         </InfoImgList>
                         <InfoTextContainer>
@@ -108,7 +125,7 @@ export const CenterDetail = () => {
                     <ReviewPostList>
                     {centerReview.length ? centerReview.map((review)=>(
                         <ReviewPost>
-                        <ReviewWriterImg>{review?.profileimage || "/images/mainlogo.png"}</ReviewWriterImg>
+                        <ReviewWriterImg src={review?.profileimage || "/images/mainlogo.png"}></ReviewWriterImg>
                         <ReviewText>
                             <ReviewProfile>
                                 <ReviewWriter>{review?.nickname}</ReviewWriter>
@@ -136,6 +153,14 @@ export const CenterDetail = () => {
         </Container>
     </>
   )}
+  else{
+    <>
+       <NoCenterInfo>
+            준비중입니다...
+        </NoCenterInfo>
+    </>
+    
+  }
 }
 
 const Container = styled.div`
@@ -225,6 +250,7 @@ const InfoImg = styled.img`
     flex-shrink: 0;
     border-radius: 8px;
     background: url(<path-to-image>) lightgray 50% / cover no-repeat, #D9D9D9;
+    object-fit: cover;
 `
 
 const InfoTextContainer = styled.div`
@@ -453,6 +479,7 @@ const ReviewProfile = styled.div`
     flex-direction: row;
     gap: 8px;
     align-items: center;
+    
 `
 const ReviewWriter = styled.div`
     font-size: 16px;
@@ -504,3 +531,11 @@ const ReviewTextImg = styled.img`
     object-fit: cover;
 `
 
+const NoCenterInfo = styled.div`
+    color: var(--Gray-01, #615D67);
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 25%;
+`
