@@ -70,7 +70,7 @@ export const Search = () => {
             } else {
                 console.log('Selected district:', district);
                 console.log('Selected city_code:', selectedCityCode); // 선택된 district와 city_code 확인
-                navigate('/Localinfo', { state: { city_codes: [selectedCityCode] } });
+                navigate('/Localinfo', { state: { city: selectedCity, district: district, city_codes: [selectedCityCode] } });
             }
         }
     };
