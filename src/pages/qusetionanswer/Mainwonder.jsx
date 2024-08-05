@@ -1,68 +1,121 @@
+import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 export const Mainwonder = () => {
-    const [cities, setCities] = useState([]);
+    const [cities] = useState([
+        '서울특별시', '부산광역시', '대구광역시', '인천광역시', '광주광역시', '대전광역시', 
+        '울산광역시', '수원시', '성남시', '의정부시', '안양시', '부천시', '광명시', 
+        '평택시', '동두천시', '안산시', '고양시', '과천시', '구리시', '남양주시', 
+        '오산시', '시흥시', '군포시', '의왕시', '하남시', '용인시', '파주시', 
+        '이천시', '안성시', '김포시', '화성시', '광주시', '양주시', '포천시', 
+        '여주시', '경기도', '춘천시', '원주시', '강릉시', '동해시', '태백', 
+        '속초시', '삼척시', '강원도', '청주시', '충주시', '제천시', '충청북도', 
+        '천안시', '공주시', '보령시', '아산시', '서산시', '논산시', '계룡시', 
+        '당진시', '충청남도', '전주시', '군산시', '익산시', '정읍시', '남원시', 
+        '김제시', '전라북도', '목포시', '여수시', '순천시', '나주시', '광양시', 
+        '전라남도', '포항시', '경주시', '김천시', '안동시', '구미시', '영주시', 
+        '영천시', '상주시', '문경시', '경산시', '경상북도', '창원시', '진주시', 
+        '통영시', '사천시', '김해시', '밀양시', '거제시', '양산시', '경상남도', 
+        '제주시', '서귀포시'
+    ]);
     const [districts, setDistricts] = useState([]);
     const [selectedCity, setSelectedCity] = useState('');
     const [selectedDistrict, setSelectedDistrict] = useState('');
     const [showCityDropdown, setShowCityDropdown] = useState(false);
     const [showDistrictDropdown, setShowDistrictDropdown] = useState(false);
-
     const navigate = useNavigate();
 
-    useEffect(() => {
-        // 나중에 패치해야 됨
-        setCities(['서울특별시', '부산광역시', '전라남도 여수시', '제주특별자치도 서귀포시', '고양시']);
-    }, []);
+    const [questions, setQuestions] = useState([]);
+    const [myQuestions, setMyQuestions] = useState([]);
+    const [myAnswers, setMyAnswers] = useState([]);
+    const [error, setError] = useState(null);
 
+    //도시에 따른 시, 구 패치
     useEffect(() => {
         if (selectedCity) {
-            // 나중에 패치해야 됨
-            const cityDistricts = {
-                '서울특별시': ['강남구', '강동구', '강북구', '강서구'],
-                '부산광역시': ['해운대구', '수영구', '연제구'],
-                '전라남도 여수시': ['여서동', '문수동', '미평동'],
-                '제주특별자치도 서귀포시': ['서귀동', '송산동', '정방동']
-            };
-            setDistricts(cityDistricts[selectedCity] || []);
-            setSelectedDistrict('');
+            fetch('https://wellcheers.p-e.kr/account/region/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ city: selectedCity }),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.gugoon.length === 0 || (data.gugoon.length === 1 && data.gugoon[0] === '')) {
+                        setDistricts([{ name: '전체보기', city_code: data.city_codes[0] }]);
+                    } else {
+                        const combinedData = data.gugoon.map((gugoon, index) => ({
+                            name: gugoon,
+                            city_code: data.city_codes[index],
+                        }));
+                        setDistricts(combinedData);
+                    }
+                    setSelectedDistrict('');
+                })
+                .catch((error) => {
+                    console.error('Error fetching districts:', error);
+                });
         }
-    }, [selectedCity]);
+    }, [selectedCity, navigate]);
 
-    const mockQuestions = [
-        { author: '사용자1', date: '2023-07-26', question: '혹석은 몇 시에 끝나나요?', status: '미답변', profile: '/images/profile.png'},
-        { author: '사용자2', date: '2023-07-25', question: '주차장은 어디에 있나요?', status: '답변완료', profile: '/images/profile.png'},
-        { author: '사용자2', date: '2023-07-25', question: '주차장은 어디에 있나요?', status: '답변완료', profile: '/images/profile.png'},
-        { author: '사용자2', date: '2023-07-25', question: '주차장은 어디에 있나요?', status: '답변완료', profile: '/images/profile.png'},
-        { author: '사용자2', date: '2023-07-25', question: '주차장은 어디에 있나요?', status: '답변완료', profile: '/images/profile.png'},
-        { author: '사용자2', date: '2023-07-25', question: '주차장은 어디에 있나요?', status: '답변완료', profile: '/images/profile.png'}
-      ];
-    
-      const mockMyQuestions = [
-        { location: '서울시 홍대구', date: '2023-07-26', question: '어린이 놀이터는 어디에 있나요?', status: '답변완료' },
-        { location: '서울시 강남구', date: '2023-07-27', question: '주차장은 어디에 있나요?', status: '답변완료' },
-        { location: '서울시 마포구', date: '2023-07-28', question: '병원은 어디에 있나요?', status: '답변완료' },
-        { location: '서울시 서대문구', date: '2023-07-29', question: '식당은 어디에 있나요?', status: '답변완료' },
-        { location: '서울시 동작구', date: '2023-07-30', question: '공원은 어디에 있나요?', status: '답변완료' },
-        { location: '서울시 성북구', date: '2023-07-31', question: '지하철역은 어디에 있나요?', status: '답변완료' },
-        { location: '서울시 은평구', date: '2023-08-01', question: '도서관은 어디에 있나요?', status: '답변완료' },
-      ];
-    
-      const mockMyAnswers = [
-        { location: '서울시 홍대구', date: '2023-07-26', question: '어린이 놀이터는 어디에 있나요?', status: '답변완료' },
-        { location: '서울시 강남구', date: '2023-07-27', question: '주차장은 어디에 있나요?', status: '답변완료' },
-        { location: '서울시 마포구', date: '2023-07-28', question: '병원은 어디에 있나요?', status: '답변완료' },
-        { location: '서울시 서대문구', date: '2023-07-29', question: '식당은 어디에 있나요?', status: '답변완료' },
-        { location: '서울시 동작구', date: '2023-07-30', question: '공원은 어디에 있나요?', status: '답변완료' },
-        { location: '서울시 성북구', date: '2023-07-31', question: '지하철역은 어디에 있나요?', status: '답변완료' },
-        { location: '서울시 은평구', date: '2023-08-01', question: '도서관은 어디에 있나요?', status: '답변완료' },
-      ];
 
-      const [questions, setQuestions] = useState(mockQuestions);
-      const [myQuestions, setMyQuestions] = useState(mockMyQuestions);
-      const [myAnswers, setMyAnswers] = useState(mockMyAnswers);
+    //주민 궁금증 리스트 패치
+    useEffect(() => {
+        const fetchQuestions = async () => {
+          try {
+            const accessToken = localStorage.getItem("access"); 
+            const response = await axios.get('https://wellcheers.p-e.kr/qna/question/', {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            });
+            setQuestions(response.data);
+          } catch (error) {
+            setError(error);
+          }
+        };
+    
+        fetchQuestions();
+      }, []);
+
+      useEffect(() => {
+        const fetchMyQuestions = async () => {
+          try {
+            const accessToken = localStorage.getItem("access");
+            const response = await axios.get('https://wellcheers.p-e.kr/qna/myquestion/', {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            });
+            setMyQuestions(response.data);
+          } catch (error) {
+            setError(error);
+          }
+        };
+    
+        fetchMyQuestions();
+      }, []);
+
+      useEffect(() => {
+        const fetchMyAnswers = async () => {
+          try {
+            const accessToken = accessToken = localStorage.getItem("access");
+            const response = await axios.get('https://wellcheers.p-e.kr/qna/myanswer/', {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            });
+            setMyAnswers(response.data);
+          } catch (error) {
+            setError(error);
+          }
+        };
+    
+        fetchMyAnswers();
+      }, []);
 
     const handleCitySelect = (city) => {
         setSelectedCity(city);
@@ -72,11 +125,16 @@ export const Mainwonder = () => {
     const handleDistrictSelect = (district) => {
         setSelectedDistrict(district);
         setShowDistrictDropdown(false);
-    };
 
-    const handleSearchClick = () => {
-        if (selectedCity && selectedDistrict) {
-            navigate('/wonderwrite', { state: { city: selectedCity, district: selectedDistrict} });
+        if (selectedCity && district) {
+            const selectedCityCode = districts.find(d => d.name === district)?.city_code;
+            if (district === '전체보기') {
+                navigate('/wonderwrite', { state: { city_codes: [selectedCityCode] } });
+            } else {
+                console.log('Selected district:', district);
+                console.log('Selected city_code:', selectedCityCode); // 선택된 district와 city_code 확인
+                navigate('/wonderwrite', { state: { city: selectedCity, district: district } });
+            } 
         }
     };
   
@@ -87,6 +145,13 @@ export const Mainwonder = () => {
     const handleQuestionClick = (question) => {
         navigate('/question', { state: { question } });
     };
+
+    const handleSearchClick = () => {
+        if (selectedCity && selectedDistrict) {
+            navigate('/wonderwrite', { state: { city: selectedCity, district: selectedDistrict} });
+        }
+    };
+
   return (
     <Container>
     <MaintitleWrapper>
@@ -109,39 +174,43 @@ export const Mainwonder = () => {
             <Bigbutton onClick={handleSearchClick()}>
                 <div>궁금한 지역을 선택하고, 동네 주민들에게 궁금한 점을 물어보세요!</div>
                 <SearchWrapper>
+
                 <DropdownWrapper>
-                <DropdownContainer>
-                    <DropdownButton onClick={() => setShowCityDropdown(!showCityDropdown)}>
-                        {selectedCity}
-                    </DropdownButton>
-                    {showCityDropdown && (
-                        <DropdownMenu>
-                            {cities.map((city, index) => (
-                                <DropdownItem key={index} onClick={() => handleCitySelect(city)}>
-                                    {city}
-                                </DropdownItem>
-                            ))}
-                        </DropdownMenu>
-                    )}
-                </DropdownContainer>
-                <DropdownContainer>
-                    <DropdownButton
-                        onClick={() => setShowDistrictDropdown(!showDistrictDropdown)}
-                        disabled={!selectedCity}
-                    >
-                        {selectedDistrict}
-                    </DropdownButton>
-                    {showDistrictDropdown && (
-                        <DropdownMenu>
-                            {districts.map((district, index) =>  (
-                                <DropdownItem key={index}  onClick={() => handleDistrictSelect(district)}>
-                                    {district}
-                                </DropdownItem>
-                            ))}
-                        </DropdownMenu>
-                    )}
-                </DropdownContainer>
+                    <DropdownContainer>
+                        <DropdownButton onClick={() => setShowCityDropdown(!showCityDropdown)}>
+                            {selectedCity || '시'}
+                        </DropdownButton>
+                        {showCityDropdown && (
+                            <DropdownMenu>
+                                {cities.map((city, index) => (
+                                    <DropdownItem key={index} onClick={() => handleCitySelect(city)}>
+                                        {city}
+                                    </DropdownItem>
+                                ))}
+                            </DropdownMenu>
+                        )}
+                    </DropdownContainer>
+                    <DropdownContainer>
+                        <DropdownButton
+                            onClick={() => setShowDistrictDropdown(!showDistrictDropdown)}
+                            disabled={!selectedCity}
+                        >
+                            {selectedDistrict || '구'}
+                        </DropdownButton>
+                        {showDistrictDropdown && (
+                            <DropdownMenu>
+                                {districts.map((district, index) => (
+                                    <DropdownItem key={index} onClick={() => handleDistrictSelect(district.name)}>
+                                        {district.name}
+                                    </DropdownItem>
+                                ))}
+                            </DropdownMenu>
+                        )}
+                    </DropdownContainer>
                 </DropdownWrapper>
+
+
+                
                     <SearchIcon src='/images/dotbogi.png' alt='흰색 돋보기' />
                 </SearchWrapper>
             </Bigbutton>
@@ -158,24 +227,37 @@ export const Mainwonder = () => {
                 <BlueBox>
                     <img src="/images/megaphone.png" alt="Megaphone" />
                     <RequestTitle>답변하기</RequestTitle>
-                    <Content>윤경님의 지역에 대한 질문들에 답해보세요!</Content>
+                    <Content>회원님의 지역에 대한 질문들에 답해보세요!</Content>
                 </BlueBox>
                 
                 <RequestWrapper>
-                    <Answerpartitle>주민들의 궁금증</Answerpartitle>
-                    {questions.map((q, index) => (
-                        <Cardwrapper>
-                        <RequestBox key={index}>
-                            <Oneline>
-                                <Profile src={q.profile} /><Name>{q.author}</Name><Date>{q.date}</Date>
-                            </Oneline>
-                        <RequestContent><div>{q.question}</div></RequestContent>
-                        <Doanswer onClick={() => handleAnswerClick(q)}><Lineimg src='/images/worm.png' /><Doanswertext><div>답변하기</div></Doanswertext></Doanswer>
-                        </RequestBox>
-                        <State><StateImg src='/images/loading.png'></StateImg><div>{q.status}</div></State>
-                        </Cardwrapper>
-                    ))}
-                </RequestWrapper>
+      <Answerpartitle>주민들의 궁금증</Answerpartitle>
+      {questions.map((q, index) => (
+        <Cardwrapper key={index}>
+          <RequestBox>
+            <Oneline>
+              <Profile src={q.profile || '/images/profile.png'} alt="Profile" />
+              <Name>{q.author || 'Unknown User'}</Name>
+              <Date>{q.date || 'Unknown Date'}</Date>
+            </Oneline>
+            <RequestContent>
+              <div>{q.title}</div>
+              <div>{q.content}</div>
+            </RequestContent>
+            <Doanswer onClick={() => handleAnswerClick(q)}>
+              <Lineimg src='/images/worm.png' alt="Answer" />
+              <Doanswertext>
+                <div>답변하기</div>
+              </Doanswertext>
+            </Doanswer>
+          </RequestBox>
+          <State>
+            <StateImg src='/images/loading.png' alt="Status" />
+            <div>{q.finish ? '답변완료' : '미답변'}</div>
+          </State>
+        </Cardwrapper>
+      ))}
+    </RequestWrapper>
                     </Wrapper>
                     </Section>
         </AnswerWrapper>
@@ -188,46 +270,48 @@ export const Mainwonder = () => {
         <Otherwrapper>
         <Boxbutton>나의 질문</Boxbutton>
         <Boxcontainer>
-          <QuestionList>
+        <QuestionList>
             {myQuestions.slice(0, 6).map((q, index) => (
-              <QuestionItem onClick={() => handleQuestionClick(q)} key={index}>
+            <QuestionItem onClick={() => handleQuestionClick(q)} key={index}>
                 <LeftContent>
-                    <Loda>
+                <Loda>
                     <Name>{q.location}</Name>
                     <Date>{q.date}</Date>
-                    </Loda>
-                  <div>{q.question}</div>
+                </Loda>
+                <div>{q.title}</div>
+                <div>{q.content}</div>
                 </LeftContent>
                 <RightContent>
-                  <StateImg src='/images/loading.png' alt="status icon" />
-                  <div>{q.status}</div>
+                <StateImg src='/images/loading.png' alt="status icon" />
+                <div>{q.finish ? '답변완료' : '미답변'}</div>
                 </RightContent>
-              </QuestionItem>
+            </QuestionItem>
             ))}
-          </QuestionList>
+        </QuestionList>
         </Boxcontainer>
 
         </Otherwrapper>
         <Otherwrapper>
         <Boxbutton>나의 답변</Boxbutton>
         <Boxcontainer>
-          <QuestionList>
+        <QuestionList>
             {myAnswers.slice(0, 6).map((q, index) => (
-              <QuestionItem onClick={() => handleAnswerClick(q)} key={index}>
+            <QuestionItem onClick={() => handleAnswerClick(q)} key={index}>
                 <LeftContent>
-                    <Loda>
+                <Loda>
                     <Name>{q.location}</Name>
                     <Date>{q.date}</Date>
-                    </Loda>
-                  <div>{q.question}</div>
+                </Loda>
+                <div>{q.title}</div>
+                <div>{q.content}</div>
                 </LeftContent>
                 <RightContent>
-                  <StateImg src='/images/loading.png' alt="status icon" />
-                  <div>{q.status}</div>
+                <StateImg src='/images/loading.png' alt="status icon" />
+                <div>{q.finish ? '답변완료' : '미답변'}</div>
                 </RightContent>
-              </QuestionItem>
+            </QuestionItem>
             ))}
-          </QuestionList>
+        </QuestionList>
         </Boxcontainer>
         </Otherwrapper>
       </Boxwrapper>
@@ -252,7 +336,7 @@ const Boxwrapper = styled.section`
   display: flex;
   justify-content: center;
   width: 100%;
-  gap: 15%;
+  gap: 5%;
   margin-left: 6%;
   margin-top: 7%;
 `;
@@ -260,8 +344,10 @@ const Boxwrapper = styled.section`
 const Boxcontainer = styled.section`
   display: flex;
   flex-direction: column;
-  width: 130%;
-  max-height: 500px;
+  justify-content: center;
+  gap: 1%;
+  width: 500px;
+  height: 450px;
   overflow-y: auto;
   background: rgba(255, 255, 255, 1);
   border: 1px solid rgba(187, 184, 184, 1);
@@ -614,7 +700,8 @@ const Container = styled.div`
 `
 
 const MaintitleWrapper = styled.div`
-    width: 100vw;
+    //width: 100vw;
+    width: 125%;
     display: flex;
     flex-direction: column;
     height: 20%;

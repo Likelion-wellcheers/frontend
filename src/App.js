@@ -26,6 +26,8 @@ import { Reviewing } from './pages/searchHome/Reviewing';
 import KakaoLogin from './pages/login/KakaoLogin';
 import Test from './pages/login/Test';
 import { ReviewCenter } from './pages/searchHome/ReviewCenter';
+import { Logincomplete } from './pages/login/Logincomplete';
+import { AddMyInfo } from './pages/login/AddMyInfo';
 
 
 
@@ -36,6 +38,8 @@ const App = () => {
                   <Route index element={<Home />} />
                   <Route path="login" element={<Login />} />
                   <Route path="kakaologin" element={<KakaoLogin />} />
+                  <Route path="addmyinfo" element={<AddMyInfo />} />
+                  <Route path="logincomplete" element={<Logincomplete />} />
                   <Route path="test" element={<Test />} />
                   <Route path="mypage" element={<Mypage />} />
                   <Route path="editinfo" element={<Editinfo />} />

@@ -7,7 +7,7 @@ const kakaoURL = `https://kauth.kakao.com/oauth/authorize?client_id=${Rest_API_k
 
 export const Login = () => {
   const handleLogin = () => {
-    window.location.href = kakaoURL;
+    window.location.href = kakaoURL; 
   };
 
   return (
@@ -59,7 +59,7 @@ const BtnWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 10px;
-  margin-bottom: 15%;
+  margin-bottom: 18%;
 `;
 
 const KakaoButton = styled.button`

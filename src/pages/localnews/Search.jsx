@@ -37,14 +37,14 @@ export const Search = () => {
             })
                 .then((response) => response.json())
                 .then((data) => {
-                    const combinedData = data.gugoon.map((gugoon, index) => ({
-                        name: gugoon,
-                        city_code: data.city_codes[index],
-                    }));
-                    setDistricts(combinedData);
-                    if (data.gugoon.length === 0) {
-                        console.log('City codes:', data.city_codes); // city_codes 확인
-                        navigate('/Localinfo', { state: { city_codes: data.city_codes } });
+                    if (data.gugoon.length === 0 || (data.gugoon.length === 1 && data.gugoon[0] === '')) {
+                        setDistricts([{ name: '전체보기', city_code: data.city_codes[0] }]);
+                    } else {
+                        const combinedData = data.gugoon.map((gugoon, index) => ({
+                            name: gugoon,
+                            city_code: data.city_codes[index],
+                        }));
+                        setDistricts(combinedData);
                     }
                     setSelectedDistrict('');
                 })
@@ -65,9 +65,13 @@ export const Search = () => {
 
         if (selectedCity && district) {
             const selectedCityCode = districts.find(d => d.name === district)?.city_code;
-            console.log('Selected district:', district);
-            console.log('Selected city_code:', selectedCityCode); // 선택된 district와 city_code 확인
-            navigate('/Localinfo', { state: { city: selectedCity, district: district, city_codes: [selectedCityCode] } });
+            if (district === '전체보기') {
+                navigate('/Localinfo', { state: { city_codes: [selectedCityCode] } });
+            } else {
+                console.log('Selected district:', district);
+                console.log('Selected city_code:', selectedCityCode); // 선택된 district와 city_code 확인
+                navigate('/Localinfo', { state: { city: selectedCity, district: district, city_codes: [selectedCityCode] } });
+            }
         }
     };
 

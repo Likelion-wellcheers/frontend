@@ -48,7 +48,7 @@ const Bgimage = styled.div`
   top: 0;
   left: 0;
   width: 100%;
-  height: 1000px; /* 필요에 따라 조정 */
+  height: 862px; /* 필요에 따라 조정 */
   background: rgba(255, 255, 255, 1);
   box-shadow: 4px 4px 4px 0px rgba(0, 0, 0, 0.12);
   border-radius: 0px 0px 24px 24px;

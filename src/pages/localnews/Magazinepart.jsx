@@ -5,9 +5,8 @@ import styled from 'styled-components';
 export const Magazinepart = ({ city_codes }) => {
   const [cards, setCards] = useState([]);
   const navigate = useNavigate();
-
+/*
   useEffect(() => {
-    
     if (city_codes) {
       fetch(`https://wellcheers.p-e.kr/issue/${city_codes}/getmagazine/`, {
         method: 'POST',
@@ -17,14 +16,39 @@ export const Magazinepart = ({ city_codes }) => {
       })
         .then((response) => response.json())
         .then((data) => {
-          setCards(data);
+          if (Array.isArray(data)) {
+            setCards(data);
+          } else {
+            setCards([data]); // 데이터를 배열로 변환
+          }
         })
         .catch((error) => {
           console.error('Error fetching magazine data:', error);
         });
     }
   }, [city_codes]);
+*/
 
+useEffect(() => {
+  if (city_codes) {
+    fetch(`https://wellcheers.p-e.kr/issue/${city_codes}/getmagazine/`, {
+      method: 'GET'
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setCards(data);
+        } else {
+          setCards([data]); // 데이터를 배열로 변환
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching magazine data:', error);
+      });
+  }
+}, [city_codes]);
+
+  if(cards){
   return (
     <CardWrapper>
       {cards.map((card, index) => (
@@ -32,13 +56,14 @@ export const Magazinepart = ({ city_codes }) => {
           <CardImage src={card.image ? card.image : '/images/default.png'} alt={card.content} />
           <CardContent>
             <CardTitle>{card.content}</CardTitle>
-            <DetailButton onClick={() => navigate('/eachmagazine')}>상세보기</DetailButton>
+            <DetailButton onClick={() => navigate('/eachmagazine', { state: { id: card.id, region_id: card.region_id } })}>상세보기</DetailButton>
           </CardContent>
         </Card>
       ))}
     </CardWrapper>
   );
 };
+}
 
 const CardWrapper = styled.div`
   display: flex;
