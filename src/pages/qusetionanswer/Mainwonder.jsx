@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
@@ -26,6 +27,12 @@ export const Mainwonder = () => {
     const [showDistrictDropdown, setShowDistrictDropdown] = useState(false);
     const navigate = useNavigate();
 
+    const [questions, setQuestions] = useState([]);
+    const [myQuestions, setMyQuestions] = useState([]);
+    const [myAnswers, setMyAnswers] = useState([]);
+    const [error, setError] = useState(null);
+
+    //도시에 따른 시, 구 패치
     useEffect(() => {
         if (selectedCity) {
             fetch('https://wellcheers.p-e.kr/account/region/', {
@@ -54,6 +61,62 @@ export const Mainwonder = () => {
         }
     }, [selectedCity, navigate]);
 
+
+    //주민 궁금증 리스트 패치
+    useEffect(() => {
+        const fetchQuestions = async () => {
+          try {
+            const accessToken = localStorage.getItem("access"); 
+            const response = await axios.get('https://wellcheers.p-e.kr/qna/question/', {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            });
+            setQuestions(response.data);
+          } catch (error) {
+            setError(error);
+          }
+        };
+    
+        fetchQuestions();
+      }, []);
+
+      useEffect(() => {
+        const fetchMyQuestions = async () => {
+          try {
+            const accessToken = localStorage.getItem("access");
+            const response = await axios.get('https://wellcheers.p-e.kr/qna/myquestion/', {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            });
+            setMyQuestions(response.data);
+          } catch (error) {
+            setError(error);
+          }
+        };
+    
+        fetchMyQuestions();
+      }, []);
+
+      useEffect(() => {
+        const fetchMyAnswers = async () => {
+          try {
+            const accessToken = accessToken = localStorage.getItem("access");
+            const response = await axios.get('https://wellcheers.p-e.kr/qna/myanswer/', {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            });
+            setMyAnswers(response.data);
+          } catch (error) {
+            setError(error);
+          }
+        };
+    
+        fetchMyAnswers();
+      }, []);
+
     const handleCitySelect = (city) => {
         setSelectedCity(city);
         setShowCityDropdown(false);
@@ -70,43 +133,10 @@ export const Mainwonder = () => {
             } else {
                 console.log('Selected district:', district);
                 console.log('Selected city_code:', selectedCityCode); // 선택된 district와 city_code 확인
-                navigate('/wonderwrite', { state: { city_codes: [selectedCityCode] } });
-            }
+                navigate('/wonderwrite', { state: { city: selectedCity, district: district } });
+            } 
         }
     };
-
-    const mockQuestions = [
-        { author: '사용자1', date: '2023-07-26', question: '혹석은 몇 시에 끝나나요?', status: '미답변', profile: '/images/profile.png'},
-        { author: '사용자2', date: '2023-07-25', question: '주차장은 어디에 있나요?', status: '답변완료', profile: '/images/profile.png'},
-        { author: '사용자2', date: '2023-07-25', question: '주차장은 어디에 있나요?', status: '답변완료', profile: '/images/profile.png'},
-        { author: '사용자2', date: '2023-07-25', question: '주차장은 어디에 있나요?', status: '답변완료', profile: '/images/profile.png'},
-        { author: '사용자2', date: '2023-07-25', question: '주차장은 어디에 있나요?', status: '답변완료', profile: '/images/profile.png'},
-        { author: '사용자2', date: '2023-07-25', question: '주차장은 어디에 있나요?', status: '답변완료', profile: '/images/profile.png'}
-      ];
-    
-      const mockMyQuestions = [
-        { location: '서울시 홍대구', date: '2023-07-26', question: '어린이 놀이터는 어디에 있나요?', status: '답변완료' },
-        { location: '서울시 강남구', date: '2023-07-27', question: '주차장은 어디에 있나요?', status: '답변완료' },
-        { location: '서울시 마포구', date: '2023-07-28', question: '병원은 어디에 있나요?', status: '답변완료' },
-        { location: '서울시 서대문구', date: '2023-07-29', question: '식당은 어디에 있나요?', status: '답변완료' },
-        { location: '서울시 동작구', date: '2023-07-30', question: '공원은 어디에 있나요?', status: '답변완료' },
-        { location: '서울시 성북구', date: '2023-07-31', question: '지하철역은 어디에 있나요?', status: '답변완료' },
-        { location: '서울시 은평구', date: '2023-08-01', question: '도서관은 어디에 있나요?', status: '답변완료' },
-      ];
-    
-      const mockMyAnswers = [
-        { location: '서울시 홍대구', date: '2023-07-26', question: '어린이 놀이터는 어디에 있나요?', status: '답변완료' },
-        { location: '서울시 강남구', date: '2023-07-27', question: '주차장은 어디에 있나요?', status: '답변완료' },
-        { location: '서울시 마포구', date: '2023-07-28', question: '병원은 어디에 있나요?', status: '답변완료' },
-        { location: '서울시 서대문구', date: '2023-07-29', question: '식당은 어디에 있나요?', status: '답변완료' },
-        { location: '서울시 동작구', date: '2023-07-30', question: '공원은 어디에 있나요?', status: '답변완료' },
-        { location: '서울시 성북구', date: '2023-07-31', question: '지하철역은 어디에 있나요?', status: '답변완료' },
-        { location: '서울시 은평구', date: '2023-08-01', question: '도서관은 어디에 있나요?', status: '답변완료' },
-      ];
-
-      const [questions, setQuestions] = useState(mockQuestions);
-      const [myQuestions, setMyQuestions] = useState(mockMyQuestions);
-      const [myAnswers, setMyAnswers] = useState(mockMyAnswers);
   
     const handleAnswerClick = (question) => {
         navigate('/answer', { state: { question } });
@@ -197,24 +227,37 @@ export const Mainwonder = () => {
                 <BlueBox>
                     <img src="/images/megaphone.png" alt="Megaphone" />
                     <RequestTitle>답변하기</RequestTitle>
-                    <Content>윤경님의 지역에 대한 질문들에 답해보세요!</Content>
+                    <Content>회원님의 지역에 대한 질문들에 답해보세요!</Content>
                 </BlueBox>
                 
                 <RequestWrapper>
-                    <Answerpartitle>주민들의 궁금증</Answerpartitle>
-                    {questions.map((q, index) => (
-                        <Cardwrapper>
-                        <RequestBox key={index}>
-                            <Oneline>
-                                <Profile src={q.profile} /><Name>{q.author}</Name><Date>{q.date}</Date>
-                            </Oneline>
-                        <RequestContent><div>{q.question}</div></RequestContent>
-                        <Doanswer onClick={() => handleAnswerClick(q)}><Lineimg src='/images/worm.png' /><Doanswertext><div>답변하기</div></Doanswertext></Doanswer>
-                        </RequestBox>
-                        <State><StateImg src='/images/loading.png'></StateImg><div>{q.status}</div></State>
-                        </Cardwrapper>
-                    ))}
-                </RequestWrapper>
+      <Answerpartitle>주민들의 궁금증</Answerpartitle>
+      {questions.map((q, index) => (
+        <Cardwrapper key={index}>
+          <RequestBox>
+            <Oneline>
+              <Profile src={q.profile || '/images/profile.png'} alt="Profile" />
+              <Name>{q.author || 'Unknown User'}</Name>
+              <Date>{q.date || 'Unknown Date'}</Date>
+            </Oneline>
+            <RequestContent>
+              <div>{q.title}</div>
+              <div>{q.content}</div>
+            </RequestContent>
+            <Doanswer onClick={() => handleAnswerClick(q)}>
+              <Lineimg src='/images/worm.png' alt="Answer" />
+              <Doanswertext>
+                <div>답변하기</div>
+              </Doanswertext>
+            </Doanswer>
+          </RequestBox>
+          <State>
+            <StateImg src='/images/loading.png' alt="Status" />
+            <div>{q.finish ? '답변완료' : '미답변'}</div>
+          </State>
+        </Cardwrapper>
+      ))}
+    </RequestWrapper>
                     </Wrapper>
                     </Section>
         </AnswerWrapper>
@@ -227,46 +270,48 @@ export const Mainwonder = () => {
         <Otherwrapper>
         <Boxbutton>나의 질문</Boxbutton>
         <Boxcontainer>
-          <QuestionList>
+        <QuestionList>
             {myQuestions.slice(0, 6).map((q, index) => (
-              <QuestionItem onClick={() => handleQuestionClick(q)} key={index}>
+            <QuestionItem onClick={() => handleQuestionClick(q)} key={index}>
                 <LeftContent>
-                    <Loda>
+                <Loda>
                     <Name>{q.location}</Name>
                     <Date>{q.date}</Date>
-                    </Loda>
-                  <div>{q.question}</div>
+                </Loda>
+                <div>{q.title}</div>
+                <div>{q.content}</div>
                 </LeftContent>
                 <RightContent>
-                  <StateImg src='/images/loading.png' alt="status icon" />
-                  <div>{q.status}</div>
+                <StateImg src='/images/loading.png' alt="status icon" />
+                <div>{q.finish ? '답변완료' : '미답변'}</div>
                 </RightContent>
-              </QuestionItem>
+            </QuestionItem>
             ))}
-          </QuestionList>
+        </QuestionList>
         </Boxcontainer>
 
         </Otherwrapper>
         <Otherwrapper>
         <Boxbutton>나의 답변</Boxbutton>
         <Boxcontainer>
-          <QuestionList>
+        <QuestionList>
             {myAnswers.slice(0, 6).map((q, index) => (
-              <QuestionItem onClick={() => handleAnswerClick(q)} key={index}>
+            <QuestionItem onClick={() => handleAnswerClick(q)} key={index}>
                 <LeftContent>
-                    <Loda>
+                <Loda>
                     <Name>{q.location}</Name>
                     <Date>{q.date}</Date>
-                    </Loda>
-                  <div>{q.question}</div>
+                </Loda>
+                <div>{q.title}</div>
+                <div>{q.content}</div>
                 </LeftContent>
                 <RightContent>
-                  <StateImg src='/images/loading.png' alt="status icon" />
-                  <div>{q.status}</div>
+                <StateImg src='/images/loading.png' alt="status icon" />
+                <div>{q.finish ? '답변완료' : '미답변'}</div>
                 </RightContent>
-              </QuestionItem>
+            </QuestionItem>
             ))}
-          </QuestionList>
+        </QuestionList>
         </Boxcontainer>
         </Otherwrapper>
       </Boxwrapper>
@@ -291,7 +336,7 @@ const Boxwrapper = styled.section`
   display: flex;
   justify-content: center;
   width: 100%;
-  gap: 15%;
+  gap: 5%;
   margin-left: 6%;
   margin-top: 7%;
 `;
@@ -299,8 +344,10 @@ const Boxwrapper = styled.section`
 const Boxcontainer = styled.section`
   display: flex;
   flex-direction: column;
-  width: 130%;
-  max-height: 500px;
+  justify-content: center;
+  gap: 1%;
+  width: 500px;
+  height: 450px;
   overflow-y: auto;
   background: rgba(255, 255, 255, 1);
   border: 1px solid rgba(187, 184, 184, 1);
@@ -653,7 +700,8 @@ const Container = styled.div`
 `
 
 const MaintitleWrapper = styled.div`
-    width: 100vw;
+    //width: 100vw;
+    width: 125%;
     display: flex;
     flex-direction: column;
     height: 20%;

@@ -255,14 +255,15 @@ const FloatingButton = styled.button`
     transform: translate(-50%, -50%); 
 ;`
 
+
 const Button1 = styled(FloatingButton)`
     top: -150%;  
-    left: 65%; 
+    left: 80%; 
 ;`
 
 const Button2 = styled(FloatingButton)`
     top: -100%; 
-    left: 84%;  
+    left: 104%;  
 ;`
 
 const FloatingIcon = styled.img`
@@ -275,14 +276,13 @@ const FloatingIcon = styled.img`
 
 const Icon1 = styled(FloatingIcon)`
   top: -130%; 
-  left: 84%; 
+  left: 104%; 
 ;
 `
 const Icon2 = styled(FloatingIcon)`
   top: -180%;  
-  left: 65%;  
+  left: 80%;  
 ;`
-
 
 const TitleWrapper = styled.div`
     display: flex;

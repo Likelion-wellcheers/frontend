@@ -1,50 +1,115 @@
+import axios from 'axios';
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 export const Editinfo = () => {
   const [nickname, setNickname] = useState('');
+  const [districts, setDistricts] = useState([]);
   const [selectedCity, setSelectedCity] = useState('');
   const [selectedDistrict, setSelectedDistrict] = useState('');
-  const [districts, setDistricts] = useState([]);
+  const [showCityDropdown, setShowCityDropdown] = useState(false);
+  const [showDistrictDropdown, setShowDistrictDropdown] = useState(false);
+  const [userInfo, setUserInfo] = useState(null);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
-  const cityDistricts = {
-    '서울특별시': ['강남구', '강동구', '강북구', '강서구'],
-    '부산광역시': ['해운대구', '수영구', '연제구'],
-    '전라남도 여수시': ['여서동', '문수동', '미평동'],
-    '제주특별자치도 서귀포시': ['서귀동', '송산동', '정방동']
-  };
+  const cities = [
+    '서울특별시', '부산광역시', '대구광역시', '인천광역시', '광주광역시', '대전광역시', 
+    '울산광역시', '수원시', '성남시', '의정부시', '안양시', '부천시', '광명시', 
+    '평택시', '동두천시', '안산시', '고양시', '과천시', '구리시', '남양주시', 
+    '오산시', '시흥시', '군포시', '의왕시', '하남시', '용인시', '파주시', 
+    '이천시', '안성시', '김포시', '화성시', '광주시', '양주시', '포천시', 
+    '여주시', '경기도', '춘천시', '원주시', '강릉시', '동해시', '태백', 
+    '속초시', '삼척시', '강원도', '청주시', '충주시', '제천시', '충청북도', 
+    '천안시', '공주시', '보령시', '아산시', '서산시', '논산시', '계룡시', 
+    '당진시', '충청남도', '전주시', '군산시', '익산시', '정읍시', '남원시', 
+    '김제시', '전라북도', '목포시', '여수시', '순천시', '나주시', '광양시', 
+    '전라남도', '포항시', '경주시', '김천시', '안동시', '구미시', '영주시', 
+    '영천시', '상주시', '문경시', '경산시', '경상북도', '창원시', '진주시', 
+    '통영시', '사천시', '김해시', '밀양시', '거제시', '양산시', '경상남도', 
+    '제주시', '서귀포시'
+  ];
 
   useEffect(() => {
-    // Simulate fetching user data from backend
     const fetchUserData = async () => {
-      const userData = {
-        nickname: '야채윤경', 
-        city: '서울특별시',  
-        district: '강남구' 
-      };
-      setNickname(userData.nickname);
-      setSelectedCity(userData.city);
-      setSelectedDistrict(userData.district);
-      setDistricts(cityDistricts[userData.city] || []);
+      try {
+        const accessToken = localStorage.getItem("access");
+        const response = await axios.get('https://wellcheers.p-e.kr/account/mypage/', {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        setUserInfo(response.data);
+        setNickname(response.data.nickname);
+        setSelectedCity(response.data.city);
+        setSelectedDistrict(response.data.gugoon);
+      } catch (error) {
+        setError(error);
+      }
     };
+
     fetchUserData();
   }, []);
 
+  useEffect(() => {
+    if (selectedCity) {
+      fetch('https://wellcheers.p-e.kr/account/region/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ city: selectedCity }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.gugoon.length === 0 || (data.gugoon.length === 1 && data.gugoon[0] === '')) {
+            setDistricts([{ name: '전체보기', city_code: data.city_codes[0] }]);
+          } else {
+            const combinedData = data.gugoon.map((gugoon, index) => ({
+              name: gugoon,
+              city_code: data.city_codes[index],
+            }));
+            setDistricts(combinedData);
+          }
+          setSelectedDistrict('');
+        })
+        .catch((error) => {
+          console.error('Error fetching districts:', error);
+        });
+    }
+  }, [selectedCity]);
+
   const handleCitySelect = (city) => {
     setSelectedCity(city);
-    setDistricts(cityDistricts[city] || []);
-    setSelectedDistrict('');
+    setShowCityDropdown(false);
   };
 
   const handleDistrictSelect = (district) => {
-    setSelectedDistrict(district);
+    setSelectedDistrict(district.name);
+    setShowDistrictDropdown(false);
   };
 
-  const handleSave = () => {
-    const updatedData = { nickname, city: selectedCity, district: selectedDistrict };
-    console.log('Saved data:', updatedData);
-    // Here you would send a request to your backend to save the updated data
+  const handleSave = async () => {
+    const updatedData = { nickname, city: selectedCity, gugoon: selectedDistrict };
+    try {
+      const accessToken = localStorage.getItem("access");
+      await axios.put('https://wellcheers.p-e.kr/account/mypage/', updatedData, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      alert('내 정보가 성공적으로 수정되었습니다');
+      navigate(-1); // 이전 페이지로 이동
+    } catch (error) {
+      console.error('Error saving user info:', error);
+      alert('정보 저장 중 오류가 발생했습니다.');
+    }
   };
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
 
   return (
     <Container>
@@ -60,30 +125,35 @@ export const Editinfo = () => {
         <Label>현재 거주지</Label>
         <DropdownWrapper>
           <DropdownContainer>
-            <DropdownButton>
+            <DropdownButton onClick={() => setShowCityDropdown(!showCityDropdown)}>
               {selectedCity || '시'}
             </DropdownButton>
-            <DropdownMenu>
-              {Object.keys(cityDistricts).map((city, index) => (
-                <DropdownItem key={index} onClick={() => handleCitySelect(city)}>
-                  {city}
-                </DropdownItem>
-              ))}
-            </DropdownMenu>
+            {showCityDropdown && (
+              <DropdownMenu>
+                {cities.map((city, index) => (
+                  <DropdownItem key={index} onClick={() => handleCitySelect(city)}>
+                    {city}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            )}
           </DropdownContainer>
           <DropdownContainer>
             <DropdownButton
+              onClick={() => setShowDistrictDropdown(!showDistrictDropdown)}
               disabled={!selectedCity}
             >
               {selectedDistrict || '구'}
             </DropdownButton>
-            <DropdownMenu>
-              {districts.map((district, index) => (
-                <DropdownItem key={index} onClick={() => handleDistrictSelect(district)}>
-                  {district}
-                </DropdownItem>
-              ))}
-            </DropdownMenu>
+            {showDistrictDropdown && (
+              <DropdownMenu>
+                {districts.map((district, index) => (
+                  <DropdownItem key={index} onClick={() => handleDistrictSelect(district)}>
+                    {district.name}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            )}
           </DropdownContainer>
         </DropdownWrapper>
         <SaveButton onClick={handleSave}>저장</SaveButton>
@@ -92,11 +162,14 @@ export const Editinfo = () => {
   );
 };
 
+
 const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: #f8f6f3;
+  padding-top: 1%;
+  padding-bottom: 5%;
 `;
 
 const Form = styled.div`
@@ -184,7 +257,7 @@ const DropdownMenu = styled.div`
   top: 100%;
   left: 0;
   width: 250px;
-  max-height: 500px;
+  max-height: 180px;
   overflow-y: scroll;
   background: white;
   border: 1px solid rgba(93, 95, 239, 1);

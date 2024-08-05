@@ -1,37 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const baseURL = 'https://wellcheers.p-e.kr'; // 백엔드 URL
-
-const Test = () => {
+const Getuserinfo = () => {
   const [userInfo, setUserInfo] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchUserInfo = async () => {
-      const accessToken = localStorage.getItem('access');
-
-      if (!accessToken) {
-        setError('Access token is missing');
-        return;
-      }
-
       try {
-        const response = await axios({
-          method: 'get',
-          url: `${baseURL}/account/mypage/`,
+        const accessToken = localStorage.getItem("access");
+        const response = await axios.get('https://wellcheers.p-e.kr/account/mypage/', {
           headers: {
-            Authorization: `Bearer ${accessToken}`
-          }
+            Authorization: `Bearer ${accessToken}`,
+          },
         });
-
         setUserInfo(response.data);
       } catch (error) {
-        console.error('유저 정보 가져오기 중 에러 발생', error);
-        setError('Failed to fetch user info');
-        if (error.response) {
-          console.error('Error response:', error.response);
-        }
+        setError(error);
       }
     };
 
@@ -39,24 +24,25 @@ const Test = () => {
   }, []);
 
   if (error) {
-    return <div>{error}</div>;
+    return <div>Error: {error.message}</div>;
   }
 
   if (!userInfo) {
-    return <div>유저 정보 로딩 중...</div>;
+    return <div>Loading...</div>;
   }
 
   return (
     <div>
-      <h1>유저 정보</h1>
-      <p>이름: {userInfo.username}</p>
-      <p>닉네임: {userInfo.nickname}</p>
-      <p>도시: {userInfo.city}</p>
-      <p>구/군: {userInfo.gugoon}</p>
-      <p>지역 ID: {userInfo.region_id}</p>
-      <img src={userInfo.profileimage_url} alt="프로필 이미지" />
+      <h1>User Info</h1>
+      <img src={userInfo.profileimage_url} alt="Profile" />
+      <p><strong>Username:</strong> {userInfo.username}</p>
+      <p><strong>Nickname:</strong> {userInfo.nickname}</p>
+      <p><strong>City:</strong> {userInfo.city}</p>
+      <p><strong>Gugoon:</strong> {userInfo.gugoon}</p>
+      <p><strong>Region:</strong> {userInfo.region_id}</p>
+
     </div>
   );
 };
 
-export default Test;
+export default Getuserinfo;
