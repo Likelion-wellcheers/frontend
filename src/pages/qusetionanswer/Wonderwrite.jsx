@@ -1,31 +1,75 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { useForm } from '../../hooks/useForm';
 
 export const Wonderwrite = () => {
-  //const { city, district } = location.state;
-  const handleCommentSubmit = () => {};
-
   const location = useLocation();
   const navigate = useNavigate();
-  const { question } = location.state || {};
+  const { city, district } = location.state || {};
   const [newTitle, onChangeNewTitle] = useForm("");
   const [newComment, onChangeNewComment] = useForm("");
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
 
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setSelectedImage(file);
+      
+      const objectUrl = URL.createObjectURL(file);
+      setPreviewUrl(objectUrl);
 
-  // 임시 댓글 데이터
-  const [comments, setComments] = useState([
-    { author: '야채윤', date: '2024-07-26', content: '이런이런이런이런이런이런', authorProfilePic: '/images/profile.png' },
-    { author: '김철수', date: '2024-07-27', content: '좋은 질문이에요!', authorProfilePic: '/images/profile.png' },
-  ]);
+      //return () => URL.revokeObjectURL(objectUrl);
+    }
+  };
+
+  const handleUpload = async () => {
+  const formData = new FormData();
+  if(selectedImage) {
+    formData.append('image', selectedImage);
+  }
+  formData.append('city', city);
+  formData.append('gugoon', district);
+  formData.append('title', newTitle);
+  formData.append('content', newComment);
+  
+    const accessToken = localStorage.getItem("access");
+
+    try {
+      const response = await fetch('https://wellcheers.p-e.kr/qna/', { 
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('서버 응답이 없습니다.');
+      }
+
+      const result = await response.json();
+      console.log('업로드 성공:', result);
+      alert('성공적으로 업로드 되었습니다');
+      navigate(-1);
+    } catch (error) {
+      console.error('업로드 실패:', error);
+      alert('업로드에 실패했습니다. 다시 시도해 주세요.');
+    }
+  };
 
   return (
     <Container>
       <MaintitleWrapper>
-        <SubTitle> 지역 Q&A <SubTitle_2><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M8.29289 5.29289C8.68342 4.90237 9.31658 4.90237 9.70711 5.29289L15.7071 11.2929C16.0976 11.6834 16.0976 12.3166 15.7071 12.7071L9.70711 18.7071C9.31658 19.0976 8.68342 19.0976 8.29289 18.7071C7.90237 18.3166 7.90237 17.6834 8.29289 17.2929L13.5858 12L8.29289 6.70711C7.90237 6.31658 7.90237 5.68342 8.29289 5.29289Z" fill="black"/>
-            </svg></SubTitle_2></SubTitle>
+        <SubTitle>
+          지역 Q&A
+          <SubTitle_2>
+            <svg xmlns="" width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path fillRule="evenodd" clipRule="evenodd" d="M8.29289 5.29289C8.68342 4.90237 9.31658 4.90237 9.70711 5.29289L15.7071 11.2929C16.0976 11.6834 16.0976 12.3166 15.7071 12.7071L9.70711 18.7071C9.31658 19.0976 8.68342 19.0976 8.29289 18.7071C7.90237 18.3166 7.90237 17.6834 8.29289 17.2929L13.5858 12L8.29289 6.70711C7.90237 6.31658 7.90237 5.68342 8.29289 5.29289Z" fill="black"/>
+            </svg>
+          </SubTitle_2>
+        </SubTitle>
         <Title>동네 주민들과 궁금한 점을 물어보세요</Title>
       </MaintitleWrapper>
       <Icongroup>
@@ -35,43 +79,43 @@ export const Wonderwrite = () => {
       </Icongroup>
 
       <ContentWrapper>
-          <TitleWrapper>
-                    <Titlemini>제목</Titlemini>
-          </TitleWrapper>
-          <CommentInputContainer>
+        <TitleWrapper>
+          <Titlemini>제목</Titlemini>
+        </TitleWrapper>
+        <CommentInputContainer>
           <TextArea
-              value={newTitle}
-              onChange={onChangeNewTitle}
-              placeholder="댓글을 남겨주세요..."
-            />
-          </CommentInputContainer>
+            value={newTitle}
+            onChange={onChangeNewTitle}
+            placeholder="제목을 입력해 주세요"
+          />
+        </CommentInputContainer>
       </ContentWrapper>
 
       <ContentWrapper>
-          <TitleWrapper>
-                    <Titlemini>내용</Titlemini>
-          </TitleWrapper>
-          <CommentInputContainer>
-              <ContentArea
-                  value={newComment}
-                  onChange={onChangeNewComment}
-                  placeholder="댓글을 남겨주세요..."
-                />
-          </CommentInputContainer>
+        <TitleWrapper>
+          <Titlemini>내용</Titlemini>
+        </TitleWrapper>
+        <CommentInputContainer>
+          <ContentArea
+            value={newComment}
+            onChange={onChangeNewComment}
+            placeholder="동네에 대해 궁금한 점을 물어보세요"
+          />
+        </CommentInputContainer>
       </ContentWrapper>
-      
 
       <Addfile>
         <input
-            type="file"
-            style={{ marginRight: '10px' }}
+          type="file"
+          onChange={handleImageChange}
+          style={{ marginRight: '10px' }}
         />
-              <Registerbutton onClick={handleCommentSubmit}>업로드</Registerbutton>
+        {previewUrl && <img src={previewUrl} alt="Preview" style={{ width: '100px', height: '100px' }} />}
+        <Registerbutton onClick={handleUpload}>업로드</Registerbutton>
       </Addfile>
-
-  </Container>
-  )
-}
+    </Container>
+  );
+};
 
 const Addfile = styled.div`
   border-bottom: 1px black;
