@@ -1,10 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { ThemeColorContext } from '../../context/context';
 import Chart from 'chart.js/auto';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useForm } from '../../hooks/useForm';
-import { fetchCartId } from '../../apis/recommend';
+import { fetchCartId, fetchCartUpdate, fetchCompCost, fetchPlan } from '../../apis/recommend';
 import { useRecoilState } from 'recoil';
 import { curPageRecoil } from '../../recoil/atom';
 
@@ -13,89 +13,43 @@ export const CalCost = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [curPage, setCurPage] = useRecoilState(curPageRecoil);
-    const  { selected_center } = location.state || {}; //선택된 목록
+    const { selected_center, city_code } = location.state || {};
     const dataLabel = ['center1_id', 'center2_id', 'center3_id', 'center4_id', 'center5_id'];
-    const [cart, setCart] = useState({}); // 해당 카트 아이디의 카트
-    // /recommend/mycart/{int:id}로 받아올 객체 예시
-    // 백엔드에게 받아올 내용..
-
-    const tempCart = {
-        "id": 1,
-        "center1": {
-            "id": 1,
-            "created_at": "2024-07-27T10:44:50.870766Z",
-            "name": "김영삼도서관",
-            "address": "광진구 광진로285 610",
-            "time": "오전10시~오후9시",
-            "cost": 3000,
-            "region_id": 4
-        },
-        "center2": {
-            "id": 2,
-            "created_at": "2024-07-28T09:56:32.779974Z",
-            "name": "휘트니스",
-            "address": "구구가가",
-            "time": "",
-            "cost": 5000,
-            "region_id": 2
-        },
-        "center3": {
-            "id": 4,
-            "created_at": "2024-07-28T10:04:21.950407Z",
-            "name": "꽂꽂이공방",
-            "address": "ㅁㄴㅇㅁ",
-            "time": "",
-            "cost": 15000,
-            "region_id": 6
-        },
-        "total_cost": 92000
-    }
-
-    const [selected, setSelected] = useState(tempCart);
-
-    // 수정시 업데이트해서 백에 보내줄 객체 
-    // {
-    //     "center1_id": 1,  # 새로운 Center ID
-    //     "center2_id": 2,  # 새로운 Center ID
-    //     "center3_id": 4   # 새로운 Center ID
-    // }
-    const [updated, setUpdated] = useState();
-
-    const handleDelete = (id) => {
-        // 선택된 시설 삭제 (임시로함)
-        const updatedSelection = { ...selected };
-        Object.keys(updatedSelection).forEach(key => {
-            if (updatedSelection[key].id === id) {
-                delete updatedSelection[key];
-            }
-        });
-
-        // update된 것들 백엔드에 보낼 데이터 가공
-        const updates = {};
-        let index = 1;
-        Object.keys(updatedSelection).forEach(key => {
-            if (key.startsWith('center')) {
-                updates[`center${index}_id`] = updatedSelection[key].id;
-                index++;
-            }
-        });
-
-        setUpdated(updates);
-        /* updates를 백엔드에 보내고, 백엔드로부터 받은 값으로 selected를 다시 set. */
-        
-        // 임시로 해놓음
-        setSelected(updatedSelection);
-    };
-
-    //const [myBudget, setMyBudget] = useState(0); //생활비 비용
+    const [cart, setCart] = useState({}); // 해당 카트 아이디의 카트, 계속해서 수정시킬 것임
+    const [firstLoad, setFirstLoad] = useState(true);
+    const [compare, setCompare] = useState({});
+    const [addPage, setAddPage] = useState(false);
     const [myleisureCost, setMyleisureCost] = useState(0); //생활비 바탕으로 계산한 여가 비용
     const [expectCost, setexpectCost] = useState(0); //예상 여가비용
+    const [inputBudget, onChangeBudget] = useForm(""); // 받아온 예산
+    const [plan_1, setPlan_1] = useForm("");
+    const [plan_2, setPlan_2] = useForm("");
+    const [plan_3, setPlan_3] = useForm("");
+    const [isExtra, setisExtra] = useState(false);
+    const [prepare, setPrepare] = useState();
+    const [myBudget, setMyBudget] = useState();
+    const chartRef = useRef(null); // 차트 인스턴스 저장할 ref
+    
+    const datalabel1 = "나의 적정여가비용";
+    const datalabel2 = "내가 담은 여가비용";
 
-    const [inputBudget, onChangeBudget] = useForm("");
+    const [selected, setSelected] = useState({});
+    const [updated, setUpdated] = useState();
 
-    //아래는 addPage 관련 내용
-    //계산 클릭 시 아래 페이지 더보기
-    const [addPage, setAddPage] = useState(false);
+    const handleDelete = (idx) => {
+        var deleteId = idx.substr(6,6);
+
+        const updatedData = {
+            "delete_center" : parseInt(deleteId)
+        }
+        const getCartUpdate = async(id, updated) =>{
+            const result = await fetchCartUpdate(id, updatedData);
+            setCart(result);
+        }
+        getCartUpdate(cart.id, updatedData);
+
+    };
+
 
     const showAddPage = () => {
         if(inputBudget === ""){
@@ -109,51 +63,83 @@ export const CalCost = () => {
             return;
         }
 
-        //setMyBudget(inputBudget);
+        const compareData = {"mybudget" : Number(inputBudget)};
+
+        const getCompCost = async(id, budget) => {
+            const result = await fetchCompCost(id, budget);
+            setCompare(result);
+            setMyBudget(Math.ceil(result[datalabel1]));
+            setPrepare(Math.ceil(result[datalabel2]));
+            setisExtra(result.message);
+        }
+        getCompCost(cart.id, compareData);
+
+        const chartEI = document.getElementById('bar-chart')?.getContext('2d');
+
+        if(chartRef.current) {
+            chartRef.current.destroy();
+        }
+
+        chartRef.current = new Chart(chartEI, {
+            type: 'bar',
+            data: {
+                labels: ["예상 비용", "적정 비용"],
+                datasets: [
+                    {
+                        label: "원",
+                        backgroundColor: isExtra ? ["#F14A4A", "#5D5FEF"] : ["#C1BEFF", "#5D5FEF"],
+                        data: [prepare, myBudget]
+                    }
+                ]
+            },
+                options: {
+                    legend: { display: true },
+                    title: {
+                        display: true,
+                        text: '예상 비용과 적정 비용'
+                    }
+                }
+            });
+        
         setAddPage(true);
-        /*
-        백으로부터 초과하는지와 적정 여가비용 가져오기
-        */
     }
 
     useEffect(()=>{
-        // 차트 그리기
-        // 적정 금액 초과시
-
-        const getCartId = async(selection) => {
-            const result = await fetchCartId(selection);
-            setCart('받아온 데이터', result);
-        }
-
-        console.log(selected_center);
         const centerData = {}
         // 백엔드에 카트 생성 위해 보낼 데이터 만들기
         if(selected_center){
             selected_center.map((center, idx)=>(
                 centerData[dataLabel[idx]] = parseInt(center.id)
             ))
-            console.log('가공한데이터임', centerData);
-            console.log();
         }
-        getCartId();
-        
-        
-        var tempLeisureCost = 400000; //임시 내 여가 비용
-        let barChart;
+                // 첫 로드 시에만 cart id 불러오도록
+        if(firstLoad){
+                const getCartId = async(selected) => {
+                    const result = await fetchCartId(selected);
+                    setCart(result);
+                }
+                getCartId(centerData);
+                setFirstLoad(false);
+            }
+    },[firstLoad])
 
-        if (addPage) {
-            //const inputBudget = myBudget;
-            const chartEI = document.getElementById('bar-chart').getContext('2d');
-
-            barChart = new Chart(chartEI, {
+    useEffect(()=>{
+        if (addPage && compare[datalabel1] !== undefined && compare[datalabel2] !== undefined) {
+            const chartEI = document.getElementById('bar-chart')?.getContext('2d');
+    
+            if (chartRef.current) {
+                chartRef.current.destroy(); // 이전 차트 인스턴스가 있을 경우 제거
+            }
+    
+            chartRef.current = new Chart(chartEI, {
                 type: 'bar',
                 data: {
                     labels: ["예상 비용", "적정 비용"],
                     datasets: [
                         {
                             label: "원",
-                            backgroundColor: isExtraCost ? ["#F14A4A", "#5D5FEF"] : ["#C1BEFF", "#5D5FEF"],
-                            data: [tempLeisureCost, 600000]
+                            backgroundColor: compare.message ? ["#F14A4A", "#5D5FEF"] : ["#C1BEFF", "#5D5FEF"],
+                            data: [prepare, myBudget]
                         }
                     ]
                 },
@@ -166,21 +152,30 @@ export const CalCost = () => {
                 }
             });
         }
-        return() => {
-            //언마운트 시 차트 인스턴스 삭제
-            Chart.getChart(barChart)?.destroy();
-        }
-    },
-    [addPage])
+    },[compare, addPage])
 
-    const isExtraCost = true; //초과했는지 여부. 임시로 정함
+    const handleSave = () => {
+        var planData = {
+            "plan1" : plan_1,
+            "plan2" : plan_2,
+            "plan3" : plan_3,
+            "city_code" : parseInt(city_code),
+        }
+        const getPlanSave = async(data) => {
+            const result = await fetchPlan(data);
+            setMyBudget(data[datalabel2]);
+            setPrepare(data[datalabel1]);
+        }
+        getPlanSave(planData);
+        alert("저장되었습니다!");
+    }
 
     const handleGotoQna = () => {
         setCurPage('/mainwonder');
         navigate('/mainwonder')
-        //아직 경로 안나옴
     }
 
+    if(cart) {
   return (
     <>
         <Container>
@@ -189,20 +184,21 @@ export const CalCost = () => {
                     <path fill-rule="evenodd" clip-rule="evenodd" d="M8.29289 5.29289C8.68342 4.90237 9.31658 4.90237 9.70711 5.29289L15.7071 11.2929C16.0976 11.6834 16.0976 12.3166 15.7071 12.7071L9.70711 18.7071C9.31658 19.0976 8.68342 19.0976 8.29289 18.7071C7.90237 18.3166 7.90237 17.6834 8.29289 17.2929L13.5858 12L8.29289 6.70711C7.90237 6.31658 7.90237 5.68342 8.29289 5.29289Z" fill="black"/>
                     </svg></SubTitle_2></SubTitle>
                 <Title>한 달 여가활동 예상 비용</Title>
-                <TitleDesc>인영공주님이 선택하신 시설을 이용할 때 드는 평균 비용을 계산해 보았어요!</TitleDesc>
+                <TitleDesc>회원님이 선택하신 시설을 이용할 때 드는 평균 비용을 계산해 보았어요!</TitleDesc>
                 <CostContainer>
                 <InfraList>
-                    {Object.keys(selected).filter(key => key.startsWith('center')).map(centerKey => (
-                                    <Infra key={selected[centerKey].id} onClick={() => handleDelete(selected[centerKey].id)}>
-                                        {selected[centerKey].name} <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    {Object.keys(cart).filter(key => key.startsWith('center')).map(centerKey => (
+                                    cart[centerKey] && (
+                                    <Infra key={cart[centerKey]?.id} onClick={() => handleDelete(centerKey)}>
+                                        {cart[centerKey]?.name} <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
                                             <path d="M15.8346 5.34199L14.6596 4.16699L10.0013 8.82533L5.34297 4.16699L4.16797 5.34199L8.8263 10.0003L4.16797 14.6587L5.34297 15.8337L10.0013 11.1753L14.6596 15.8337L15.8346 14.6587L11.1763 10.0003L15.8346 5.34199Z" fill="#BBB8B8"/>
                                             </svg>
-                                    </Infra>
+                                    </Infra>)
                                 ))}
                     </InfraList>
                     <CostResult>
                         <CostResultDesc>예상비용</CostResultDesc>
-                            <Cost>{tempCart.total_cost.toLocaleString()}</Cost>
+                            <Cost>{cart.total_cost}</Cost>
                             <Won> 원</Won>
                         </CostResult>
                 </CostContainer>
@@ -215,11 +211,11 @@ export const CalCost = () => {
                     <BudgetInput id="inputBudget" value={inputBudget} onChange={onChangeBudget}></BudgetInput>
                     <BudgetWon>원</BudgetWon>
                 </BudgetInputContainer>
-                <BudgetBtn onClick={()=>showAddPage()}>적정 여가비용 <br/>
+                <BudgetBtn onClick={()=>showAddPage()}>적정 여가비용<br/>
                 확인하기</BudgetBtn>
             </BudgetContainer>
 
-            {addPage && (
+            {addPage && compare && (
                 
                 <AddContainer>
                     <svg xmlns="http://www.w3.org/2000/svg" width="74" height="74" viewBox="0 0 74 74" fill="none">
@@ -231,13 +227,13 @@ export const CalCost = () => {
                         <AddSubTitle>*생활비의 5.27% (국가발전지표)</AddSubTitle>
                     </AddTitleContainer>
                     <AddDesc>적정 여가비용</AddDesc>
-                    <AddDescCost>600,000
+                    <AddDescCost>{Math.ceil(compare[datalabel1])}
                         <AddWon>원</AddWon>
                     </AddDescCost>
                 </AddDescContainer>
                 <AddGraphContainer>
-                        {isExtraCost ? <AddGraphDesc>예상되는 여가비용이  <Point isExtraCost={isExtraCost}>평균 이상</Point>으로 많아요! <br />우선순위를 고려해서 다시 생각해 보는 건 어떨까요?</AddGraphDesc> : 
-                        <AddGraphDesc><Point isExtraCost={isExtraCost}>적정수준</Point> 의 여가비용이 나왔어요 <br />이를 바탕으로 구체적인 계획을 세워보세요!</AddGraphDesc>}
+                        {compare.message ==="true" ? (<AddGraphDesc>예상되는 여가비용이  <Point isExtra={isExtra}>평균 이상</Point>으로 많아요! <br />우선순위를 고려해서 다시 생각해 보는 건 어떨까요?</AddGraphDesc>) : 
+                        (<AddGraphDesc><Point isExtraCost={isExtra}>적정수준</Point> 의 여가비용이 나왔어요 <br />이를 바탕으로 구체적인 계획을 세워보세요!</AddGraphDesc>)}
                 
                 <AddGraph><canvas id="bar-chart"></canvas>
                 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -248,14 +244,14 @@ export const CalCost = () => {
                         <AddPlanTitle>계획 세우기</AddPlanTitle>
                         <AddPlanQuestion>여가비용 금액이 내 노후에 적합한가요? <br />
                         아니라면 계획을 다시 세워보세요!</AddPlanQuestion>
-                        <AddPlanAnswer></AddPlanAnswer>
+                        <AddPlanAnswer onChange={setPlan_1}></AddPlanAnswer>
                         <AddPlanQuestion>추천받은 시설 및 활동들로 <br />
-                        인영공주님이 추구하는 노후를 이뤄낼 수 있을지 상상해보세요!</AddPlanQuestion>
-                        <AddPlanAnswer></AddPlanAnswer>
+                        회원님이 추구하는 노후를 이뤄낼 수 있을지 상상해보세요!</AddPlanQuestion>
+                        <AddPlanAnswer onChange={setPlan_2}></AddPlanAnswer>
                         <AddPlanQuestion>내가 원하는 노후 생활을 위해서 <br />
                         지금 준비해야할 것은 무엇이 있을지 계획해보세요!</AddPlanQuestion>
-                        <AddPlanAnswer></AddPlanAnswer>
-                        <AddPlanSaveBtn>저장</AddPlanSaveBtn>
+                        <AddPlanAnswer onChange={setPlan_3}></AddPlanAnswer>
+                        <AddPlanSaveBtn onClick={handleSave}>저장</AddPlanSaveBtn>
                     </AddPlanContainer>
                     <GotoQnaContainer>
                         <QnaDesc>계획을 세우며 생긴 궁금증을 주민들에게 직접 물어보세요!</QnaDesc>
@@ -269,7 +265,7 @@ export const CalCost = () => {
             </Background>
         </Container>
     </>
-  )
+  )    }
 }
 
 const Container = styled.div`
@@ -468,6 +464,7 @@ const BudgetBtn = styled.div`
     border-radius: 4px;
     background: linear-gradient(247deg, #BCBDFF 7.5%, #5D5FEF 62.93%);
     cursor: pointer;
+    white-space: nowrap;
 `
 
 
@@ -575,7 +572,7 @@ const AddGraphDesc = styled.div`
     padding: 28px;
 `
 const Point = styled.span`
-    color: ${({ isExtraCost }) => (isExtraCost ? '#EA3C3C' : '#6394F8')};
+    color: ${({isExtra}) => (isExtra ? '#EA3C3C' : '#6394F8')};
 `
 
 const AddGraph = styled.div`
@@ -710,6 +707,7 @@ const QnaDesc = styled.div`
     font-style: normal;
     font-weight: 500;
     line-height: 150%;
+    white-space: nowrap;
 `
 const QnaBtn = styled.div`
     color: var(--Main, #5D5FEF);
@@ -719,4 +717,5 @@ const QnaBtn = styled.div`
     line-height: 150%;
     cursor: pointer;
     display: flex;
+    white-space: nowrap;
 `

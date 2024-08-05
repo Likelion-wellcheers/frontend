@@ -1,16 +1,65 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components';
+import { useForm } from '../../hooks/useForm';
 
 export const PostReview = ({title, isRequired}) => {
     const { centerId } = useParams();
-    const [rate, setRate] = useState(5);
+    const [rate, setRate] = useState(3);
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [previewUrl, setPreviewUrl] = useState(null);
+    const [reviewContent, setReviewContent] = useForm();
+    const [required, setRequired] = useState(isRequired);
 
     const handleRate = (idx) => {
         setRate(idx);
     }
 
-    const sentence = isRequired === 0 ? '시설의 사진을 첨부해주세요(필수)' : '파일 첨부';
+    const sentence = isRequired === 0 ? '시설의 사진을 첨부해주세요' : '파일 첨부';
+
+    const handleImageChange = (event) => {
+        
+        const file = event.target.files[0];
+        if (file) {
+          setSelectedImage(file);
+        }
+    
+          // 이미지 미리보기 URL 생성
+          const objectUrl = URL.createObjectURL(file);
+          setPreviewUrl(objectUrl);
+        }
+      
+
+    const handleUpload = async () => {
+        const formData = new FormData();
+        if(selectedImage !== null) {
+            formData.append("thumbnail", selectedImage);
+        }
+        formData.append("content", reviewContent);
+        formData.append("score", parseInt(rate));
+        // 이미지 필수로 필요할때만 이미지 선택하라고 에러 처리
+        
+        const accessToken = localStorage.getItem("access");
+
+        try {
+        const response = await fetch(`https://wellcheers.p-e.kr/recommend/center/${centerId}/review/`, {
+            method: 'POST',
+            body: formData,
+            headers : {
+                'Authorization': `Bearer ${accessToken}`,
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('서버 응답이 없습니다.');
+        }
+
+      const result = await response.json();
+      alert('후기가 등록되었습니다!');
+    } catch (error) {
+      console.error('업로드 실패:', error);
+    }
+}
 
   return (
     <>
@@ -40,21 +89,22 @@ export const PostReview = ({title, isRequired}) => {
                     </svg>
                     </PostTitleRating></PostTitleContent>
                 </PostTitle>
-                <PostTextArea placeholder='후기를 작성해 주세요'></PostTextArea>
+                <PostTextArea onChange={setReviewContent} placeholder='후기와 별점을 입력해주세요'></PostTextArea>
                 <PostImgContainer>
                     {sentence}
                     <PostImgDesc> 
-                        <PostImgIcon><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M3.9 12C3.9 10.29 5.29 8.9 7 8.9H11V7H7C4.24 7 2 9.24 2 12C2 14.76 4.24 17 7 17H11V15.1H7C5.29 15.1 3.9 13.71 3.9 12ZM8 13H16V11H8V13ZM17 7H13V8.9H17C18.71 8.9 20.1 10.29 20.1 12C20.1 13.71 18.71 15.1 17 15.1H13V17H17C19.76 17 22 14.76 22 12C22 9.24 19.76 7 17 7Z" fill="#615D67"/>
-                        </svg></PostImgIcon>
-                        <PostImgBtn>등록</PostImgBtn>
+                    {previewUrl && 
+                        <PostImgIcon src={previewUrl} alt="이미지 미리보기" ></PostImgIcon>}
+                            <input onChange={(e)=>handleImageChange(e)} type="file" style={{ marginRight: '10px' }}/>
+                        <PostImgBtn onClick={handleUpload}>등록</PostImgBtn>
                     </PostImgDesc>
                 </PostImgContainer>
             </PostContainer>
         </Container>
     </>
-  )
+  );
 }
+
 
 const Container = styled.div`
     display: flex;
@@ -151,8 +201,9 @@ const PostImgDesc = styled.div`
     cursor: pointer;
 `
 
-const PostImgIcon = styled.div`
-    
+const PostImgIcon = styled.img`
+    width: 50px;
+    height: 50px;
 `
 const PostImgBtn = styled.button`
     color: var(--White, #FFF);

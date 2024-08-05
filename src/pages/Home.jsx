@@ -22,6 +22,11 @@ export const Home = () => {
   const [curPage, setCurPage] = useRecoilState(curPageRecoil);
   const [magData, setMagData] = useState([]);
   const [regData, setRegData] = useState([]);
+  const [regKeys, setRegKeys] = useState([]);
+
+  const shuffle = (array) => {
+    array.sort(() => Math.random() - 0.5);
+  }
 
   const handleSearchClick = () => {
     setCurPage("searchhome");
@@ -33,6 +38,17 @@ export const Home = () => {
       const result = await fetchHome();
       setMagData(result.magazine_list);
       setRegData(result.region_list);
+      
+      const firstKeys = shuffle(result.region_list[0].infraname?.concat(result?.lifename, result?.hobbyname));
+      const secondKeys = shuffle(result.region_list[1].infraname?.concat(result?.lifename, result?.hobbyname));
+      const thirdKeys = shuffle(result.region_list[2].infraname?.concat(result?.lifename, result?.hobbyname));
+
+      const newKeys = []
+      newKeys.push(firstKeys || []); // 없으면 빈배열 넣음
+      newKeys.push(secondKeys || []);
+      newKeys.push(thirdKeys || []);
+      
+      setRegKeys(newKeys);
     }
     getHome();
   },[]);
@@ -56,16 +72,16 @@ export const Home = () => {
               </SectionDesc>
 
               <SectionContentContainer>
-              {regData.map((data)=>(
+              {regData.map((data, idx)=>(
                 <SectionContent>
                   <SectionContentImgContainer>
                     <SectionContentImg src={data.thumnail || "/images/default.png"} alt="거주지사진"></SectionContentImg>
                   </SectionContentImgContainer>
                   <SectionContentTitle>{data.city} {data.gugoon}</SectionContentTitle>
                   <SectionContentKeys>
-                        <SectionContentKey themeColor={themeColor}>#섬도시</SectionContentKey>
-                        <SectionContentKey themeColor={themeColor}>#나폴리</SectionContentKey>
-                        <SectionContentKey themeColor={themeColor}>#바다</SectionContentKey>
+                        <SectionContentKey themeColor={themeColor}>{regKeys[idx][0] != undefined ? `#${regKeys[idx][0]}` : "#준비중"}</SectionContentKey>
+                        <SectionContentKey themeColor={themeColor}>{regKeys[idx][1] != undefined ? `#${regKeys[idx][1]}`: "#준비중"}</SectionContentKey>
+                        <SectionContentKey themeColor={themeColor}>{regKeys[idx][2] != undefined ? `#${regKeys[idx][2]}`: '#준비중'}</SectionContentKey>
                   </SectionContentKeys>
                 </SectionContent>
               ))}
