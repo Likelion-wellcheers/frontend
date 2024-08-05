@@ -1,32 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { fetchMyInfo, fetchMyPlan, fetchSaveCenter } from '../../apis/account';
 
 export const Mypage = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('지역후기');
-
-  const profile = {
-    name: '야채윤경',
-    image: '/images/profile.png',
-    age: 21,
-    location: '서울특별시 강남구'
-  };
-
-  const plans = [
-    { location: '서울시 동작구', date: '2024-07-26', content: '계획 한 줄만 보이게' },
-    { location: '서울시 동작구', date: '2024-07-26', content: '계획 한 줄만 보이게' },
-    { location: '서울시 동작구', date: '2024-07-26', content: '계획 한 줄만 보이게' },
-    { location: '서울시 동작구', date: '2024-07-26', content: '계획 한 줄만 보이게' },
-    { location: '서울시 동작구', date: '2024-07-26', content: '계획 한 줄만 보이게' },
-  ];
-
-  const savedItems = [
-    { location: '서울특별시 동작구', image1: '/images/cat1.png', image2: '/images/cat2.png', count: 3 },
-    { location: '서울특별시 강남구', image1: '/images/cat1.png', image2: '/images/cat2.png', count: 5 },
-    { location: '서울특별시 마포구', image1: '/images/cat1.png', image2: '/images/cat2.png', count: 4 },
-    { location: '서울특별시 마포구', image1: '/images/cat1.png', image2: '/images/cat2.png', count: 4 },
-  ];
+  const [profile, setProfile] = useState({}); // 사용자 프로필 정보
+  const [myPlan, setMyPlan] = useState([]); // 사용자가 쓴 계획 정보
+  const [savedItems, setSavedItems] = useState({});
 
   const reviews = [
     { location: '서울시 동작구', date: '2024-07-26', rating: 4.0, content: '어린이랑이런내용의리뷰글달았어요', image: '/images/cat3.png', type: '지역후기' },
@@ -37,18 +19,40 @@ export const Mypage = () => {
     { location: '서울시 강서구', date: '2024-07-24', rating: 3.0, content: '이런내용의리뷰글달았어요', image: '/images/cat3.png', type: '시설후기' },
   ];
 
+  useEffect(()=>{
+    const getMyProfile = async() => {
+      const result = await fetchMyInfo();
+      setProfile(result);
+    }
+    const getMyPlan = async() => {
+      const result = await fetchMyPlan();
+      setMyPlan(result);
+    }
+    const getMySaveCenter = async() => {
+      const result = await fetchSaveCenter();
+      setSavedItems(result);
+      console.log(savedItems);
+      Object.keys(savedItems).forEach((regionKey) => {
+        const regionItems = savedItems[regionKey];
+        const indexItems = regionItems.slice(0, 3);
+        console.log('아이템',indexItems);
+      })
+    getMyProfile();
+    getMyPlan();
+    getMySaveCenter();
+}},[]);
+
+  if(profile){
   return (
     <Container>
       <LeftCard>
-        <ProfileImage src={profile.image} alt="Profile" />
-        <Name>{profile.name}님</Name>
+        <ProfileImage src={profile.profileimage_url} alt="Profile" />
+        <Name>{profile.nickname || "user"}</Name>
         <ProfileDetail>
-          <div>{profile.age}세 |</div>
-          <div>{profile.location}</div>
+          <div>{profile.city} {profile.gugoon}</div>
         </ProfileDetail>
         <Button onClick={() => navigate('/editinfo')}>
-          <SettingIcon src='/images/setting.png' alt='설정 아이콘' />
-          내 정보 수정
+          <SettingIcon src='/images/setting.png' alt='설정 아이콘' />내 정보 수정
         </Button>
       </LeftCard>
       <RightCard>
@@ -58,37 +62,41 @@ export const Mypage = () => {
             <TextWrapper>나의 계획</TextWrapper>
           </SectionTitle>
           <Scrollable>
-            {plans.map((plan, index) => (
+            {myPlan.map((plan, index) => (
               <ReviewItem key={index}>
                 <ContentWrapper>
                   <Locdate>
-                    <Locationname>{plan.location}</Locationname>
-                    <Date>{plan.date}</Date>
+                    <Locationname>{plan.city} {plan.gugoon}</Locationname>
+                    <Date>{plan.created_at.substr(0,10)}</Date>
                   </Locdate>
-                  <Content>{plan.content}</Content>
+                  <Content>{plan.plan1}</Content>
                 </ContentWrapper>
               </ReviewItem>
             ))}
           </Scrollable>
         </Section>
+
         <Section>
           <SectionTitle>
             <Icon src='/images/heart.png' alt='하트 아이콘' />
             <TextWrapper>저장 목록</TextWrapper>
           </SectionTitle>
           <SaveList>
-            {savedItems.slice(0, 3).map((item, index) => (
-              <SaveListItem key={index}>
+            {/* {Object.keys(savedItems).forEach((regionKey) => {
+              const regionItems = savedItems[regionKey];
+              const indexItems = regionItems.slice(0, 3);
+              indexItems.map(item, index => {
+                <SaveListItem key={index}>
                 <SaveListImageContainer>
-                  <SaveListImage src={item.image1} alt={item.location} />
-                  <SaveListImage src={item.image2} alt={item.location} />
+                  <SaveListImage src={item[0]?.thumbnail || "/images/centerDefault.jpg"} alt={item.name} />
+                  <SaveListImage src={item[1]?.thumbnail || "/images/centerDefault.jpg"} alt={item.name} />
                 </SaveListImageContainer>
                 <div>
-                  <div>{item.location}</div>
-                  <div>{item.count}개</div>
+                  <div>{item[0]?.city} {item[0]?.gugoon}</div>
+                  <div>{item?.length}개</div>
                 </div>
               </SaveListItem>
-            ))}
+            })})} */}
           </SaveList>
           <MoreButton onClick={() => navigate('/savelist')}>더보기</MoreButton>
         </Section>
@@ -124,7 +132,7 @@ export const Mypage = () => {
       </RightCard>
     </Container>
   );
-};
+};}
 
 const Container = styled.div`
   display: flex;
@@ -181,6 +189,7 @@ const ProfileDetail = styled.div`
 const SettingIcon = styled.img`
   width: 20px;
   height: 20px;
+  white-space: nowrap;
 `;
 
 const RightCard = styled.div`
@@ -205,6 +214,7 @@ const Button = styled.button`
   gap: 5px;
   display: flex;
   align-items: center;
+  white-space: nowrap;
 
   &:hover {
     background-color: rgba(244, 243, 255, 1);
@@ -317,17 +327,20 @@ const TabButton = styled.button`
 
 const MoreButton = styled.button`
   margin: 20px auto;
-  padding: 10px 20px;
+  font-size: 16px;
+  padding: 6px 20px;
   width: fit-content;
-  background-color: #007BFF;
-  color: white;
-  border: none;
+  background-color: white;
+  color: black;
+  border: solid black 1px;
   border-radius: 5px;
   cursor: pointer;
   display: block;
+  font-weight: 500;
+line-height: 150%;
 
   &:hover {
-    background-color: #0056b3;
+    background-color: '#ccc';
   }
 `;
 
