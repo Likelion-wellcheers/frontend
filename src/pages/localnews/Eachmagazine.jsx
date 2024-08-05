@@ -1,10 +1,12 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components'
 
 export const Eachmagazine = () => {
 
     const [currentIndex, setCurrentIndex] = useState(1);
+    const [magazine, setMagazine] = useState(null);
+    const [images, setImages] = useState([]);  
   
     const handlePrevClick = () => {
       setCurrentIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
@@ -15,38 +17,52 @@ export const Eachmagazine = () => {
     };
 
     const navigate=useNavigate();
+    const location=useLocation();
+    const { id, region_id } = location.state;
+
+    useEffect(() => {
+      const fetchMagazine = async () => {
+        try {
+          const response = await fetch(`https://wellcheers.p-e.kr/issue/getmagazine/${id}/`);
+          const data = await response.json();
+          setMagazine(data);
+          if (data.photos && data.photos.length > 0) {
+            setImages(data.photos.map(photo => photo.image));
+          }
+        } catch (error) {
+          console.error('에러:', error);
+        }
+      };
+  
+      fetchMagazine();
+    }, [id, region_id]);
 
   return (
     <Container>
       <NavContainer>매거진</NavContainer>
 
 
+      {magazine && (
+        <>
+          <PostTitle>
+            <PostTitleContent>{magazine.content}
+              <PostTitleRating src='/images/magazine_icon.png' />
+            </PostTitleContent>
+          </PostTitle>
 
-      <PostTitle>
-        <PostTitleContent>흑석 주민의 생생한 이야기
-        <PostTitleRating src='/images/magazine_icon.png'>
-      </PostTitleRating></PostTitleContent>
-    </PostTitle>
+          <CarouselContainer>
+            <Arrow onClick={handlePrevClick}>&#9664;</Arrow>
+            <Image src={images[(currentIndex - 1 + images.length) % images.length]} dim />
+            <Image src={images[currentIndex]} highlight />
+            <Image src={images[(currentIndex + 1) % images.length]} dim />
+            <Arrow onClick={handleNextClick}>&#9654;</Arrow>
+          </CarouselContainer>
+          <Line />
+          <Button onClick={() => navigate(-1)}>목록</Button>
 
-    <CarouselContainer>
-      <Arrow src='/images/arrowbtn.png' left onClick={handlePrevClick}>
-        &#9664;
-      </Arrow>
-      <Image
-        src={images[(currentIndex - 1 + images.length) % images.length]}
-        dim
-      />
-      <Image src={images[currentIndex]} highlight />
-      <Image
-        src={images[(currentIndex + 1) % images.length]}
-        dim
-      />
-      <Arrow onClick={handleNextClick}>
-        &#9654;
-      </Arrow>
-    </CarouselContainer>
-    <Line />
-    <Button onClick={() => navigate('/moremagazine')}>목록</Button>
+        </>
+      )}
+
     </Container>
   )
 }

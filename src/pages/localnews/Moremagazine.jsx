@@ -7,19 +7,41 @@ export const Moremagazine = () => {
     const { city_codes } = location.state; // get city_codes from the location state
     const navigate = useNavigate();
     const [magazines, setMagazines] = useState([]);
-
+/*
     useEffect(() => {
-    
+        if (city_codes) {
+            fetch(`https://wellcheers.p-e.kr/issue/${city_codes}/getmagazine/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (Array.isArray(data)) {
+                        setMagazines(data);
+                    } else {
+                        setMagazines([data]); // 데이터를 배열로 변환
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error fetching magazine data:', error);
+                });
+        }
+    }, [city_codes]);
+*/
+    useEffect(() => {
         if (city_codes) {
           fetch(`https://wellcheers.p-e.kr/issue/${city_codes}/getmagazine/`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
+            method: 'GET'
           })
             .then((response) => response.json())
             .then((data) => {
-              setMagazines(data);
+              if (Array.isArray(data)) {
+                setMagazines(data);
+              } else {
+                setMagazines([data]); // 데이터를 배열로 변환
+              }
             })
             .catch((error) => {
               console.error('Error fetching magazine data:', error);
@@ -28,15 +50,17 @@ export const Moremagazine = () => {
       }, [city_codes]);
 
     const handleCardClick = (id) => {
-        navigate(`/eachmagazine`, { state: { id } });
+        navigate(`/eachmagazine`, { state: { id, city_codes } });
     };
 
     return (
         <Container>
             <MaintitleWrapper>
-                <SubTitle> 매거진 <SubTitle_2><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M8.29289 5.29289C8.68342 4.90237 9.31658 4.90237 9.70711 5.29289L15.7071 11.2929C16.0976 11.6834 16.0976 12.3166 15.7071 12.7071L9.70711 18.7071C9.31658 19.0976 8.68342 19.0976 8.29289 18.7071C7.90237 18.3166 7.90237 17.6834 8.29289 17.2929L13.5858 12L8.29289 6.70711C7.90237 6.31658 7.90237 5.68342 8.29289 5.29289Z" fill="black"/>
-                    </svg></SubTitle_2></SubTitle>
+                <SubTitle> 매거진 <SubTitle_2>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path fillRule="evenodd" clipRule="evenodd" d="M8.29289 5.29289C8.68342 4.90237 9.31658 4.90237 9.70711 5.29289L15.7071 11.2929C16.0976 11.6834 16.0976 12.3166 15.7071 12.7071L9.70711 18.7071C9.31658 19.0976 8.68342 19.0976 8.29289 18.7071C7.90237 18.3166 7.90237 17.6834 8.29289 17.2929L13.5858 12L8.29289 6.70711C7.90237 6.31658 7.90237 5.68342 8.29289 5.29289Z" fill="black"/>
+                    </svg>
+                </SubTitle_2></SubTitle>
                 <Title>동네 주민들의 생생한 목소리를 들어보세요</Title>
             </MaintitleWrapper>
             <Icongroup>

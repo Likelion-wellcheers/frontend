@@ -5,17 +5,36 @@ export const Welfare = ({ city_codes }) => {
     const [banners, setBanners] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
 
+    // 기본 이미지들
+    const defaultImages = [
+        '/images/default_wal1.png',
+        '/images/default_wal2.png',
+        '/images/default_wal3.png'
+    ];
+
     useEffect(() => {
         if (city_codes) {
             fetch(`https://wellcheers.p-e.kr/issue/${city_codes}/welfare/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                method: 'GET',
             })
                 .then((response) => response.json())
                 .then((data) => {
-                    const images = data.map((item) => item.image ? item.image : '/images/default.png'); // use a default image if image is null
+                    // 데이터가 배열인지 확인
+                    const welfareData = Array.isArray(data) ? data : [data];
+                    
+                    // 기본 이미지를 채우기 위한 배열
+                    let images = [];
+
+                    // 데이터에서 이미지가 있는 경우, 이미지 배열에 추가
+                    welfareData.forEach((item, index) => {
+                        images.push(item.image || defaultImages[index % defaultImages.length]);
+                    });
+
+                    // 데이터가 부족한 경우, 기본 이미지를 추가하여 배너 수를 맞춤
+                    while (images.length < 3) {
+                        images.push(defaultImages[images.length % defaultImages.length]);
+                    }
+
                     setBanners(images);
                 })
                 .catch((error) => {
@@ -37,7 +56,7 @@ export const Welfare = ({ city_codes }) => {
             <ArrowButton left onClick={handlePrev}>
                 <ArrowImage src='/images/leftarrow.png' alt='Previous' />
             </ArrowButton>
-            <Banner style={{ transform: `translateX(-${currentIndex * 100 / 3}%)` }}>
+            <Banner style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
                 {banners.map((banner, index) => (
                     <BannerImage key={index} src={banner} alt={`Banner ${index + 1}`} />
                 ))}
@@ -48,7 +67,6 @@ export const Welfare = ({ city_codes }) => {
         </Wrapper>
     );
 };
-
 
 const Wrapper = styled.div`
   display: flex;

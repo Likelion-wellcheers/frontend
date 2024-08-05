@@ -59,7 +59,7 @@ const BtnWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 10px;
-  margin-bottom: 15%;
+  margin-bottom: 18%;
 `;
 
 const KakaoButton = styled.button`
