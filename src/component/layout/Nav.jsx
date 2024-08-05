@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { ThemeColorContext } from '../../context/context';
 import { useRecoilState } from 'recoil';
 import { curPageRecoil } from '../../recoil/atom';
+import { isLoginState } from '../../recoil/isLoginState';
 
 const NavStyle = createGlobalStyle`
   @font-face {
@@ -20,14 +21,27 @@ export const Nav = () => {
   const navigate = useNavigate();
   const themeColor = useContext(ThemeColorContext);
   const [curPage, setCurPage] = useRecoilState(curPageRecoil);
-
-  const [isLogin, setIsLogin] = useState(true); //임시로 true로 해놓음
+  const [isLogin, setIsLogin] = useRecoilState(isLoginState);
 
   //메뉴 클릭 시 해당 버튼에 대한 페이지로 이동하도록
   const handleClick = (buttonName) => {
+    if(buttonName === "/searchhome" || buttonName === "/mainwonder"){
+      if(!isLogin){
+        alert("로그인 먼저 해주세요!");
+        navigate("/login");
+        return;
+      }
+    }
     setCurPage(buttonName);
     navigate(buttonName);
   } 
+
+  //로그아웃
+  const handleLogout = () => {
+    window.localStorage.removeItem("access");
+    window.localStorage.removeItem("refresh");
+    setIsLogin(false);
+  }
 
   return (
     <>
@@ -53,15 +67,23 @@ export const Nav = () => {
           $active={curPage === "/localnews" || curPage === "/Localinfo"  || curPage === "/eachmagazine" || curPage === "/moremagazine"}
           onClick={()=>handleClick("/localnews")}>지역생활</Button>
 
-          {isLogin ? (
-            <UserButton  themeColor={themeColor}
-            $active={curPage === "/mypage"}
-            onClick={()=>handleClick("/mypage")}>
-              마이페이지</UserButton>
+          {isLogin ? (<>
+          <UserButtons>
+              <UserButton  themeColor={themeColor}
+                $active={curPage === "/mypage"}
+                onClick={()=>handleClick("/mypage")}>
+                  마이페이지 </UserButton> <UserButtonDivide>|</UserButtonDivide>
+                <UserButton onClick={handleLogout}> 로그아웃</UserButton>
+                </UserButtons>
+              </>
+
           ) : (
-          <UserButton
-            onClick={()=>{handleClick("/login")}}
-            >로그인</UserButton>)}
+          <>
+            <UserButton
+              onClick={()=>{handleClick("/login")}}
+              >로그인</UserButton>
+              </>)}
+           
           
         </Container>
       </OuterContainer>
@@ -129,6 +151,21 @@ const Button = styled.button`
     height: 2.4px;
     background-color: ${({themeColor})=> themeColor.main}; 
   }
+`
+const UserButtonDivide = styled.div`
+    font-size: 20px;
+    color: #615D67;
+    cursor: default;
+`
+
+const UserButtons = styled.div`
+  display: flex;
+  font-size: 13px;
+  color: #615D67;
+  font-family: 'GmarketSansMedium',  sans-serif;
+  background: none;
+  border: none;
+  cursor: pointer;
 `
 
 const UserButton = styled.button`

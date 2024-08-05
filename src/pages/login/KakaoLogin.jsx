@@ -1,11 +1,14 @@
 import React, { useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { isLoginState } from '../../recoil/isLoginState';
+import { useRecoilState } from 'recoil';
 
 const baseURL = 'https://wellcheers.p-e.kr'; // 백엔드 URL
 
 const KakaoLogin = () => {
   const navigate = useNavigate();
+  const [isLogin, setIsLogin] = useRecoilState(isLoginState);
 
   useEffect(() => {
     const code = new URL(window.location.href).searchParams.get('code');
@@ -33,7 +36,8 @@ const KakaoLogin = () => {
           localStorage.setItem('refresh', internal_refresh_token);
 
           // / 페이지로 이동
-          navigate('/');
+          setIsLogin(true); // Login -> true!
+          navigate('/logincomplete');
         } catch (error) {
           console.error('인가 코드 전송 중 에러 발생', error);
           if (error.response) {

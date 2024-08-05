@@ -54,8 +54,8 @@ export const PostReview = ({title, isRequired}) => {
             throw new Error('서버 응답이 없습니다.');
         }
 
-      const result = await response.json();
-      alert('후기가 등록되었습니다!');
+            const result = await response.json();
+            alert('후기가 등록되었습니다!');
     } catch (error) {
       console.error('업로드 실패:', error);
     }
