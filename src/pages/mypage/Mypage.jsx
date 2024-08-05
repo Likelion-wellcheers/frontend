@@ -30,13 +30,13 @@ export const Mypage = () => {
     }
     const getMySaveCenter = async() => {
       const result = await fetchSaveCenter();
-      setSavedItems(result);
-      console.log(savedItems);
-      Object.keys(savedItems).forEach((regionKey) => {
-        const regionItems = savedItems[regionKey];
-        const indexItems = regionItems.slice(0, 3);
-        console.log('아이템',indexItems);
-      })
+       setSavedItems(result);
+      // console.log(savedItems);
+      // Object.keys(savedItems).forEach((regionKey) => {
+      //   const regionItems = savedItems[regionKey];
+      //   const indexItems = regionItems.slice(0, 3);
+      //   console.log('아이템',indexItems);
+      
     getMyProfile();
     getMyPlan();
     getMySaveCenter();
