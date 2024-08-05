@@ -2,14 +2,13 @@ import axios from "axios";
 
 const baseURL = 'https://wellcheers.p-e.kr'
 
-export const fetchMagazines = async (city_codes) => {
+export const getMagList = async (body) => {
     try{
-        const response = await axios.get(`${baseURL}/issue/${city_codes}/getmagazine/`);
-        console.log(response.data);
+        const response = await axios.post(`${baseURL}/region/getarticle/`, body);
+        console.log(' 받은데이터', response.data);
         return response.data;
     }
     catch(e){
         console.log(e);
-        return[];
     }
 }

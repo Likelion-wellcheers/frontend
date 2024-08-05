@@ -9,7 +9,7 @@ export const Reviewpart = ({ city_codes }) => {
 
     useEffect(() => {
         if (city_codes) {
-            fetch(`https://yourapi.com/issue/${city_codes}/review`, {
+            fetch(`https://wellcheers.p-e.kr/issue/${city_codes}/review`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
