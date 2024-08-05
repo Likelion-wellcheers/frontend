@@ -2,9 +2,10 @@ import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import styled, { createGlobalStyle, keyframes } from 'styled-components'
 import { ThemeColorContext } from '../context/context'
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { curPageRecoil } from '../recoil/atom';
 import { fetchHome } from '../apis/recommend';
+import { isLoginState } from '../recoil/isLoginState';
 
 
 const HomeStyle = createGlobalStyle`
@@ -23,12 +24,18 @@ export const Home = () => {
   const [magData, setMagData] = useState([]);
   const [regData, setRegData] = useState([]);
   const [regKeys, setRegKeys] = useState([]);
+  const isLogin = useRecoilValue(isLoginState);
 
   const shuffle = (array) => {
     array.sort(() => Math.random() - 0.5);
   }
 
   const handleSearchClick = () => {
+    if(!isLogin){
+      alert("로그인 먼저 해주세요!");
+      navigate("/login");
+      return;
+    }
     setCurPage("searchhome");
     navigate("/searchhome");
   }
