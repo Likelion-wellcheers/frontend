@@ -7,8 +7,8 @@ export const Wonderwrite = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { city, district } = location.state || {};
-  const [newTitle, onChangeNewTitle] = useForm("");
-  const [newComment, onChangeNewComment] = useForm("");
+  const [newTitle, setNewTitle] = useForm("");
+  const [newComment, setNewComment] = useForm("");
   const [previewUrl, setPreviewUrl] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
 
@@ -19,20 +19,19 @@ export const Wonderwrite = () => {
       
       const objectUrl = URL.createObjectURL(file);
       setPreviewUrl(objectUrl);
-
       //return () => URL.revokeObjectURL(objectUrl);
     }
   };
 
   const handleUpload = async () => {
-  const formData = new FormData();
-  if(selectedImage) {
-    formData.append('image', selectedImage);
-  }
-  formData.append('city', city);
-  formData.append('gugoon', district);
-  formData.append('title', newTitle);
-  formData.append('content', newComment);
+      const formData = new FormData();
+      if(selectedImage !== null) {
+        formData.append('image', selectedImage);
+      }
+      formData.append('city', city);
+      formData.append('gugoon', district);
+      formData.append('title', newTitle);
+      formData.append('content', newComment);
   
     const accessToken = localStorage.getItem("access");
 
@@ -48,11 +47,11 @@ export const Wonderwrite = () => {
       if (!response.ok) {
         throw new Error('서버 응답이 없습니다.');
       }
+        const result = await response.json();
+        console.log('업로드 성공:', result);
+        alert('성공적으로 업로드 되었습니다');
+        navigate(-1);
 
-      const result = await response.json();
-      console.log('업로드 성공:', result);
-      alert('성공적으로 업로드 되었습니다');
-      navigate(-1);
     } catch (error) {
       console.error('업로드 실패:', error);
       alert('업로드에 실패했습니다. 다시 시도해 주세요.');
@@ -84,8 +83,7 @@ export const Wonderwrite = () => {
         </TitleWrapper>
         <CommentInputContainer>
           <TextArea
-            value={newTitle}
-            onChange={onChangeNewTitle}
+            onChange={setNewTitle}
             placeholder="제목을 입력해 주세요"
           />
         </CommentInputContainer>
@@ -97,8 +95,7 @@ export const Wonderwrite = () => {
         </TitleWrapper>
         <CommentInputContainer>
           <ContentArea
-            value={newComment}
-            onChange={onChangeNewComment}
+            onChange={setNewComment}
             placeholder="동네에 대해 궁금한 점을 물어보세요"
           />
         </CommentInputContainer>
@@ -107,7 +104,7 @@ export const Wonderwrite = () => {
       <Addfile>
         <input
           type="file"
-          onChange={handleImageChange}
+          onChange={(e)=>handleImageChange(e)}
           style={{ marginRight: '10px' }}
         />
         {previewUrl && <img src={previewUrl} alt="Preview" style={{ width: '100px', height: '100px' }} />}
