@@ -84,7 +84,7 @@ export const Reviewpart = ({ city_codes , city, district}) => {
 
 const Button = styled.button`
     margin-left: 83%;
-    padding: 10px;
+    padding: 7px 18px;
     border: none;
     background: white;
     color: black;
@@ -92,6 +92,9 @@ const Button = styled.button`
     display: flex;
     align-items: center;
     height: fit-content;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 150%;
     //float: right;
     cursor: pointer;
 
@@ -101,6 +104,7 @@ const Button = styled.button`
 `
 
 const ReviewWrapper = styled.div`
+    margin-top: 4.5%;
     position: relative;
     overflow: hidden;
     padding: 10px;

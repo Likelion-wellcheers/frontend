@@ -18,7 +18,7 @@ export const Eachmagazine = () => {
 
     const navigate=useNavigate();
     const location=useLocation();
-    const { id, region_id } = location.state;
+    const { id, region_id, is_default } = location.state;
 
     useEffect(() => {
       const fetchMagazine = async () => {
@@ -37,6 +37,16 @@ export const Eachmagazine = () => {
       fetchMagazine();
     }, [id, region_id]);
 
+    if(is_default){
+      return(
+        <>
+          <ImgContainer>
+              <NoImage>매거진을 준비중입니다.</NoImage>
+          </ImgContainer>
+        </>
+      )
+    }
+    else{
   return (
     <Container>
       <NavContainer>매거진</NavContainer>
@@ -65,7 +75,7 @@ export const Eachmagazine = () => {
 
     </Container>
   )
-}
+}}
 
 const Button = styled.button`
   background: rgba(255, 255, 255, 1);
@@ -165,3 +175,19 @@ const images = [
   '/images/interview.png',
   // Add more image paths as needed
 ];
+
+const ImgContainer = styled.div`
+  margin-top: 20%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
+
+const NoImage = styled.div`
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 150%;
+    top: -50%;
+    left: 50%;
+`
