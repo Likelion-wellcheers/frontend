@@ -1,122 +1,126 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { useForm } from '../../hooks/useForm';
 
 export const Question = () => {
-
   const location = useLocation();
   const navigate = useNavigate();
-  const { question } = location.state || {};
+  const { 
+    id, 
+    nickname, 
+    profileimage_url, 
+    title, 
+    content, 
+    finish, 
+    created_at 
+  } = location.state || {};
   const [newComment, onChangeNewComment] = useForm("");
+  const [answers, setAnswers] = useState([]);
+  const { question, q_user_id } = location.state || {};
 
+  useEffect(() => {
+    if (q_user_id) {
+      axios.get(`https://wellcheers.p-e.kr/qna/question/${q_user_id}/`)
+        .then(response => setAnswers(response.data))
+        .catch(error => console.error('Error fetching question data:', error));
+    }
+  }, [q_user_id]);
 
-  // 임시 댓글 데이터
-  const [comments, setComments] = useState([
-    { author: '야채윤', date: '2024-07-26', content: '이런이런이런이런이런이런', authorProfilePic: '/images/profile.png' },
-    { author: '김철수', date: '2024-07-27', content: '좋은 질문이에요!', authorProfilePic: '/images/profile.png' },
-  ]);
+  useEffect(() => {
+    if (id) {
+      axios.get(`https://wellcheers.p-e.kr/qna/question/${id}/answer/`)
+        .then(response => setAnswers(response.data))
+        .catch(error => console.error('Error fetching answers:', error));
+    }
+  }, [id]);
 
   const handleCommentSubmit = () => {
     if (newComment.trim()) {
-      const newComments = [
-        ...comments,
-        { author: '야채윤', date: new Date().toISOString().split('T')[0], content: newComment, authorProfilePic: 'url_to_profile_image' },
-      ];
+      const accessToken = localStorage.getItem('access');
+      axios.post(
+        `https://wellcheers.p-e.kr/qna/question/${id}/`,
+        { content: newComment, image: null },
+        { headers: { Authorization: `Bearer ${accessToken}` } }
+      )
+        .then(response => {
+          setAnswers([...answers, response.data]);
+          onChangeNewComment({ target: { value: "" } });
+        })
+        .catch(error => console.error('Error submitting comment:', error));
     }
   };
 
   return (
     <Container>
-    <Title>지역 Q&A</Title>
-    <Divider />
-    <ContentWrapper>
-    {question ? (
-      <div>
-        <QuestionTitle>제목제목제목자리</QuestionTitle>
-        <InfoRow>
-          <AuthorInfo>
-            <ProfileImage src={question.profile} alt="Profile" />
-              <Author><strong>{question.author}</strong></Author>
-              <Date>{question.date}</Date>
-          </AuthorInfo>
-          <StatusContainer>
-            <Content>{question.status}</Content>
-            <Status alt="Status" style={{ width: '20px' }} />
-          </StatusContainer>
-        </InfoRow>
-        <Divider />
-        <Button>주민들의 궁금증</Button>
-        <ContentBox><div>{question.question}</div></ContentBox>
-      </div>
-    ) : (
-      <p>없음</p>
-    )}
+      <Title>지역 Q&A</Title>
+      <Divider />
+      <ContentWrapper>
+        {title ? (
+          <div>
+            <QuestionTitle>{title}</QuestionTitle>
+            <InfoRow>
+              <AuthorInfo>
+                <ProfileImage src={profileimage_url|| '/images/profile.png'} alt="Profile" />
 
-    <TitleWrapper>
-              <TitleIcon src='/images/comment.png' alt='전구 아이콘'/>
-              <Titlemini>댓글</Titlemini>
-     </TitleWrapper>
-    <CommentSection>
-      <CommentBox>
-        {comments.map((comment, index) => (
-          <CommentContainer key={index}>
-            <ProfileImage src={comment.authorProfilePic} alt="Profile" style={{ width: '30px' }} />
-            <CommentContent>
-              <AuDa>
-                <Author><strong>{question.author}</strong></Author>
-                <Date>{question.date}</Date>
-              </AuDa>
-              <Content>{comment.content}</Content>
-            </CommentContent>
-          </CommentContainer>
-        ))}
-      </CommentBox>
-    </CommentSection>
+                <Author><strong>{nickname}</strong></Author>
+                <Date>{created_at}</Date>
+              </AuthorInfo>
+              <StatusContainer>
+                <Content>{finish ? "완료" : "진행 중"}</Content>
+                <Status alt="Status" style={{ width: '20px' }} />
+              </StatusContainer>
+            </InfoRow>
+            <Divider />
+            <Button>내 지역 질문</Button>
+            <ContentBox>
+              <div>{title}</div>
+              <div>{content}</div>
+            </ContentBox>
+          </div>
+        ) : (
+          <p>없음</p>
+        )}
 
-    <CommentInputContainer>
-      <TextArea
-        value={newComment}
-        onChange={onChangeNewComment}
-        placeholder="댓글을 남겨주세요..."
-      />
-      <input
-        type="file"
-        style={{ marginRight: '10px' }}
-      />
-      <Registerbutton onClick={handleCommentSubmit}>등록</Registerbutton>
-    </CommentInputContainer>
-    </ContentWrapper>
+        <TitleWrapper>
+          <TitleIcon src='/images/comment.png' alt='전구 아이콘' />
+          <Titlemini>댓글</Titlemini>
+        </TitleWrapper>
+        <CommentSection>
+          <CommentBox>
+            {answers.map((answer, index) => (
+              <CommentContainer key={index}>
+                <ProfileImage src={answer.profileimage_url || '/images/profile.png'} alt="Profile" style={{ width: '30px' }} />
+                <CommentContent> 
+                  <AuDa>
+                    <Author><strong>{answer.nickname}</strong></Author>
+                    <Date>{answer.created_at}</Date>
+                  </AuDa>
+                  <Content>{answer.content}</Content>
+                </CommentContent>
+              </CommentContainer>
+            ))}
+          </CommentBox>
+        </CommentSection>
 
-    <SolveWrapper>
-      <SolveContent>궁금증이 해결되셨나요?</SolveContent>
-      <Solvebutton>굼긍증 해결완료!</Solvebutton>
-    </SolveWrapper>
-  </Container>
-  )
-}
+        <CommentInputContainer>
+          <TextArea
+            value={newComment}
+            onChange={onChangeNewComment}
+            placeholder="댓글을 남겨주세요..."
+          />
+          <input
+            type="file"
+            style={{ marginRight: '10px' }}
+          />
+          <Registerbutton onClick={handleCommentSubmit}>등록</Registerbutton>
+        </CommentInputContainer>
+      </ContentWrapper>
+    </Container>
+  );
+};
 
-const SolveWrapper = styled.div`
-display: flex;
-flex-direction: column;
-text-align: center;
-align-items: center;
-`
-const SolveContent = styled.div`
-color: rgba(97, 93, 103, 1);
-font-size: 14px;
-font-weight: 500;
-margin-bottom: 1%;
-`
-const Solvebutton = styled.div`
-background: linear-gradient(247.34deg, #BCBDFF 7.5%, #5D5FEF 62.93%);
-box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.12);
-width: 30%;
-padding: 12px;
-color: white;
-margin-bottom: 5%;
-border-radius: 12px;
-`
 
 const AuDa = styled.div`
   display: flex;

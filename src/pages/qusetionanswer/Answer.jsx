@@ -20,7 +20,6 @@ export const Answer = () => {
   const [answers, setAnswers] = useState([]);
   const { question, q_user_id } = location.state || {};
 
-  // Fetch question data
   useEffect(() => {
     if (q_user_id) {
       axios.get(`https://wellcheers.p-e.kr/qna/question/${q_user_id}/`)
@@ -31,7 +30,7 @@ export const Answer = () => {
 
   useEffect(() => {
     if (id) {
-      axios.get(`https://wellcheers.p-e.kr/qna/question/${q_user_id}/answer/`)
+      axios.get(`https://wellcheers.p-e.kr/qna/question/${id}/answer/`)
         .then(response => setAnswers(response.data))
         .catch(error => console.error('Error fetching answers:', error));
     }
@@ -64,6 +63,7 @@ export const Answer = () => {
             <InfoRow>
               <AuthorInfo>
                 <ProfileImage src={profileimage_url|| '/images/profile.png'} alt="Profile" />
+
                 <Author><strong>{nickname}</strong></Author>
                 <Date>{created_at}</Date>
               </AuthorInfo>
@@ -91,11 +91,11 @@ export const Answer = () => {
           <CommentBox>
             {answers.map((answer, index) => (
               <CommentContainer key={index}>
-                <ProfileImage src={question.profile} alt="Profile" style={{ width: '30px' }} />
-                <CommentContent>
+                <ProfileImage src={answer.profileimage_url || '/images/profile.png'} alt="Profile" style={{ width: '30px' }} />
+                <CommentContent> 
                   <AuDa>
-                    <Author><strong>{question.author}</strong></Author>
-                    <Date>{question.date}</Date>
+                    <Author><strong>{answer.nickname}</strong></Author>
+                    <Date>{answer.created_at}</Date>
                   </AuDa>
                   <Content>{answer.content}</Content>
                 </CommentContent>
