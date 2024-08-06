@@ -167,7 +167,7 @@ const Date = styled.div`
 `;
 
 const Content = styled.div`
-color: rgba(97, 93, 103, 1);
+//color: rgba(97, 93, 103, 1);
 font-size: 16px;
 font-weight: 600;
 
