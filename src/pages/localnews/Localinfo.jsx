@@ -28,7 +28,7 @@ export const Localinfo = () => {
               <MoreButton onClick={() => navigate('/moremagazine', { state: { city_codes } })}>더보기</MoreButton>
           </SubTitle>
           <Magazinepart city_codes={city_codes} />
-          <Reviewpart city_codes={city_codes} />
+          <Reviewpart city_codes={city_codes} city={city} district={district}/>
       </Content>
       </PageWrapper>
     )

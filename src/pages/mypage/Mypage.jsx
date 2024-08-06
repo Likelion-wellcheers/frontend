@@ -138,10 +138,12 @@ export const Mypage = () => {
                 <ReviewItem key={review.id}>
                 <ContentWrapper>
                   <Locdate>
-                    <Locationname>{review.location}</Locationname>
+                    <Locationname>{review.city} {review.gugoon}</Locationname>
                     <Date>{review.created_at.substr(0,10)}</Date>
                   </Locdate>
-                  <Rating>★ {review.score}</Rating>
+                  <Rating><svg xmlns="http://www.w3.org/2000/svg" width="12" height="13" viewBox="0 0 12 13" fill="none">
+                  <path d="M2.70799 12.0826C2.41849 12.2311 2.08999 11.9709 2.14849 11.6386L2.77099 8.09113L0.12874 5.57413C-0.11801 5.33862 0.0102401 4.90813 0.34099 4.86163L4.01449 4.33963L5.65249 1.09437C5.80024 0.801875 6.19999 0.801875 6.34774 1.09437L7.98574 4.33963L11.6592 4.86163C11.99 4.90813 12.1182 5.33862 11.8707 5.57413L9.22924 8.09113L9.85174 11.6386C9.91024 11.9709 9.58174 12.2311 9.29224 12.0826L5.99899 10.3906L2.70799 12.0826Z" fill="#5D5FEF"/>
+                  </svg> {review.score}</Rating>
                   <Content>{review.content}</Content>
                 </ContentWrapper>
                 <ReviewImage src={review.image} onerror="this.style.display='none'"/>

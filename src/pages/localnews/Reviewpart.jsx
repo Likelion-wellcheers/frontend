@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
-export const Reviewpart = ({ city_codes }) => {
+export const Reviewpart = ({ city_codes , city, district}) => {
     const [reviews, setReviews] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [title, setTitle] = useState();
     const navigate = useNavigate();
 
     useEffect(() => {
+        var tempTitle = city+ " " + district
+        setTitle(tempTitle);
         if (city_codes) {
             fetch(`https://wellcheers.p-e.kr/issue/${city_codes}/review`, {
                 method: 'GET',
@@ -33,15 +36,13 @@ export const Reviewpart = ({ city_codes }) => {
         setCurrentIndex((currentIndex - 1 + reviews.length) % reviews.length);
     };
 
-    const isRequired = 1;
-    const title = "서울특별시 동작구";
 
     return (
         <ReviewWrapper>
             <SubTitle>
                 <Icon src='/images/icon4.png' alt='후기 아이콘' />
                 지역 후기
-                <Button onClick={() => navigate('/searchhome/searchmap/centerdetail/:centerId/postreview', { state: { title, isRequired } })}>작성하기</Button>
+                <Button onClick={() => navigate(`${city_codes}/reviewing`, { state: { title } })}>작성하기</Button>
             </SubTitle>
             <HorizontalRule />
             <ArrowButton left onClick={handlePrev}>
