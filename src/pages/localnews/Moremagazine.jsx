@@ -244,3 +244,19 @@ const Icon2 = styled(FloatingIcon)`
   top: -180%;  
   left: 68%;  
 ;`
+
+const ImgContainer = styled.div`
+  margin-top: 20%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
+
+const NoImage = styled.div`
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 150%;
+    top: -50%;
+    left: 50%;
+`
