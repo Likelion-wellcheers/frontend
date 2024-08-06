@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useForm } from '../../hooks/useForm';
+import StatusButton from '../../apis/StatusButton';
 
 export const Answer = () => {
   const location = useLocation();
@@ -65,10 +66,10 @@ export const Answer = () => {
                 <ProfileImage src={profileimage_url|| '/images/profile.png'} alt="Profile" />
 
                 <Author><strong>{nickname}</strong></Author>
-                <Date>{created_at}</Date>
+                <Date>{created_at.substr(0,10)}</Date>
               </AuthorInfo>
               <StatusContainer>
-                <Content>{finish ? "완료" : "진행 중"}</Content>
+                <Content><StatusButton finish={finish} /></Content>
                 <Status alt="Status" style={{ width: '20px' }} />
               </StatusContainer>
             </InfoRow>

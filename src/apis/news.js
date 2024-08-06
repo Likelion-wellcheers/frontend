@@ -30,3 +30,4 @@ export const fetchQna = async (question) => {
         console.log(e);
     }
 }
+
