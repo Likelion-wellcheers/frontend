@@ -7,7 +7,7 @@ const kakaoURL = `https://kauth.kakao.com/oauth/authorize?client_id=${Rest_API_k
 
 export const Login = () => {
   const handleLogin = () => {
-    window.location.href = kakaoURL; 
+    window.location.href = kakaoURL;
   };
 
   return (
