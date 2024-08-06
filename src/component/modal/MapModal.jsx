@@ -278,7 +278,7 @@ if(!modalPage){
                         return(
                         <CenterCard>
                             <CenterCardImg onClick={()=>handleDetail(center.id)}
-                            src={center.thumnail || "/images/default.png"} alt="시설사진"></CenterCardImg>
+                            src={center.thumbnail || "/images/default.png"} alt="시설사진"></CenterCardImg>
                             <CenterCardDesc>
                                 <CenterCardDescCon>
                                     <CenterCardTitle>{center.name}</CenterCardTitle>
@@ -310,6 +310,7 @@ const MapContainer = styled.div`
     display: flex;
     justify-content: center;
     padding-bottom: 20px;
+    padding: 8%;
 `
 
 const MapContent = styled.div`
