@@ -49,11 +49,23 @@ export const Reviewpart = ({ city_codes }) => {
             </ArrowButton>
             <ReviewList style={{ transform: `translateX(-${(currentIndex - 2) * (100 / 5)}%)` }}>
                 {reviews.map((review, index) => (
-                    <ReviewCard onClick={() => navigate('/locreview', { state: { review } })} key={index} className={index === currentIndex - 2 || index === currentIndex + 2 ? 'hidden' : ''}>
+                    <ReviewCard 
+                        onClick={() => navigate('/locreview', { 
+                            state: { 
+                                review, 
+                                city: review.city, 
+                                gugoon: review.gugoon, 
+                                nickname: review.nickname, 
+                                profileimage_url: review.profileimage_url 
+                            } 
+                        })} 
+                        key={index} 
+                        className={index === currentIndex - 2 || index === currentIndex + 2 ? 'hidden' : ''}
+                    >
                         <ReviewHeader>
-                            <ProfileImage src={review.image ? review.image : '/images/profile.png'} alt={review.user_id} />
+                            <ProfileImage src={review.profileimage_url ? review.profileimage_url : '/images/profile.png'} alt={review.user_id} />
                             <ReviewInfo>
-                                <Username>{review.user_id}</Username>
+                                <Username>{review.nickname}</Username>
                                 <Location>{review.city} {review.gugoon}</Location>
                                 <Rating>{'★'.repeat(review.score)}{'☆'.repeat(5 - review.score)}</Rating>
                             </ReviewInfo>
@@ -91,7 +103,6 @@ const ReviewWrapper = styled.div`
     position: relative;
     overflow: hidden;
     padding: 10px;
-    margin-top: 100px;
     padding-bottom: 5%;
 `;
 

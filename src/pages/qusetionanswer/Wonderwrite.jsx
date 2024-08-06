@@ -72,9 +72,7 @@ export const Wonderwrite = () => {
         <Title>동네 주민들과 궁금한 점을 물어보세요</Title>
       </MaintitleWrapper>
       <Icongroup>
-        <Button1 /><Button2 />
-        <Icon1 src='/images/wonder_icon.png' alt='궁금 아이콘' />
-        <Icon2 src='/images/search_icon.png' alt='돋보기 아이콘' />
+
       </Icongroup>
 
       <ContentWrapper>
@@ -255,6 +253,7 @@ const FloatingButton = styled.button`
     transform: translate(-50%, -50%); 
 ;`
 
+/*
 
 const Button1 = styled(FloatingButton)`
     top: -150%;  
@@ -283,6 +282,8 @@ const Icon2 = styled(FloatingIcon)`
   top: -180%;  
   left: 80%;  
 ;`
+
+*/
 
 const TitleWrapper = styled.div`
     display: flex;

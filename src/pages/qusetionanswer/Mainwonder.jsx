@@ -139,11 +139,22 @@ export const Mainwonder = () => {
     };
   
     const handleAnswerClick = (question) => {
-        navigate('/answer', { state: { question } });
+        const { id, nickname, profileimage_url, title, content, finish, created_at } = question;
+        navigate('/answer', { 
+            state: { 
+                id, 
+                nickname, 
+                profileimage_url, 
+                title, 
+                content, 
+                finish, 
+                created_at 
+            } 
+        });
     };
 
     const handleQuestionClick = (question) => {
-        navigate('/question', { state: { question } });
+        navigate('/question', { state: { question, q_user_id: question.q_user_id } });
     };
 
     const handleSearchClick = () => {
@@ -151,6 +162,7 @@ export const Mainwonder = () => {
             navigate('/wonderwrite', { state: { city: selectedCity, district: selectedDistrict} });
         }
     };
+    
 
   return (
     <Container>
@@ -236,9 +248,9 @@ export const Mainwonder = () => {
         <Cardwrapper key={index}>
           <RequestBox>
             <Oneline>
-              <Profile src={q.profile || '/images/profile.png'} alt="Profile" />
-              <Name>{q.author || 'Unknown User'}</Name>
-              <Date>{q.date || 'Unknown Date'}</Date>
+              <Profile src={q.profileimage_url || '/images/profile.png'} alt="Profile" />
+              <Name>{q.nickname || 'Unknown User'}</Name>
+              <Date>{q.created_at || 'Unknown Date'}</Date>
             </Oneline>
             <RequestContent>
               <div>{q.title}</div>
@@ -334,17 +346,15 @@ const Otherwrapper = styled.div`
 `
 const Boxwrapper = styled.section`
   display: flex;
-  justify-content: center;
   width: 100%;
   gap: 5%;
-  margin-left: 6%;
+  margin-left: 4%;
   margin-top: 7%;
 `;
 
 const Boxcontainer = styled.section`
   display: flex;
   flex-direction: column;
-  justify-content: center;
   gap: 1%;
   width: 500px;
   height: 450px;

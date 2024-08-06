@@ -94,13 +94,13 @@ export const AddMyInfo = () => {
       const updatedData = { nickname, city: selectedCity, gugoon: selectedDistrict };
       try {
         const accessToken = localStorage.getItem("access");
-        await axios.put('https://wellcheers.p-e.kr/account/information/', updatedData, {
+        await axios.put('https://wellcheers.p-e.kr/account/mypage/', updatedData, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
         });
         alert('내 추가정보가 성공적으로 입력 되었습니다');
-        navigate(-1); // 이전 페이지로 이동
+        navigate('/logincomplete'); // 이전 페이지로 이동
       } catch (error) {
         console.error('Error saving user info:', error);
         alert('정보 저장 중 오류가 발생했습니다.');
