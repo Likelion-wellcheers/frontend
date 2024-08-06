@@ -53,6 +53,7 @@ const Bgimage = styled.div`
   box-shadow: 4px 4px 4px 0px rgba(0, 0, 0, 0.12);
   border-radius: 0px 0px 24px 24px;
   z-index: 1;
+  padding-bottom: 2%;
 `;
 
 const Content = styled.div`

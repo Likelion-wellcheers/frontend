@@ -46,7 +46,7 @@ export const Question = () => {
           </StatusContainer>
         </InfoRow>
         <Divider />
-        <Button>서울특별시 동작구</Button>
+        <Button>주민들의 궁금증</Button>
         <ContentBox><div>{question.question}</div></ContentBox>
       </div>
     ) : (

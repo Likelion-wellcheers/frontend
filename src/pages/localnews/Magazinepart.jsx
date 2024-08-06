@@ -5,14 +5,11 @@ import styled from 'styled-components';
 export const Magazinepart = ({ city_codes }) => {
   const [cards, setCards] = useState([]);
   const navigate = useNavigate();
-/*
+
   useEffect(() => {
     if (city_codes) {
       fetch(`https://wellcheers.p-e.kr/issue/${city_codes}/getmagazine/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        method: 'GET',
       })
         .then((response) => response.json())
         .then((data) => {
@@ -27,31 +24,14 @@ export const Magazinepart = ({ city_codes }) => {
         });
     }
   }, [city_codes]);
-*/
 
-useEffect(() => {
-  if (city_codes) {
-    fetch(`https://wellcheers.p-e.kr/issue/${city_codes}/getmagazine/`, {
-      method: 'GET'
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          setCards(data);
-        } else {
-          setCards([data]); // 데이터를 배열로 변환
-        }
-      })
-      .catch((error) => {
-        console.error('Error fetching magazine data:', error);
-      });
+  if (!cards) {
+    return <div>Loading...</div>;
   }
-}, [city_codes]);
 
-  if(cards){
   return (
     <CardWrapper>
-      {cards.map((card, index) => (
+      {cards.slice(0, 3).map((card, index) => (
         <Card key={index}>
           <CardImage src={card.image ? card.image : '/images/default.png'} alt={card.content} />
           <CardContent>
@@ -63,7 +43,6 @@ useEffect(() => {
     </CardWrapper>
   );
 };
-}
 
 const CardWrapper = styled.div`
   display: flex;
