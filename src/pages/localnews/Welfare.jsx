@@ -53,16 +53,14 @@ export const Welfare = ({ city_codes }) => {
 
     return (
         <Wrapper>
-            <ArrowButton left onClick={handlePrev}>
-                <ArrowImage src='/images/leftarrow.png' alt='Previous' />
+            <ArrowButton>
             </ArrowButton>
             <Banner style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
                 {banners.map((banner, index) => (
                     <BannerImage key={index} src={banner} alt={`Banner ${index + 1}`} />
                 ))}
             </Banner>
-            <ArrowButton right onClick={handleNext}>
-                <ArrowImage src='/images/arrowbtn.png' alt='Next' />
+            <ArrowButton>
             </ArrowButton>
         </Wrapper>
     );
@@ -96,13 +94,6 @@ const ArrowButton = styled.button`
     ${({ left }) => left && 'left: 10px;'}
     ${({ right }) => right && 'right: 10px;'}
 `;
-
-const ArrowImage = styled.img`
-    width: 50px; 
-    height: 50px;
-    //margin-top: 30px;
-`;
-
 
 const BannerImage = styled.img`
   width: 33.33%;

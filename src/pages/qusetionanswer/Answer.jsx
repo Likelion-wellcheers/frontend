@@ -21,6 +21,10 @@ export const Answer = () => {
   const [answers, setAnswers] = useState([]);
   const { question, q_user_id } = location.state || {};
 
+  const handleBack = () => {
+    navigate(-1); // 이전 페이지로 이동
+  };
+
   useEffect(() => {
     if (q_user_id) {
       axios.get(`https://wellcheers.p-e.kr/qna/question/${q_user_id}/`)
@@ -111,16 +115,13 @@ export const Answer = () => {
             onChange={onChangeNewComment}
             placeholder="댓글을 남겨주세요..."
           />
-          <input
-            type="file"
-            style={{ marginRight: '10px' }}
-          />
           <Registerbutton onClick={handleCommentSubmit}>등록</Registerbutton>
         </CommentInputContainer>
       </ContentWrapper>
     </Container>
   );
 };
+
 
 const AuDa = styled.div`
   display: flex;

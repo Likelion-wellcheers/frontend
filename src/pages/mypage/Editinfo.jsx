@@ -10,6 +10,7 @@ export const Editinfo = () => {
   const [selectedDistrict, setSelectedDistrict] = useState('');
   const [showCityDropdown, setShowCityDropdown] = useState(false);
   const [showDistrictDropdown, setShowDistrictDropdown] = useState(false);
+  const [districtsAvailable, setDistrictsAvailable] = useState(true);
   const [userInfo, setUserInfo] = useState(null);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -65,12 +66,14 @@ export const Editinfo = () => {
         .then((data) => {
           if (data.gugoon.length === 0 || (data.gugoon.length === 1 && data.gugoon[0] === '')) {
             setDistricts([{ name: '전체보기', city_code: data.city_codes[0] }]);
+            setDistrictsAvailable(false);
           } else {
             const combinedData = data.gugoon.map((gugoon, index) => ({
               name: gugoon,
               city_code: data.city_codes[index],
             }));
             setDistricts(combinedData);
+            setDistrictsAvailable(true);
           }
           setSelectedDistrict('');
         })
@@ -86,6 +89,7 @@ export const Editinfo = () => {
   };
 
   const handleDistrictSelect = (district) => {
+    if (!districtsAvailable) return;
     setSelectedDistrict(district.name);
     setShowDistrictDropdown(false);
   };
@@ -141,11 +145,12 @@ export const Editinfo = () => {
           <DropdownContainer>
             <DropdownButton
               onClick={() => setShowDistrictDropdown(!showDistrictDropdown)}
-              disabled={!selectedCity}
+              disabled={!districtsAvailable}
+              style={{ cursor: districtsAvailable ? 'pointer' : 'not-allowed' }}
             >
               {selectedDistrict || '구'}
             </DropdownButton>
-            {showDistrictDropdown && (
+            {showDistrictDropdown && districtsAvailable && (
               <DropdownMenu>
                 {districts.map((district, index) => (
                   <DropdownItem key={index} onClick={() => handleDistrictSelect(district)}>

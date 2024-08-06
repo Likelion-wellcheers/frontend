@@ -53,6 +53,10 @@ export const Question = () => {
     }
   };
 
+  const handleBack = () => {
+    navigate(-1); // 이전 페이지로 이동
+  };
+
   const handleSolveButtonClick = async () => {
     const accessToken = localStorage.getItem("access");
     try {
@@ -125,10 +129,6 @@ export const Question = () => {
             onChange={onChangeNewComment}
             placeholder="댓글을 남겨주세요..."
           />
-          <input
-            type="file"
-            style={{ marginRight: '10px' }}
-          />
           <Registerbutton onClick={handleCommentSubmit}>등록</Registerbutton>
         </CommentInputContainer>
       </ContentWrapper>
@@ -137,10 +137,10 @@ export const Question = () => {
         <SolveContent>궁금증이 해결되셨나요?</SolveContent>
         <Solvebutton onClick={handleSolveButtonClick}>궁금증 해결완료!</Solvebutton>
       </SolveWrapper>
-
     </Container>
   );
 };
+
 
 const SolveWrapper = styled.div`
 display: flex;
