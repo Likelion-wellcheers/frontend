@@ -310,7 +310,6 @@ const MapContainer = styled.div`
     display: flex;
     justify-content: center;
     padding-bottom: 20px;
-    padding: 8%;
 `
 
 const MapContent = styled.div`
