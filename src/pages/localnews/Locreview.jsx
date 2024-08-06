@@ -46,7 +46,15 @@ export const Locreview = () => {
                 <Name>{nickname}</Name>
                 
             </Profile>
-            <PostTextArea placeholder={review.content}></PostTextArea>
+            <PostTextArea>
+            <ReviewTextImgs>
+                {review?.image && (<ReviewTextImg src={review?.image}></ReviewTextImg>)}
+            </ReviewTextImgs> 
+                {review?.content}
+            
+
+            </PostTextArea>
+            
         </PostContainer>
     </Container>
 </>
@@ -137,13 +145,12 @@ const PostTitleRating = styled.div`
     top: -7vh;
 `
 
-const PostTextArea = styled.textarea`
+const PostTextArea = styled.div`
     display: flex;
+    flex-direction: column;
     width: 85%;
     height: 254px;
     padding: 20px 40px;
-    justify-content: center;
-    align-items: center;
     gap: 10px;
     flex-shrink: 0;
     border-radius: 4px;
@@ -154,4 +161,18 @@ const PostTextArea = styled.textarea`
     font-weight: 500;
     line-height: 150%; 
     margin-top: 2vh;
+`
+
+const ReviewTextImgs = styled.div` 
+    display: flex;
+    flex-direction: row;
+    gap: 7px;
+    margin-top: 6px;
+    margin-bottom: 5px;
+`
+
+const ReviewTextImg = styled.img`
+    width: 88px;
+    height: 88px;
+    object-fit: cover;
 `

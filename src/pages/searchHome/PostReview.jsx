@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import styled from 'styled-components';
 import { useForm } from '../../hooks/useForm';
 
@@ -12,6 +12,7 @@ export const PostReview = ({title, isRequired}) => {
     const [previewUrl, setPreviewUrl] = useState(null);
     const [reviewContent, setReviewContent] = useForm();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const handleRate = (idx) => {
         setRate(idx);
@@ -75,7 +76,7 @@ export const PostReview = ({title, isRequired}) => {
         
                     const result = await response.json();
                     alert('후기가 등록되었습니다!');
-                    navigate('/Localinfo');
+                    navigate(-1);
             } catch (error) {
               console.error('업로드 실패:', error);
             }
@@ -98,6 +99,7 @@ export const PostReview = ({title, isRequired}) => {
         
                     const result = await response.json();
                     alert('후기가 등록되었습니다!');
+                    navigate(-1);
             } catch (error) {
               console.error('업로드 실패:', error);
             }
