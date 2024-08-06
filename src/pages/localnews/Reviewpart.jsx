@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
-export const Reviewpart = ({ city_codes }) => {
+export const Reviewpart = ({ city_codes , city, district}) => {
     const [reviews, setReviews] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [title, setTitle] = useState();
     const navigate = useNavigate();
 
     useEffect(() => {
+        var tempTitle = city+ " " + district
+        setTitle(tempTitle);
         if (city_codes) {
             fetch(`https://wellcheers.p-e.kr/issue/${city_codes}/review`, {
                 method: 'GET',
@@ -33,15 +36,13 @@ export const Reviewpart = ({ city_codes }) => {
         setCurrentIndex((currentIndex - 1 + reviews.length) % reviews.length);
     };
 
-    const isRequired = 1;
-    const title = "서울특별시 동작구";
 
     return (
         <ReviewWrapper>
             <SubTitle>
                 <Icon src='/images/icon4.png' alt='후기 아이콘' />
                 지역 후기
-                <Button onClick={() => navigate('/searchhome/searchmap/centerdetail/:centerId/postreview', { state: { title, isRequired } })}>작성하기</Button>
+                <Button onClick={() => navigate(`${city_codes}/reviewing`, { state: { title } })}>작성하기</Button>
             </SubTitle>
             <HorizontalRule />
             <ArrowButton left onClick={handlePrev}>
@@ -49,11 +50,23 @@ export const Reviewpart = ({ city_codes }) => {
             </ArrowButton>
             <ReviewList style={{ transform: `translateX(-${(currentIndex - 2) * (100 / 5)}%)` }}>
                 {reviews.map((review, index) => (
-                    <ReviewCard onClick={() => navigate('/locreview', { state: { review } })} key={index} className={index === currentIndex - 2 || index === currentIndex + 2 ? 'hidden' : ''}>
+                    <ReviewCard 
+                        onClick={() => navigate('/locreview', { 
+                            state: { 
+                                review, 
+                                city: review.city, 
+                                gugoon: review.gugoon, 
+                                nickname: review.nickname, 
+                                profileimage_url: review.profileimage_url 
+                            } 
+                        })} 
+                        key={index} 
+                        className={index === currentIndex - 2 || index === currentIndex + 2 ? 'hidden' : ''}
+                    >
                         <ReviewHeader>
-                            <ProfileImage src={review.image ? review.image : '/images/profile.png'} alt={review.user_id} />
+                            <ProfileImage src={review.profileimage_url ? review.profileimage_url : '/images/profile.png'} alt={review.user_id} />
                             <ReviewInfo>
-                                <Username>{review.user_id}</Username>
+                                <Username>{review.nickname}</Username>
                                 <Location>{review.city} {review.gugoon}</Location>
                                 <Rating>{'★'.repeat(review.score)}{'☆'.repeat(5 - review.score)}</Rating>
                             </ReviewInfo>
@@ -71,7 +84,7 @@ export const Reviewpart = ({ city_codes }) => {
 
 const Button = styled.button`
     margin-left: 83%;
-    padding: 10px;
+    padding: 7px 18px;
     border: none;
     background: white;
     color: black;
@@ -79,6 +92,9 @@ const Button = styled.button`
     display: flex;
     align-items: center;
     height: fit-content;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 150%;
     //float: right;
     cursor: pointer;
 
@@ -88,10 +104,10 @@ const Button = styled.button`
 `
 
 const ReviewWrapper = styled.div`
+    margin-top: 4.5%;
     position: relative;
     overflow: hidden;
     padding: 10px;
-    margin-top: 100px;
     padding-bottom: 5%;
 `;
 

@@ -15,6 +15,7 @@ export const fetchHome = async () => {
 export const fetchMag = async() => {
     try{
         const response = await axios.get(`${baseURL}/recommend/home/`);
+        return response.data;
     }
     catch(e){
         console.log(e)
@@ -84,11 +85,10 @@ export const fetchLikeCenter = async (center_id, likeData) => {
     const accessToken = localStorage.getItem("access");
     try{
         const response = await axios.put(`${baseURL}/recommend/center/${center_id}/`,
-            {likeData},
+            likeData,
             {headers : {
             'Authorization': `Bearer ${accessToken}`,
             }});
-        console.log(response.data);
         return response.data;
     }catch(e){
         console.log(e);
@@ -99,7 +99,6 @@ export const fetchLikeCenter = async (center_id, likeData) => {
 export const fetchCenterReview = async (center_id) => {
     try{
         const response = await axios.get(`${baseURL}/recommend/center/${center_id}/review/`);
-        console.log('시설리뷰', response.data);
         return response.data;
     }
     catch(e){
@@ -115,7 +114,6 @@ export const fetchPostReview = async (center_id, content) => {
             {headers : {
             'Authorization': `Bearer ${accessToken}`,
             }});
-        console.log(response.data);
         return response.data();
     }
     catch(e){ 

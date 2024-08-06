@@ -202,6 +202,10 @@ export const MapModal = ({mymap, load, cityCodes}) => {
     )};
 
     const handleCal = () => {
+        if (selectedCenter.length > 5) {
+            alert("5개 이하로 담아주세요!");
+            return;
+        }
         navigate('/searchhome/searchmap/CalCost', {state: {selected_center : selectedCenter, city_code: cityCode}});
     }
 

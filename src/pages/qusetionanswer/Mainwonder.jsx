@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import StatusButton from '../../apis/StatusButton';
 
 export const Mainwonder = () => {
     const [cities] = useState([
@@ -102,7 +103,7 @@ export const Mainwonder = () => {
       useEffect(() => {
         const fetchMyAnswers = async () => {
           try {
-            const accessToken = accessToken = localStorage.getItem("access");
+            const accessToken = localStorage.getItem("access");
             const response = await axios.get('https://wellcheers.p-e.kr/qna/myanswer/', {
               headers: {
                 Authorization: `Bearer ${accessToken}`,
@@ -139,11 +140,33 @@ export const Mainwonder = () => {
     };
   
     const handleAnswerClick = (question) => {
-        navigate('/answer', { state: { question } });
+        const { id, nickname, profileimage_url, title, content, finish, created_at } = question;
+        navigate('/answer', { 
+            state: { 
+                id, 
+                nickname, 
+                profileimage_url, 
+                title, 
+                content, 
+                finish, 
+                created_at 
+            } 
+        });
     };
 
     const handleQuestionClick = (question) => {
-        navigate('/question', { state: { question } });
+        const { id, nickname, profileimage_url, title, content, finish, created_at } = question;
+        navigate('/question', { 
+            state: { 
+                id, 
+                nickname, 
+                profileimage_url, 
+                title, 
+                content, 
+                finish, 
+                created_at 
+            } 
+        });
     };
 
     const handleSearchClick = () => {
@@ -152,174 +175,175 @@ export const Mainwonder = () => {
         }
     };
 
-  return (
-    <Container>
-    <MaintitleWrapper>
-        <SubTitle> 지역 Q&A <SubTitle_2><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M8.29289 5.29289C8.68342 4.90237 9.31658 4.90237 9.70711 5.29289L15.7071 11.2929C16.0976 11.6834 16.0976 12.3166 15.7071 12.7071L9.70711 18.7071C9.31658 19.0976 8.68342 19.0976 8.29289 18.7071C7.90237 18.3166 7.90237 17.6834 8.29289 17.2929L13.5858 12L8.29289 6.70711C7.90237 6.31658 7.90237 5.68342 8.29289 5.29289Z" fill="black"/>
-            </svg></SubTitle_2></SubTitle>
-        <Title>동네 주민들과 궁금한 점을 묻고 답해보세요</Title>
-    </MaintitleWrapper>
-    <Icongroup>
-        <Button1 /><Button2 />
-        <Icon1 src='/images/wonder_icon.png' alt='궁금 아이콘' />
-        <Icon2 src='/images/search_icon.png' alt='돋보기 아이콘' />
-    </Icongroup>
-    <ContentWrapper>
-        <AskWrapper>
-            <TitleWrapper>
-                <TitleIcon src='/images/twinkle.png' alt='반짝 아이콘'/>
-                <Titlemini>물어보세요</Titlemini>
-            </TitleWrapper>
-            <Bigbutton onClick={handleSearchClick()}>
-                <div>궁금한 지역을 선택하고, 동네 주민들에게 궁금한 점을 물어보세요!</div>
-                <SearchWrapper>
+    return (
+        <Container>
+            <MaintitleWrapper>
+                <SubTitle> 지역 Q&A <SubTitle_2><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path fillRule="evenodd" clipRule="evenodd" d="M8.29289 5.29289C8.68342 4.90237 9.31658 4.90237 9.70711 5.29289L15.7071 11.2929C16.0976 11.6834 16.0976 12.3166 15.7071 12.7071L9.70711 18.7071C9.31658 19.0976 8.68342 19.0976 8.29289 18.7071C7.90237 18.3166 7.90237 17.6834 8.29289 17.2929L13.5858 12L8.29289 6.70711C7.90237 6.31658 7.90237 5.68342 8.29289 5.29289Z" fill="black"/>
+                </svg></SubTitle_2></SubTitle>
+                <Title>동네 주민들과 궁금한 점을 묻고 답해보세요</Title>
+            </MaintitleWrapper>
+            <Icongroup>
+                <Button1 /><Button2 />
+                <Icon1 src='/images/wonder_icon.png' alt='궁금 아이콘' />
+                <Icon2 src='/images/search_icon.png' alt='돋보기 아이콘' />
+            </Icongroup>
+            <ContentWrapper>
+                <AskWrapper>
+                    <TitleWrapper>
+                        <TitleIcon src='/images/twinkle.png' alt='반짝 아이콘'/>
+                        <Titlemini>물어보세요</Titlemini>
+                    </TitleWrapper>
+                    <Bigbutton onClick={handleSearchClick}>
+                        <div>궁금한 지역을 선택하고, 동네 주민들에게 궁금한 점을 물어보세요!</div>
+                        <SearchWrapper>
 
-                <DropdownWrapper>
-                    <DropdownContainer>
-                        <DropdownButton onClick={() => setShowCityDropdown(!showCityDropdown)}>
-                            {selectedCity || '시'}
-                        </DropdownButton>
-                        {showCityDropdown && (
-                            <DropdownMenu>
-                                {cities.map((city, index) => (
-                                    <DropdownItem key={index} onClick={() => handleCitySelect(city)}>
-                                        {city}
-                                    </DropdownItem>
+                            <DropdownWrapper>
+                                <DropdownContainer>
+                                    <DropdownButton onClick={() => setShowCityDropdown(!showCityDropdown)}>
+                                        {selectedCity || '시'}
+                                    </DropdownButton>
+                                    {showCityDropdown && (
+                                        <DropdownMenu>
+                                            {cities.map((city, index) => (
+                                                <DropdownItem key={index} onClick={() => handleCitySelect(city)}>
+                                                    {city}
+                                                </DropdownItem>
+                                            ))}
+                                        </DropdownMenu>
+                                    )}
+                                </DropdownContainer>
+                                <DropdownContainer>
+                                    <DropdownButton
+                                        onClick={() => setShowDistrictDropdown(!showDistrictDropdown)}
+                                        disabled={!selectedCity}
+                                    >
+                                        {selectedDistrict || '구'}
+                                    </DropdownButton>
+                                    {showDistrictDropdown && (
+                                        <DropdownMenu>
+                                            {districts.map((district, index) => (
+                                                <DropdownItem key={index} onClick={() => handleDistrictSelect(district.name)}>
+                                                    {district.name}
+                                                </DropdownItem>
+                                            ))}
+                                        </DropdownMenu>
+                                    )}
+                                </DropdownContainer>
+                            </DropdownWrapper>
+                            
+                            <SearchIcon src='/images/dotbogi.png' alt='흰색 돋보기' />
+                        </SearchWrapper>
+                    </Bigbutton>
+                </AskWrapper>
+                <AnswerWrapper>
+                    <TitleWrapper>
+                        <TitleIcon src='/images/bulb.png' alt='전구 아이콘'/>
+                        <Titlemini>답해보세요</Titlemini>
+                    </TitleWrapper>
+
+                    <Section>
+                        <Wrapper>
+                            <BlueBox>
+                                <img src="/images/megaphone.png" alt="Megaphone" />
+                                <RequestTitle>답변하기</RequestTitle>
+                                <Content>회원님의 지역에 대한 질문들에 답해보세요!</Content>
+                            </BlueBox>
+                            
+                            <RequestWrapper>
+                                <Answerpartitle>주민들의 궁금증</Answerpartitle>
+                                {questions.map((q, index) => (
+                                    <Cardwrapper key={index}>
+                                        <RequestBox>
+                                            <Oneline>
+                                                <Profile src={q.profileimage_url || '/images/profile.png'} alt="Profile" />
+                                                <Name>{q.nickname || 'Unknown User'}</Name>
+                                                <Date>{q.created_at.substr(0,10) || 'Unknown Date'}</Date>
+                                                <Status>
+                                                    <StatusButton finish={q.finish} />
+                                                </Status>
+                                            </Oneline>
+                                            <RequestContent>
+                                                <div>{q.title}</div>
+                                                <div>{q.content}</div>
+                                            </RequestContent>
+                                            <Doanswer onClick={() => handleAnswerClick(q)}>
+                                                <Lineimg src='/images/worm.png' alt="Answer" />
+                                                <Doanswertext>
+                                                    <div>답변하기</div>
+                                                </Doanswertext>
+                                            </Doanswer>
+                                        </RequestBox>
+                                    </Cardwrapper>
                                 ))}
-                            </DropdownMenu>
-                        )}
-                    </DropdownContainer>
-                    <DropdownContainer>
-                        <DropdownButton
-                            onClick={() => setShowDistrictDropdown(!showDistrictDropdown)}
-                            disabled={!selectedCity}
-                        >
-                            {selectedDistrict || '구'}
-                        </DropdownButton>
-                        {showDistrictDropdown && (
-                            <DropdownMenu>
-                                {districts.map((district, index) => (
-                                    <DropdownItem key={index} onClick={() => handleDistrictSelect(district.name)}>
-                                        {district.name}
-                                    </DropdownItem>
-                                ))}
-                            </DropdownMenu>
-                        )}
-                    </DropdownContainer>
-                </DropdownWrapper>
-
-
-                
-                    <SearchIcon src='/images/dotbogi.png' alt='흰색 돋보기' />
-                </SearchWrapper>
-            </Bigbutton>
-        </AskWrapper>
-        <AnswerWrapper>
-            <TitleWrapper>
-                <TitleIcon src='/images/bulb.png' alt='전구 아이콘'/>
-                <Titlemini>답해보세요</Titlemini>
-            </TitleWrapper>
-
-            <Section>
-            <Wrapper>
-            
-                <BlueBox>
-                    <img src="/images/megaphone.png" alt="Megaphone" />
-                    <RequestTitle>답변하기</RequestTitle>
-                    <Content>회원님의 지역에 대한 질문들에 답해보세요!</Content>
-                </BlueBox>
-                
-                <RequestWrapper>
-      <Answerpartitle>주민들의 궁금증</Answerpartitle>
-      {questions.map((q, index) => (
-        <Cardwrapper key={index}>
-          <RequestBox>
-            <Oneline>
-              <Profile src={q.profile || '/images/profile.png'} alt="Profile" />
-              <Name>{q.author || 'Unknown User'}</Name>
-              <Date>{q.date || 'Unknown Date'}</Date>
-            </Oneline>
-            <RequestContent>
-              <div>{q.title}</div>
-              <div>{q.content}</div>
-            </RequestContent>
-            <Doanswer onClick={() => handleAnswerClick(q)}>
-              <Lineimg src='/images/worm.png' alt="Answer" />
-              <Doanswertext>
-                <div>답변하기</div>
-              </Doanswertext>
-            </Doanswer>
-          </RequestBox>
-          <State>
-            <StateImg src='/images/loading.png' alt="Status" />
-            <div>{q.finish ? '답변완료' : '미답변'}</div>
-          </State>
-        </Cardwrapper>
-      ))}
-    </RequestWrapper>
-                    </Wrapper>
+                            </RequestWrapper>
+                        </Wrapper>
                     </Section>
-        </AnswerWrapper>
-        <MyAnsQues>
-      <TitleWrapper>
-        <TitleIcon src='/images/like.png' alt='좋아요 아이콘'/>
-        <Titlemini>나의 질문 및 답변</Titlemini>
-      </TitleWrapper>
-      <Boxwrapper>
-        <Otherwrapper>
-        <Boxbutton>나의 질문</Boxbutton>
-        <Boxcontainer>
-        <QuestionList>
-            {myQuestions.slice(0, 6).map((q, index) => (
-            <QuestionItem onClick={() => handleQuestionClick(q)} key={index}>
-                <LeftContent>
-                <Loda>
-                    <Name>{q.location}</Name>
-                    <Date>{q.date}</Date>
-                </Loda>
-                <div>{q.title}</div>
-                <div>{q.content}</div>
-                </LeftContent>
-                <RightContent>
-                <StateImg src='/images/loading.png' alt="status icon" />
-                <div>{q.finish ? '답변완료' : '미답변'}</div>
-                </RightContent>
-            </QuestionItem>
-            ))}
-        </QuestionList>
-        </Boxcontainer>
-
-        </Otherwrapper>
-        <Otherwrapper>
-        <Boxbutton>나의 답변</Boxbutton>
-        <Boxcontainer>
-        <QuestionList>
-            {myAnswers.slice(0, 6).map((q, index) => (
-            <QuestionItem onClick={() => handleAnswerClick(q)} key={index}>
-                <LeftContent>
-                <Loda>
-                    <Name>{q.location}</Name>
-                    <Date>{q.date}</Date>
-                </Loda>
-                <div>{q.title}</div>
-                <div>{q.content}</div>
-                </LeftContent>
-                <RightContent>
-                <StateImg src='/images/loading.png' alt="status icon" />
-                <div>{q.finish ? '답변완료' : '미답변'}</div>
-                </RightContent>
-            </QuestionItem>
-            ))}
-        </QuestionList>
-        </Boxcontainer>
-        </Otherwrapper>
-      </Boxwrapper>
-    </MyAnsQues>
-    </ContentWrapper>
-    </Container>
-  )
+                </AnswerWrapper>
+                <MyAnsQues>
+                    <TitleWrapper>
+                        <TitleIcon src='/images/like.png' alt='좋아요 아이콘'/>
+                        <Titlemini>나의 질문 및 답변</Titlemini>
+                    </TitleWrapper>
+                    <Boxwrapper>
+                        <Otherwrapper>
+                            <Boxbutton>나의 질문</Boxbutton>
+                            <Boxcontainer>
+                                <QuestionList>
+                                    {myQuestions.slice(0, 6).map((q, index) => (
+                                    <QuestionItem onClick={() => handleQuestionClick(q)} key={index}>
+                                        <LeftContent>
+                                            <Loda>
+                                                <Name>{q.nickname}</Name>
+                                                <Date>{q.created_at.substr(0,10)}</Date>
+                                            </Loda>
+                                            <div>{q.title}</div>
+                                            <div>{q.content}</div>
+                                        </LeftContent>
+                                        <RightContent>
+                                            <State>
+                                                <StatusButton finish={q.finish} />
+                                            </State>
+                                        </RightContent>
+                                    </QuestionItem>
+                                    ))}
+                                </QuestionList>
+                            </Boxcontainer>
+                        </Otherwrapper>
+                        <Otherwrapper>
+                            <Boxbutton>나의 답변</Boxbutton>
+                            <Boxcontainer>
+                                <QuestionList>
+                                    {myAnswers.slice(0, 6).map((a, index) => (
+                                        <QuestionItem onClick={() => handleAnswerClick(a)} key={index}>
+                                            <LeftContent>
+                                                <Loda>
+                                                    <Name>{a.nickname}</Name>
+                                                    <Date>{a.created_at.substr(0,10)}</Date>
+                                                </Loda>
+                                                <div>{a.title}</div>
+                                                <div>{a.content}</div>
+                                            </LeftContent>
+                                            <RightContent>
+                                                <State>
+                                                    <StatusButton finish={a.finish} />
+                                                </State>
+                                            </RightContent>
+                                        </QuestionItem>
+                                    ))}
+                                </QuestionList>
+                            </Boxcontainer>
+                        </Otherwrapper>
+                    </Boxwrapper>
+                </MyAnsQues>
+            </ContentWrapper>
+        </Container>
+    )
 }
+
+const Status = styled.div`
+    margin-left: 53%;
+`
 
 const Loda = styled.div`
     display: flex;
@@ -334,17 +358,15 @@ const Otherwrapper = styled.div`
 `
 const Boxwrapper = styled.section`
   display: flex;
-  justify-content: center;
   width: 100%;
   gap: 5%;
-  margin-left: 6%;
+  margin-left: 4%;
   margin-top: 7%;
 `;
 
 const Boxcontainer = styled.section`
   display: flex;
   flex-direction: column;
-  justify-content: center;
   gap: 1%;
   width: 500px;
   height: 450px;
@@ -390,7 +412,10 @@ const QuestionItem = styled.div`
 const LeftContent = styled.div`
   display: flex;
   flex-direction: column;
+  width: 95%;
   gap: 5px;
+  //styleName: Body;
+
 `;
 
 const RightContent = styled.div`
@@ -457,6 +482,7 @@ const Name = styled.div`
     font-size: 18px;
     font-weight: 600;
     text-align: left;
+    white-space: nowrap;
 `
 const Date = styled.div`
     font-family: Pretendard;
@@ -466,16 +492,7 @@ const Date = styled.div`
     color: rgba(187, 184, 184, 1);
 `
 const State = styled.div`
-    gap: 5px;
-    width: 100px;
-    font-family: Pretendard;
-    font-size: 14px;
-    font-weight: 500;
-    color: rgba(97, 93, 103, 1);
-    display: flex;
-    margin-bottom: 90px;
-    //margin-top: 1%;
-    //margin-right: 2px;
+    margin-left: 3%;
 `
 const StateImg = styled.img`
     height:10px;

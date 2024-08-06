@@ -1,21 +1,24 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import styled from 'styled-components';
 import { useForm } from '../../hooks/useForm';
 
 export const PostReview = ({title, isRequired}) => {
+    // isRequired == 1일 시 지역리뷰 0 일시 센터 리뷰
     const { centerId } = useParams();
+    const { cityCode } = useParams();
     const [rate, setRate] = useState(3);
     const [selectedImage, setSelectedImage] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
     const [reviewContent, setReviewContent] = useForm();
-    const [required, setRequired] = useState(isRequired);
+    const navigate = useNavigate();
 
     const handleRate = (idx) => {
         setRate(idx);
     }
 
     const sentence = isRequired === 0 ? '시설의 사진을 첨부해주세요' : '파일 첨부';
+
 
     const handleImageChange = (event) => {
         
@@ -32,34 +35,78 @@ export const PostReview = ({title, isRequired}) => {
 
     const handleUpload = async () => {
         const formData = new FormData();
-        if(selectedImage !== null) {
-            formData.append("thumbnail", selectedImage);
+
+        // 센터리뷰 경우
+        if(isRequired === 0){
+            if(selectedImage !== null) {
+                formData.append("thumbnail", selectedImage);
+            }
+            formData.append("content", reviewContent);
+            formData.append("score", parseInt(rate));
+            // 이미지 필수로 필요할때만 이미지 선택하라고 에러 처리
         }
-        formData.append("content", reviewContent);
-        formData.append("score", parseInt(rate));
-        // 이미지 필수로 필요할때만 이미지 선택하라고 에러 처리
+
+        // 지역 리뷰 경우
+        else if(isRequired === 1){
+            if(selectedImage !== null) {
+                formData.append("image", selectedImage);
+            }
+            formData.append("content", reviewContent);
+            formData.append("score", parseInt(rate));
+            // 이미지 필수로 필요할때만 이미지 선택하라고 에러 처리
+        }
         
         const accessToken = localStorage.getItem("access");
 
-        try {
-        const response = await fetch(`https://wellcheers.p-e.kr/recommend/center/${centerId}/review/`, {
-            method: 'POST',
-            body: formData,
-            headers : {
-                'Authorization': `Bearer ${accessToken}`,
+        if(isRequired === 0){
+            try {
+                // 0일 때 센터 리뷰 
+                const response = await fetch(`https://wellcheers.p-e.kr/recommend/center/${centerId}/review/`, {
+                    method: 'POST',
+                    body: formData,
+                    headers : {
+                        'Authorization': `Bearer ${accessToken}`,
+                    }
+                });
+        
+                if (!response.ok) {
+                    throw new Error('서버 응답이 없습니다.');
+                }
+        
+                    const result = await response.json();
+                    alert('후기가 등록되었습니다!');
+                    navigate('/Localinfo');
+            } catch (error) {
+              console.error('업로드 실패:', error);
             }
-        });
-
-        if (!response.ok) {
-            throw new Error('서버 응답이 없습니다.');
         }
-
-            const result = await response.json();
-            alert('후기가 등록되었습니다!');
-    } catch (error) {
-      console.error('업로드 실패:', error);
+        else {
+            try {
+                console.log('시티코드',cityCode);
+                // 1일 때 지역 리뷰
+                const response = await fetch(`https://wellcheers.p-e.kr/issue/${parseInt(cityCode)}/review/`, {
+                    method: 'POST',
+                    body: formData,
+                    headers : {
+                        'Authorization': `Bearer ${accessToken}`,
+                    }
+                });
+        
+                if (!response.ok) {
+                    throw new Error('서버 응답이 없습니다.');
+                }
+        
+                    const result = await response.json();
+                    alert('후기가 등록되었습니다!');
+            } catch (error) {
+              console.error('업로드 실패:', error);
+            }
+        }
+            
     }
-}
+
+        
+
 
   return (
     <>

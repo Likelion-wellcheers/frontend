@@ -5,7 +5,7 @@ import styled from 'styled-components';
 export const Locreview = () => {
 
     const location = useLocation();
-    const { review } = location.state;
+    const { review, city, gugoon, nickname, profileimage_url } = location.state;
     const { centerId } = useParams();
     const [rate, setRate] = useState(5);
 
@@ -19,7 +19,7 @@ export const Locreview = () => {
         <NavContainer>지역 후기</NavContainer>
         <PostContainer>
             <PostTitle>
-                <PostTitleContent>{review.location}
+                <PostTitleContent>{`${city} ${gugoon}`}
                     <PostTitleRating>
                         <svg xmlns="http://www.w3.org/2000/svg" width="222" height="104" viewBox="0 0 222 104" fill="none">
                             <g filter="url(#filter0_d_789_9185)">
@@ -42,9 +42,9 @@ export const Locreview = () => {
                 </PostTitleRating></PostTitleContent>
             </PostTitle>
             <Profile>
-                <Img src='/images/profile.png'></Img>
-                <Name>{review.username}</Name>
-                <Date>{review.location}</Date>
+                <Img src={profileimage_url ? profileimage_url : '/images/profile.png'} alt={nickname} />
+                <Name>{nickname}</Name>
+                
             </Profile>
             <PostTextArea placeholder={review.content}></PostTextArea>
         </PostContainer>
@@ -57,7 +57,6 @@ const Name = styled.div`
     font-family: Pretendard;
     font-size: 18px;
     font-weight: 600;
-    text-align: left;
 `
 const Date = styled.div`
     font-family: Pretendard;
@@ -78,6 +77,7 @@ const Profile = styled.div`
     margin-left: 5%;
     align-items: center;
     gap: 10%;
+    width: 300px;
 `
 
 const Container = styled.div`

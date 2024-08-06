@@ -25,10 +25,10 @@ export const Localinfo = () => {
           <SubTitle>
               <Icon src='/images/icon3.png' alt='매거진 아이콘' />
               놓치면 안 될 매거진
-              <MoreButton onClick={() => navigate('/moremagazine', { state: { city_codes } })}>더보기</MoreButton>
+              {/* <MoreButton onClick={() => navigate('/moremagazine', { state: { city_codes } })}>더보기</MoreButton> */}
           </SubTitle>
           <Magazinepart city_codes={city_codes} />
-          <Reviewpart city_codes={city_codes} />
+          <Reviewpart city_codes={city_codes} city={city} district={district}/>
       </Content>
       </PageWrapper>
     )
@@ -53,6 +53,7 @@ const Bgimage = styled.div`
   box-shadow: 4px 4px 4px 0px rgba(0, 0, 0, 0.12);
   border-radius: 0px 0px 24px 24px;
   z-index: 1;
+  padding-bottom: 2%;
 `;
 
 const Content = styled.div`

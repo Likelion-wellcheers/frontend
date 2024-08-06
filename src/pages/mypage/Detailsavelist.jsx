@@ -1,39 +1,46 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import styled from 'styled-components';
+import { fetchMyInfo, fetchSaveCenter } from '../../apis/account';
 
 export const Detailsavelist = () => {
   const navigate = useNavigate();
   const locationState = useLocation();
-  const location = locationState.state?.location || '';
+  const { index } = locationState.state || '';
+  const [profile, setProfile] = useState();
+  const [savedCenters, setSavedCenters] = useState();
+  const [idx, setIdx] = useState();
 
-  const profile = {
-    name: '야채윤경',
-    image: '/images/profile.png',
-    age: 21,
-    location: '서울특별시 강남구'
-  };
 
-  const savedItems = [
-    { location: '서울특별시 동작구', image1: '/images/cat1.png', name: '까망돌 도서관', locationDetails: '서울 동작구 서달로'},
-    { location: '서울특별시 강남구', image1: '/images/cat1.png', name: '까망돌 도서관', locationDetails: '서울 동작구 서달로'},
-    { location: '서울특별시 마포구', image1: '/images/cat1.png', name: '까망돌 도서관', locationDetails: '서울 동작구 서달로'},
-    { location: '서울특별시 마포구', image1: '/images/cat1.png', name: '까망돌 도서관', locationDetails: '서울 동작구 서달로'},
-    { location: '서울특별시 마포구', image1: '/images/cat1.png', name: '까망돌 도서관', locationDetails: '서울 동작구 서달로'},
-    { location: '서울특별시 마포구', image1: '/images/cat1.png', name: '까망돌 도서관', locationDetails: '서울 동작구 서달로'},
-    { location: '서울특별시 마포구', image1: '/images/cat1.png', name: '까망돌 도서관', locationDetails: '서울 동작구 서달로'}
-  ];
+  useEffect(()=>{
+    const getMyProfile = async() => {
+      const result = await fetchMyInfo();
+      setProfile(result);
+    }
+    const getMySaveCenter = async() => {
+      const result = await fetchSaveCenter();
+      var lis = Object.keys(result).map(regionKey => {
+        return result[regionKey].map(item => {
+            return item; 
+          });
+      });
+      setSavedCenters(lis);
+    }  
+    getMyProfile();
+    getMySaveCenter();
+    setIdx(parseInt(idx));
+    
+  },[index])
 
-  const locationDetails = savedItems.filter(item => item.location === location);
 
+if(profile && savedCenters){
   return (
     <Container>
       <LeftCard>
-        <ProfileImage src={profile.image} alt="Profile" />
-        <Name>{profile.name}님</Name>
+        <ProfileImage src={profile.profileimage_url} alt="Profile" />
+        <Name>{profile.nickname}님</Name>
         <ProfileDetail>
-          <div>{profile.age}세</div>
-          <div>{profile.location}</div>
+          <div>{profile.city} {profile.gugoon}</div>
         </ProfileDetail>
         <Button onClick={() => navigate('/editinfo')}>
           <SettingIcon src='/images/setting.png' alt='설정 아이콘' />
@@ -46,17 +53,17 @@ export const Detailsavelist = () => {
             <Icon src='/images/heart.png' alt='하트 아이콘' />
             <TextWrapper>저장 목록</TextWrapper>
           </SectionTitle>
-          <LocationTitle>{location}</LocationTitle>
+          <LocationTitle>{savedCenters?.[index][0]?.city} {savedCenters?.[index][0]?.gugoon}</LocationTitle>
           <SaveList>
-            {locationDetails.map((item, index) => (
+            {savedCenters && savedCenters?.[index]?.map((item, index) => (
               <SaveListItem key={index}>
                 <SaveListImageContainer>
-                  <SaveListImage src={item.image1} alt={item.location} />
+                  <SaveListImage src={item?.thumbnail || "images/default.png"} onerror="this.style.display='none'" />
                 </SaveListImageContainer>
-                <div>
-                  <div>{item.name}</div>
-                  <div>{item.locationDetails}</div>
-                </div>
+                <SaveDesc>
+                  <SaveTitle>{item?.name}</SaveTitle>
+                  <SaveSubtitle>{item?.address}</SaveSubtitle>
+                </SaveDesc>
               </SaveListItem>
             ))}
           </SaveList>
@@ -64,7 +71,7 @@ export const Detailsavelist = () => {
       </RightCard>
     </Container>
   )
-}
+}}
 
 const LocationTitle = styled.div`
   background-color: blue;
@@ -110,7 +117,6 @@ const ProfileImage = styled.img`
 `;
 
 const Name = styled.div`
-  font-family: Pretendard;
   font-size: 20px;
   font-weight: 600;
   line-height: 30px;
@@ -140,6 +146,7 @@ const Button = styled.button`
   gap: 5px;
   display: flex;
   align-items: center;
+  white-space: nowrap;
 
   &:hover {
     background-color: rgba(244, 243, 255, 1);
@@ -193,29 +200,47 @@ const TextWrapper = styled.div`
 `;
 
 const SaveList = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  width: 100%;
 `;
 
 const SaveListItem = styled.div`
-  width: 30%;
+  width: 100%;
   padding: 10px;
   box-sizing: border-box;
   border-bottom: 1px solid #ddd;
   display: flex;
   flex-direction: column;
+  justify-content: center;
 `;
 
 const SaveListImageContainer = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   width: 100%;
 `;
 
+const SaveDesc = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-self: flex-start;
+
+`
+const SaveTitle = styled.div`
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 150%;
+`
+const SaveSubtitle = styled.div`
+  color: var(--Gray-01, #615D67);
+`
+
 const SaveListImage = styled.img`
-  width: 48%;
-  height: 100px;
+  width: 100%;
+  height: 128px;
   object-fit: cover;
   margin-bottom: 10px;
+  border-radius: 4px;
 `;
