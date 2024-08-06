@@ -51,11 +51,11 @@ const App = () => {
                   <Route path="searchhome/searchmap" element={<SearchMap />} />
                   <Route path="searchhome/searchmap/centerdetail/:centerId" element={<CenterDetail />}/>
                   <Route path="searchhome/searchmap/centerdetail/:centerId/reviewcenter" element={<ReviewCenter />}/>
-                  <Route path="searchhome/searchmap/centerdetail/:centerId/postreview" element={<Reviewing />} />
                   <Route path="searchhome/searchmap/CalCost" element={<CalCost />}/>
                   <Route path="signup" element={<Signup />} />
                   <Route path="localnews" element={<Search />} />
                   <Route path="localinfo" element={<Localinfo />} />
+                  <Route path="localinfo/:cityCode/reviewing" element={<Reviewing />} />
                   <Route path="eachmagazine" element={<Eachmagazine />} />
                   <Route path="moremagazine" element={<Moremagazine />} />
                   <Route path="mainwonder" element={<Mainwonder />} />
