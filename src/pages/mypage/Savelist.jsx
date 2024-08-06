@@ -1,40 +1,103 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { fetchMyInfo, fetchSaveCenter } from '../../apis/account';
 
 export const Savelist = () => {
-
+  const [savedCenters, setSavedCenters] = useState();
+  const [profile, setProfile] = useState();
   const navigate = useNavigate();
 
-  const profile = {
-    name: '야채윤경',
-    image: '/images/profile.png',
-    age: 21,
-    location: '서울특별시 강남구'
+  const data = {
+    "1-서울특별시-동작구": [
+        {
+            "id": 1,
+            "name": "강남초등학교",
+            "region_id": 1,
+            "address": "우리집뒤",
+            "time": "",
+            "cost": 0,
+            "longtitude": "0.0000000000",
+            "latitude": "0.0000000000",
+            "thumbnail": null,
+            "city": "서울특별시",
+            "gugoon": "동작구"
+        },
+        {
+            "id": 2,
+            "name": "김영삼도서관",
+            "region_id": 1,
+            "address": "알잔아요",
+            "time": "",
+            "cost": 0,
+            "longtitude": "0.0000000000",
+            "latitude": "0.0000000000",
+            "thumbnail": null,
+            "city": "서울특별시",
+            "gugoon": "동작구"
+        }
+    ],
+    "2-서울특별시-강남구": [
+        {
+            "id": 3,
+            "name": "러쉬",
+            "region_id": 2,
+            "address": "강남역",
+            "time": "",
+            "cost": 0,
+            "longtitude": "1.0000000000",
+            "latitude": "1.0000000000",
+            "thumbnail": null,
+            "city": "서울특별시",
+            "gugoon": "강남구"
+        }
+    ]
+};
+
+// 바깥의 키에 대해 map을 적용하고, 그 내부의 객체에 대해 map을 한번 더 적용하는 방법
+// Object.keys(data).map(regionKey => {
+//     console.log(`Region: ${regionKey}`);
+//     return data[regionKey].map(item => {
+//         console.log(`ID: ${item.id}, Name: ${item.name}, Address: ${item.address}`);
+//         // 여기서 필요한 다른 작업도 수행 가능
+//         return item; // 이 값을 새로운 배열에 넣을 수 있음
+//     });
+// });
+
+
+  useEffect(()=>{
+    const getMySaveCenter = async() => {
+      const result = await fetchSaveCenter();
+
+       var lis = Object.keys(result).map(regionKey => {
+        console.log(`Region: ${regionKey}`);
+        return result[regionKey].map(item => {
+            return item; // 이 값을 새로운 배열에 넣을 수 있음
+          });
+      });
+      setSavedCenters(lis);
+    }  
+    const getMyProfile = async() => {
+      const result = await fetchMyInfo();
+      setProfile(result);
+    }
+    getMyProfile();
+    getMySaveCenter();
+    
+  },[])
+
+  const handleItemClick = (idx) => {
+    navigate(`/detailsavelist`, { state: { idx }});
   };
 
-  const savedItems = [
-    { location: '서울특별시 동작구', image1: '/images/cat1.png', image2: '/images/cat2.png', count: 3 },
-    { location: '서울특별시 강남구', image1: '/images/cat1.png', image2: '/images/cat2.png', count: 5 },
-    { location: '서울특별시 마포구', image1: '/images/cat1.png', image2: '/images/cat2.png', count: 4 },
-    { location: '서울특별시 마포구', image1: '/images/cat1.png', image2: '/images/cat2.png', count: 4 },
-    { location: '서울특별시 마포구', image1: '/images/cat1.png', image2: '/images/cat2.png', count: 4 },
-    { location: '서울특별시 마포구', image1: '/images/cat1.png', image2: '/images/cat2.png', count: 4 },
-    { location: '서울특별시 마포구', image1: '/images/cat1.png', image2: '/images/cat2.png', count: 4 },
-  ];
-
-  const handleItemClick = (location) => {
-    navigate(`/detailsavelist`, { state: {location}});
-  };
-
+  if(profile){
   return (
     <Container>
       <LeftCard>
-        <ProfileImage src={profile.image} alt="Profile" />
-        <Name>{profile.name}님</Name>
+        <ProfileImage src={profile.profileimage_url} alt="Profile" />
+        <Name>{profile.nicknam}님</Name>
         <ProfileDetail>
-          <div>{profile.age}세</div>
-          <div>{profile.location}</div>
+          <div>{profile.city} {profile.gugoon}</div>
         </ProfileDetail>
         <Button onClick={() => navigate('/editinfo')}>
           <SettingIcon src='/images/setting.png' alt='설정 아이콘' />
@@ -48,16 +111,16 @@ export const Savelist = () => {
             <TextWrapper>저장 목록</TextWrapper>
           </SectionTitle>
           <SaveList>
-            {savedItems.map((item, index) => (
-              <SaveListItem key={index} onClick={() => handleItemClick(item.location)}>
+          {savedCenters?.map((item, idx)=>(
+              <SaveListItem onClick={()=> handleItemClick(idx)} key={idx}>
                 <SaveListImageContainer>
-                  <SaveListImage src={item.image1} alt={item.location} />
-                  <SaveListImage src={item.image2} alt={item.location} />
+                  <SaveListImage src={item[0]?.thumbnail || "/images/default.png"} alt={item.name} />
+                  <SaveListImage src={item[1]?.thumbnail || "/images/default.png"} alt={item.name} />
                 </SaveListImageContainer>
-                <div>
-                  <div>{item.location}</div>
-                  <div>{item.count}개</div>
-                </div>
+                <SaveDesc>
+                  <SaveTitle>{item[0].city} {item[0].gugoon}</SaveTitle>
+                  <SaveSubtitle>{item.length || "0 "}개</SaveSubtitle>
+                </SaveDesc>
               </SaveListItem>
             ))}
           </SaveList>
@@ -65,7 +128,7 @@ export const Savelist = () => {
       </Rightcard>
     </Container>
   )
-}
+}}
 
 const Container = styled.div`
   display: flex;
@@ -157,6 +220,9 @@ const Rightcard = styled.div`
 
 const Section = styled.div`
   margin: 5%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 `;
 
 const SectionTitle = styled.h2`
@@ -186,13 +252,13 @@ const TextWrapper = styled.div`
 `;
 
 const SaveList = styled.div`
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  width: 100%;
 `;
 
 const SaveListItem = styled.div`
-  width: 30%;
+  width: 93%;
   padding: 10px;
   box-sizing: border-box;
   border-bottom: 1px solid #ddd;
@@ -214,3 +280,19 @@ const SaveListImage = styled.img`
   object-fit: cover;
   margin-bottom: 10px;
 `;
+
+const SaveDesc = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-self: flex-start;
+
+`
+const SaveTitle = styled.div`
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 150%;
+`
+const SaveSubtitle = styled.div`
+  color: var(--Gray-01, #615D67);
+`

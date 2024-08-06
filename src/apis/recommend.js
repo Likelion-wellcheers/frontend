@@ -15,6 +15,7 @@ export const fetchHome = async () => {
 export const fetchMag = async() => {
     try{
         const response = await axios.get(`${baseURL}/recommend/home/`);
+        return response.data;
     }
     catch(e){
         console.log(e)

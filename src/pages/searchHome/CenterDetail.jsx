@@ -22,7 +22,7 @@ export const CenterDetail = () => {
     }
 
     const handleLike = () => {
-        var likeData = {};
+        var likeData = null;
         if(like === 0){
             likeData = {
                 "like" : 1
@@ -38,7 +38,7 @@ export const CenterDetail = () => {
             const result = await fetchLikeCenter(centerId, likeData);
             setLikeInfo(result);
         } 
-        getCenterLike(parseInt(centerId));
+        getCenterLike(parseInt(centerId), likeData);
     }
 
     useEffect(()=>{

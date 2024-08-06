@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { fetchMyInfo, fetchMyPlan, fetchSaveCenter } from '../../apis/account';
+import { fetchMyCenterReview, fetchMyInfo, fetchMyPlan, fetchMyRegionReview, fetchSaveCenter } from '../../apis/account';
 
 export const Mypage = () => {
   const navigate = useNavigate();
@@ -9,15 +9,10 @@ export const Mypage = () => {
   const [profile, setProfile] = useState({}); // 사용자 프로필 정보
   const [myPlan, setMyPlan] = useState([]); // 사용자가 쓴 계획 정보
   const [savedItems, setSavedItems] = useState({});
-
-  const reviews = [
-    { location: '서울시 동작구', date: '2024-07-26', rating: 4.0, content: '어린이랑이런내용의리뷰글달았어요', image: '/images/cat3.png', type: '지역후기' },
-    { location: '서울시 동작구', date: '2024-07-26', rating: 4.0, content: '어린이랑이런내용의리뷰글달았어요', image: '/images/cat3.png', type: '지역후기' },
-    { location: '서울시 동작구', date: '2024-07-26', rating: 4.0, content: '어린이랑이런내용의리뷰글달았어요', image: '/images/cat3.png', type: '지역후기' },
-    { location: '서울시 강남구', date: '2024-07-25', rating: 5.0, content: '이런내용의리뷰글달았어요', image: '/images/cat3.png', type: '시설후기' },
-    { location: '서울시 강남구', date: '2024-07-25', rating: 5.0, content: '이런내용의리뷰글달았어요', image: '/images/cat3.png', type: '시설후기' },
-    { location: '서울시 강서구', date: '2024-07-24', rating: 3.0, content: '이런내용의리뷰글달았어요', image: '/images/cat3.png', type: '시설후기' },
-  ];
+  const [regionReview, setRegionReview] = useState([]);
+  const [centerReview, setCenterReview] = useState([]);
+  const [slicedSave, setSlicedSave] = useState([]);
+  const [savedCenters, setSavedCenters] = useState([]);
 
   useEffect(()=>{
     const getMyProfile = async() => {
@@ -31,16 +26,30 @@ export const Mypage = () => {
     const getMySaveCenter = async() => {
       const result = await fetchSaveCenter();
        setSavedItems(result);
-      // console.log(savedItems);
-      // Object.keys(savedItems).forEach((regionKey) => {
-      //   const regionItems = savedItems[regionKey];
-      //   const indexItems = regionItems.slice(0, 3);
-      //   console.log('아이템',indexItems);
-      
+       var lis = Object.keys(result).map(regionKey => {
+        console.log(`Region: ${regionKey}`);
+        return result[regionKey].map(item => {
+            return item; 
+          });
+      });
+      setSavedCenters(lis);
+    }  
+    const getMyRegionReview = async() => {
+      const result = await fetchMyRegionReview();
+      setRegionReview(result);
+    }
+    const getMyCenterReview = async() => {
+      const result = await fetchMyCenterReview();
+      setCenterReview(result);
+    }
     getMyProfile();
     getMyPlan();
     getMySaveCenter();
-}},[]);
+    getMyRegionReview();
+    getMyCenterReview();
+
+    
+},[]);
 
   if(profile){
   return (
@@ -81,23 +90,23 @@ export const Mypage = () => {
             <Icon src='/images/heart.png' alt='하트 아이콘' />
             <TextWrapper>저장 목록</TextWrapper>
           </SectionTitle>
+
           <SaveList>
-            {/* {Object.keys(savedItems).forEach((regionKey) => {
-              const regionItems = savedItems[regionKey];
-              const indexItems = regionItems.slice(0, 3);
-              indexItems.map(item, index => {
-                <SaveListItem key={index}>
+            {savedCenters?.map((item, idx)=>(
+              <SaveListItem key={idx}>
                 <SaveListImageContainer>
-                  <SaveListImage src={item[0]?.thumbnail || "/images/centerDefault.jpg"} alt={item.name} />
-                  <SaveListImage src={item[1]?.thumbnail || "/images/centerDefault.jpg"} alt={item.name} />
+                  <SaveListImage src={item[0]?.thumbnail || "/images/default.png"} alt={item.name} />
+                  <SaveListImage src={item[1]?.thumbnail || "/images/default.png"} alt={item.name} />
                 </SaveListImageContainer>
-                <div>
-                  <div>{item[0]?.city} {item[0]?.gugoon}</div>
-                  <div>{item?.length}개</div>
-                </div>
+                <SaveDesc>
+                  <SaveTitle>{item[0].city} {item[0].gugoon}</SaveTitle>
+                  <SaveSubtitle>{item.length || "0 "}개</SaveSubtitle>
+                </SaveDesc>
               </SaveListItem>
-            })})} */}
+            ))}  
+          
           </SaveList>
+
           <MoreButton onClick={() => navigate('/savelist')}>더보기</MoreButton>
         </Section>
         <Section>
@@ -114,19 +123,39 @@ export const Mypage = () => {
             </TabButton>
           </Tabs>
           <Scrollable>
-            {reviews.filter(review => review.type === activeTab).slice(0, 3).map((review, index) => (
-              <ReviewItem key={index}>
+
+          {activeTab === '지역후기' && (
+            regionReview?.map((review)=>(
+                <ReviewItem key={review.id}>
                 <ContentWrapper>
                   <Locdate>
                     <Locationname>{review.location}</Locationname>
-                    <Date>{review.date}</Date>
+                    <Date>{review.created_at.substr(0,10)}</Date>
                   </Locdate>
-                  <Rating>{review.rating}★</Rating>
+                  <Rating>★ {review.score}</Rating>
                   <Content>{review.content}</Content>
                 </ContentWrapper>
-                <ReviewImage src={review.image} alt="Review" />
+                <ReviewImage src={review.image} onerror="this.style.display='none'"/>
               </ReviewItem>
-            ))}
+            ))  
+          )}
+
+          {activeTab === '시설후기' && (
+            centerReview?.map((review, idx)=>(
+                <ReviewItem key={idx}>
+                <ContentWrapper>
+                  <Locdate>
+                    <Locationname>지역이름</Locationname>
+                    <Date>{review.created_at.substr(0,10)}</Date>
+                  </Locdate>
+                  <Rating>★ {review.score}</Rating>
+                  <Content>{review.content}</Content>
+                </ContentWrapper>
+                <ReviewImage src={review.thumbnail} onerror="this.style.display='none'"/>
+              </ReviewItem>
+            ))  
+          )}
+
           </Scrollable>
         </Section>
       </RightCard>
@@ -223,6 +252,9 @@ const Button = styled.button`
 
 const Section = styled.div`
   margin: 5%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 `;
 
 const SectionTitle = styled.h2`
@@ -264,7 +296,6 @@ const Scrollable = styled.div`
 `;
 
 const TextWrapper = styled.div`
-  font-family: Pretendard;
   font-size: 24px;
   font-weight: 700;
   line-height: 36px;
@@ -272,13 +303,12 @@ const TextWrapper = styled.div`
 `;
 
 const SaveList = styled.div`
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  width: 100%;
 `;
 
 const SaveListItem = styled.div`
-  width: 30%;
   padding: 10px;
   box-sizing: border-box;
   border-bottom: 1px solid #ddd;
@@ -299,6 +329,22 @@ const SaveListImage = styled.img`
   object-fit: cover;
   margin-bottom: 10px;
 `;
+
+const SaveDesc = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-self: flex-start;
+
+`
+const SaveTitle = styled.div`
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 150%;
+`
+const SaveSubtitle = styled.div`
+  color: var(--Gray-01, #615D67);
+`
 
 const Tabs = styled.div`
   display: flex;
@@ -385,10 +431,12 @@ const Rating = styled.div`
 
 const Content = styled.div`
   margin-bottom: 5px;
+  overflow: hidden;
 `;
 
 const ReviewImage = styled.img`
-  width: auto;
-  height: auto;
+  width: 58px;
+  height: 58px;
   object-fit: cover;
+  border: none;
 `;

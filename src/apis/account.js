@@ -37,9 +37,36 @@ export const fetchSaveCenter = async() => {
             {headers : {
                 'Authorization': `Bearer ${accessToken}`,
             }});
-        console.log(response.data);
+        console.log('저장',response.data);
         return response.data;
     } catch(e){
         console.log(e);
     }
 }
+export const fetchMyRegionReview = async() => {
+    const accessToken = localStorage.getItem("access");
+    try{
+        const response = await axios.get(`${baseURL}/account/mypage/regionreview/`,
+            {headers : {
+                'Authorization': `Bearer ${accessToken}`,
+            }});
+        return response.data;
+    } catch(e){
+        console.log(e);
+    }
+}
+
+export const fetchMyCenterReview = async() => {
+    const accessToken = localStorage.getItem("access");
+    try{
+        const response = await axios.get(`${baseURL}/account/mypage/centerreview/`,
+            {headers : {
+                'Authorization': `Bearer ${accessToken}`,
+            }});
+        console.log('res', response.data);
+        return response.data;
+    } catch(e){
+        console.log(e);
+    }
+}
+
