@@ -22,20 +22,12 @@ export const CenterDetail = () => {
     }
 
     const handleLike = () => {
-        var likeData = null;
-        if(like === 0){
-            likeData = {
-                "like" : 1
-            }
-        }
-        else{
-            likeData = {
-                "like" : 0
-            }
-        }
+        const likeData = {
+            "like": like == 0 ? 1 : 0
+        };
         setLike(!like);
         const getCenterLike = async(centerId, likeData) =>{
-            const result = await fetchLikeCenter(centerId, likeData);
+            const result = await fetchLikeCenter(parseInt(centerId), likeData);
             setLikeInfo(result);
         } 
         getCenterLike(parseInt(centerId), likeData);
@@ -46,6 +38,7 @@ export const CenterDetail = () => {
         const getCenterDetail = async() => {
             const result = await fetchCenterInfo(center_id);
             setCenterInfo(result);
+            setLike(result.is_like);
         }
         const getCenterReview = async() => {
             const result = await fetchCenterReview(center_id);
@@ -73,11 +66,11 @@ if(centerInfo){
                     </InfoTitle>
                     <InfoPart>
                         <InfoImgList>
-                            <InfoImgRepres src={centerInfo.thumnail?.[0] || "/images/centerDefault.jpg"}></InfoImgRepres>
+                            <InfoImgRepres src={centerInfo.thumnail?.[0] || "/images/center_default.png"}></InfoImgRepres>
                             <InfoImgRems>
-                                <InfoImg src={centerInfo.thumnail?.[1] || "/images/centerDefault.jpg"}></InfoImg>
-                                <InfoImg src={centerInfo.thumnail?.[2] || "/images/centerDefault.jpg"}></InfoImg>
-                                <InfoImg src={centerInfo.thumnail?.[3] || "/images/centerDefault.jpg"}></InfoImg>
+                                <InfoImg src={centerInfo.thumnail?.[1] || "/images/center_default.png"}></InfoImg>
+                                <InfoImg src={centerInfo.thumnail?.[2] || "/images/center_default.png"}></InfoImg>
+                                <InfoImg src={centerInfo.thumnail?.[3] || "/images/center_default.png"}></InfoImg>
                             </InfoImgRems>
                         </InfoImgList>
                         <InfoTextContainer>

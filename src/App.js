@@ -28,6 +28,7 @@ import Test from './pages/login/Test';
 import { ReviewCenter } from './pages/searchHome/ReviewCenter';
 import { Logincomplete } from './pages/login/Logincomplete';
 import { AddMyInfo } from './pages/login/AddMyInfo';
+import { MyPlans } from './pages/mypage/MyPlans';
 
 
 
@@ -42,6 +43,7 @@ const App = () => {
                   <Route path="logincomplete" element={<Logincomplete />} />
                   <Route path="test" element={<Test />} />
                   <Route path="mypage" element={<Mypage />} />
+                  <Route path="myplan/:idx" element={<MyPlans />} />
                   <Route path="editinfo" element={<Editinfo />} />
                   <Route path="savelist" element={<Savelist />} />
                   <Route path="detailsavelist" element={<Detailsavelist />} />

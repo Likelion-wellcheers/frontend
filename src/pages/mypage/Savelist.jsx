@@ -8,69 +8,12 @@ export const Savelist = () => {
   const [profile, setProfile] = useState();
   const navigate = useNavigate();
 
-  const data = {
-    "1-서울특별시-동작구": [
-        {
-            "id": 1,
-            "name": "강남초등학교",
-            "region_id": 1,
-            "address": "우리집뒤",
-            "time": "",
-            "cost": 0,
-            "longtitude": "0.0000000000",
-            "latitude": "0.0000000000",
-            "thumbnail": null,
-            "city": "서울특별시",
-            "gugoon": "동작구"
-        },
-        {
-            "id": 2,
-            "name": "김영삼도서관",
-            "region_id": 1,
-            "address": "알잔아요",
-            "time": "",
-            "cost": 0,
-            "longtitude": "0.0000000000",
-            "latitude": "0.0000000000",
-            "thumbnail": null,
-            "city": "서울특별시",
-            "gugoon": "동작구"
-        }
-    ],
-    "2-서울특별시-강남구": [
-        {
-            "id": 3,
-            "name": "러쉬",
-            "region_id": 2,
-            "address": "강남역",
-            "time": "",
-            "cost": 0,
-            "longtitude": "1.0000000000",
-            "latitude": "1.0000000000",
-            "thumbnail": null,
-            "city": "서울특별시",
-            "gugoon": "강남구"
-        }
-    ]
-};
-
-// 바깥의 키에 대해 map을 적용하고, 그 내부의 객체에 대해 map을 한번 더 적용하는 방법
-// Object.keys(data).map(regionKey => {
-//     console.log(`Region: ${regionKey}`);
-//     return data[regionKey].map(item => {
-//         console.log(`ID: ${item.id}, Name: ${item.name}, Address: ${item.address}`);
-//         // 여기서 필요한 다른 작업도 수행 가능
-//         return item; // 이 값을 새로운 배열에 넣을 수 있음
-//     });
-// });
-
 
   useEffect(()=>{
     const getMySaveCenter = async() => {
       const result = await fetchSaveCenter();
 
        var lis = Object.keys(result).map(regionKey => {
-        console.log(`Region: ${regionKey}`);
         return result[regionKey].map(item => {
             return item; // 이 값을 새로운 배열에 넣을 수 있음
           });
@@ -87,7 +30,7 @@ export const Savelist = () => {
   },[])
 
   const handleItemClick = (idx) => {
-    navigate(`/detailsavelist`, { state: { idx }});
+    navigate(`/detailsavelist`, { state: { index : idx }});
   };
 
   if(profile){
@@ -115,7 +58,7 @@ export const Savelist = () => {
               <SaveListItem onClick={()=> handleItemClick(idx)} key={idx}>
                 <SaveListImageContainer>
                   <SaveListImage src={item[0]?.thumbnail || "/images/default.png"} alt={item.name} />
-                  <SaveListImage src={item[1]?.thumbnail || "/images/default.png"} alt={item.name} />
+                  <SaveListImage src={item[1]?.thumbnail || item[0]?.thumbnail || "/images/default.png"} alt={item.name} />
                 </SaveListImageContainer>
                 <SaveDesc>
                   <SaveTitle>{item[0].city} {item[0].gugoon}</SaveTitle>

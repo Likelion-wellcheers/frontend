@@ -6,7 +6,7 @@ import { fetchMyInfo, fetchSaveCenter } from '../../apis/account';
 export const Detailsavelist = () => {
   const navigate = useNavigate();
   const locationState = useLocation();
-  const index = locationState.state?.idx || '';
+  const { index } = locationState.state || '';
   const [profile, setProfile] = useState();
   const [savedCenters, setSavedCenters] = useState();
   const [idx, setIdx] = useState();
@@ -21,19 +21,19 @@ export const Detailsavelist = () => {
       const result = await fetchSaveCenter();
       var lis = Object.keys(result).map(regionKey => {
         return result[regionKey].map(item => {
-            return item; // 이 값을 새로운 배열에 넣을 수 있음
+            return item; 
           });
       });
       setSavedCenters(lis);
     }  
     getMyProfile();
     getMySaveCenter();
-    setIdx(parseInt(index));
+    setIdx(parseInt(idx));
     
-  },[])
+  },[index])
 
 
-if(profile){
+if(profile && savedCenters){
   return (
     <Container>
       <LeftCard>
@@ -53,16 +53,16 @@ if(profile){
             <Icon src='/images/heart.png' alt='하트 아이콘' />
             <TextWrapper>저장 목록</TextWrapper>
           </SectionTitle>
-          <LocationTitle>{savedCenters?.[idx][0]?.city} {savedCenters?.[idx][0]?.gugoon}</LocationTitle>
+          <LocationTitle>{savedCenters?.[index][0]?.city} {savedCenters?.[index][0]?.gugoon}</LocationTitle>
           <SaveList>
-            {savedCenters?.[idx]?.map((item, index) => (
+            {savedCenters && savedCenters?.[index]?.map((item, index) => (
               <SaveListItem key={index}>
                 <SaveListImageContainer>
-                  <SaveListImage src={item.thumbnail || "images/default.png"} onerror="this.style.display='none'" />
+                  <SaveListImage src={item?.thumbnail || "images/default.png"} onerror="this.style.display='none'" />
                 </SaveListImageContainer>
                 <SaveDesc>
-                  <SaveTitle>{item.name}</SaveTitle>
-                  <SaveSubtitle>{item.address}</SaveSubtitle>
+                  <SaveTitle>{item?.name}</SaveTitle>
+                  <SaveSubtitle>{item?.address}</SaveSubtitle>
                 </SaveDesc>
               </SaveListItem>
             ))}

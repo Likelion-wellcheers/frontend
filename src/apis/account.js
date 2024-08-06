@@ -9,7 +9,6 @@ export const fetchMyInfo = async() => {
             {headers : {
             'Authorization': `Bearer ${accessToken}`,
             }});
-        console.log(response.data);
         return response.data;
     }catch(e){
         console.log(e);
@@ -23,7 +22,6 @@ export const fetchMyPlan = async() => {
             {headers : {
                 'Authorization': `Bearer ${accessToken}`,
             }});
-        console.log(response.data);
         return response.data;
     } catch(e){
         console.log(e);
@@ -37,7 +35,6 @@ export const fetchSaveCenter = async() => {
             {headers : {
                 'Authorization': `Bearer ${accessToken}`,
             }});
-        console.log('저장',response.data);
         return response.data;
     } catch(e){
         console.log(e);
@@ -63,7 +60,6 @@ export const fetchMyCenterReview = async() => {
             {headers : {
                 'Authorization': `Bearer ${accessToken}`,
             }});
-        console.log('res', response.data);
         return response.data;
     } catch(e){
         console.log(e);
