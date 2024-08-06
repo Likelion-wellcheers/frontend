@@ -46,6 +46,7 @@ export const Home = () => {
       setMagData(result.magazine_list);
       setRegData(result.region_list);
       
+      //완성 후 추후 데이터 넣어 사용할 키들
       const firstKeys = shuffle(result.region_list[0].infraname?.concat(result?.lifename, result?.hobbyname));
       const secondKeys = shuffle(result.region_list[1].infraname?.concat(result?.lifename, result?.hobbyname));
       const thirdKeys = shuffle(result.region_list[2].infraname?.concat(result?.lifename, result?.hobbyname));
@@ -59,6 +60,7 @@ export const Home = () => {
     }
     getHome();
   },[]);
+
 
   return (
     <>
@@ -82,14 +84,9 @@ export const Home = () => {
               {regData.map((data, idx)=>(
                 <SectionContent>
                   <SectionContentImgContainer>
-                    <SectionContentImg src={data.thumnail || "/images/default.png"} alt="거주지사진"></SectionContentImg>
+                    <SectionContentImg src={data.thumbnail || "/images/default.png"} alt="거주지사진"></SectionContentImg>
                   </SectionContentImgContainer>
                   <SectionContentTitle>{data.city} {data.gugoon}</SectionContentTitle>
-                  <SectionContentKeys>
-                        <SectionContentKey themeColor={themeColor}>{regKeys[idx][0] != undefined ? `#${regKeys[idx][0]}` : "#준비중"}</SectionContentKey>
-                        <SectionContentKey themeColor={themeColor}>{regKeys[idx][1] != undefined ? `#${regKeys[idx][1]}`: "#준비중"}</SectionContentKey>
-                        <SectionContentKey themeColor={themeColor}>{regKeys[idx][2] != undefined ? `#${regKeys[idx][2]}`: '#준비중'}</SectionContentKey>
-                  </SectionContentKeys>
                 </SectionContent>
               ))}
               </SectionContentContainer>
@@ -112,28 +109,28 @@ export const Home = () => {
                   <ArticleImg src={data.thumnail || "/images/default.png"}></ArticleImg>
                   <ArticleContents>
                     <ArticleContentTitle>{data.name}</ArticleContentTitle>
-                    <ArticleContentBtn themeColor={themeColor}>상세보기</ArticleContentBtn>
                   </ArticleContents>
                 </Article>
               })} 
 
             <Article id="article1">
-                <ArticleImg src="/images/default.png"></ArticleImg>
+                <ArticleImg src={magData[0]?.image}></ArticleImg>
                 <ArticleContents>
-                  <ArticleContentTitle>카드뉴스제목</ArticleContentTitle>
-                  <ArticleContentBtn themeColor={themeColor}>상세보기</ArticleContentBtn>
+                  <ArticleContentTitle>{magData[0]?.content}</ArticleContentTitle>
                 </ArticleContents>
             </Article>
           </ArticleDescContainer>            
             <Article id="article2">
-                <ArticleImg></ArticleImg>
+                <ArticleImg src={magData[1]?.image}></ArticleImg>
                 <ArticleContents>
-                  <ArticleContentTitle>카드뉴스제목</ArticleContentTitle>
-                  <ArticleContentBtn themeColor={themeColor}>상세보기</ArticleContentBtn>
+                  <ArticleContentTitle>{magData[1]?.content}</ArticleContentTitle>
                 </ArticleContents>
             </Article>
             <Article id="article3">
-
+              <ArticleImg src={magData[2]?.image}></ArticleImg>
+                  <ArticleContents>
+                    <ArticleContentTitle>{magData[2]?.content}</ArticleContentTitle>
+                  </ArticleContents>
             </Article>
         </ArticleContainer>
     </Container>
@@ -280,7 +277,7 @@ const SectionContent = styled.div`
   border: 1px solid #BBB8B8;
   border-radius: 8px;
   width: 285px;
-  height: 266px;
+  height: 250px;
   gap: 8px;
   background-color: white;
   z-index: 10;
@@ -302,33 +299,13 @@ const SectionContentImg = styled.img`
 const SectionContentTitle = styled.div`
   font-weight: 600;
   font-size: 18px;
-  height: 10%;
+  height: 5%;
   padding-left: 16px;
   padding-right: 16px;
 `
 
 const SectionContentKeys = styled.div`
   display: flex;
-  flex-direction: row;
-  gap: 8px;
-  height: 10%;
-  padding-right: 16px;
-  padding-left: 16px;
-  padding-bottom: 16px;
-`
-
-const SectionContentKey = styled.div`
-  color: ${({themeColor})=>themeColor.main};
-  height: 21px;
-  font-size: 13px;
-  font-weight: 500;
-  border-radius: 8px;
-  background-color: ${({themeColor})=>themeColor.light};
-  padding: 0px 12px 0px 12px;
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 `
 
 const SectionBackgroundImg = styled.img`
