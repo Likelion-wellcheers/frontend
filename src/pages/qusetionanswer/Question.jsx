@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useForm } from '../../hooks/useForm';
+import StatusButton from '../../apis/StatusButton';
 
 export const Question = () => {
   const location = useLocation();
@@ -52,6 +53,20 @@ export const Question = () => {
     }
   };
 
+  const handleSolveButtonClick = async () => {
+    const accessToken = localStorage.getItem("access");
+    try {
+      const response = await axios.put(`https://wellcheers.p-e.kr/qna/question/${id}/`, { is_finish: 1 },
+        { headers : { Authorization: `Bearer ${accessToken}`
+        }
+      });
+
+    } catch (error) {
+      console.error("Error updating question status:", error);
+    }
+  };
+
+
   return (
     <Container>
       <Title>지역 Q&A</Title>
@@ -65,10 +80,10 @@ export const Question = () => {
                 <ProfileImage src={profileimage_url|| '/images/profile.png'} alt="Profile" />
 
                 <Author><strong>{nickname}</strong></Author>
-                <Date>{created_at}</Date>
+                <Date>{created_at.substr(0,10)}</Date>
               </AuthorInfo>
               <StatusContainer>
-                <Content>{finish ? "완료" : "진행 중"}</Content>
+                <Content><StatusButton finish={finish} /></Content>
                 <Status alt="Status" style={{ width: '20px' }} />
               </StatusContainer>
             </InfoRow>
@@ -117,10 +132,37 @@ export const Question = () => {
           <Registerbutton onClick={handleCommentSubmit}>등록</Registerbutton>
         </CommentInputContainer>
       </ContentWrapper>
+
+      <SolveWrapper>
+        <SolveContent>궁금증이 해결되셨나요?</SolveContent>
+        <Solvebutton onClick={handleSolveButtonClick}>궁금증 해결완료!</Solvebutton>
+      </SolveWrapper>
+
     </Container>
   );
 };
 
+const SolveWrapper = styled.div`
+display: flex;
+flex-direction: column;
+text-align: center;
+align-items: center;
+`
+const SolveContent = styled.div`
+color: rgba(97, 93, 103, 1);
+font-size: 14px;
+font-weight: 500;
+margin-bottom: 1%;
+`
+const Solvebutton = styled.div`
+background: linear-gradient(247.34deg, #BCBDFF 7.5%, #5D5FEF 62.93%);
+box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.12);
+width: 30%;
+padding: 12px;
+color: white;
+margin-bottom: 5%;
+border-radius: 12px;
+`
 
 const AuDa = styled.div`
   display: flex;

@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import StatusButton from '../../apis/StatusButton';
 
 export const Mainwonder = () => {
     const [cities] = useState([
@@ -257,7 +258,10 @@ export const Mainwonder = () => {
                                             <Oneline>
                                                 <Profile src={q.profileimage_url || '/images/profile.png'} alt="Profile" />
                                                 <Name>{q.nickname || 'Unknown User'}</Name>
-                                                <Date>{q.created_at || 'Unknown Date'}</Date>
+                                                <Date>{q.created_at.substr(0,10) || 'Unknown Date'}</Date>
+                                                <Status>
+                                                    <StatusButton finish={q.finish} />
+                                                </Status>
                                             </Oneline>
                                             <RequestContent>
                                                 <div>{q.title}</div>
@@ -270,10 +274,6 @@ export const Mainwonder = () => {
                                                 </Doanswertext>
                                             </Doanswer>
                                         </RequestBox>
-                                        <State>
-                                            <StateImg src='/images/loading.png' alt="Status" />
-                                            <div>{q.finish ? '답변완료' : '미답변'}</div>
-                                        </State>
                                     </Cardwrapper>
                                 ))}
                             </RequestWrapper>
@@ -291,20 +291,21 @@ export const Mainwonder = () => {
                             <Boxcontainer>
                                 <QuestionList>
                                     {myQuestions.slice(0, 6).map((q, index) => (
-                                        <QuestionItem onClick={() => handleQuestionClick(q)} key={index}>
-                                            <LeftContent>
-                                                <Loda>
-                                                    <Name>{q.location}</Name>
-                                                    <Date>{q.date}</Date>
-                                                </Loda>
-                                                <div>{q.title}</div>
-                                                <div>{q.content}</div>
-                                            </LeftContent>
-                                            <RightContent>
-                                                <StateImg src='/images/loading.png' alt="status icon" />
-                                                <div>{q.finish ? '답변완료' : '미답변'}</div>
-                                            </RightContent>
-                                        </QuestionItem>
+                                    <QuestionItem onClick={() => handleQuestionClick(q)} key={index}>
+                                        <LeftContent>
+                                            <Loda>
+                                                <Name>{q.nickname}</Name>
+                                                <Date>{q.created_at.substr(0,10)}</Date>
+                                            </Loda>
+                                            <div>{q.title}</div>
+                                            <div>{q.content}</div>
+                                        </LeftContent>
+                                        <RightContent>
+                                            <State>
+                                                <StatusButton finish={q.finish} />
+                                            </State>
+                                        </RightContent>
+                                    </QuestionItem>
                                     ))}
                                 </QuestionList>
                             </Boxcontainer>
@@ -318,14 +319,15 @@ export const Mainwonder = () => {
                                             <LeftContent>
                                                 <Loda>
                                                     <Name>{a.nickname}</Name>
-                                                    <Date>{a.created_at}</Date>
+                                                    <Date>{a.created_at.substr(0,10)}</Date>
                                                 </Loda>
                                                 <div>{a.title}</div>
                                                 <div>{a.content}</div>
                                             </LeftContent>
                                             <RightContent>
-                                                <StateImg src='/images/loading.png' alt="status icon" />
-                                                <div>{a.finish ? '답변완료' : '미답변'}</div>
+                                                <State>
+                                                    <StatusButton finish={a.finish} />
+                                                </State>
                                             </RightContent>
                                         </QuestionItem>
                                     ))}
@@ -338,6 +340,10 @@ export const Mainwonder = () => {
         </Container>
     )
 }
+
+const Status = styled.div`
+    margin-left: 53%;
+`
 
 const Loda = styled.div`
     display: flex;
@@ -406,7 +412,10 @@ const QuestionItem = styled.div`
 const LeftContent = styled.div`
   display: flex;
   flex-direction: column;
+  width: 95%;
   gap: 5px;
+  //styleName: Body;
+
 `;
 
 const RightContent = styled.div`
@@ -473,6 +482,7 @@ const Name = styled.div`
     font-size: 18px;
     font-weight: 600;
     text-align: left;
+    white-space: nowrap;
 `
 const Date = styled.div`
     font-family: Pretendard;
@@ -482,16 +492,7 @@ const Date = styled.div`
     color: rgba(187, 184, 184, 1);
 `
 const State = styled.div`
-    gap: 5px;
-    width: 100px;
-    font-family: Pretendard;
-    font-size: 14px;
-    font-weight: 500;
-    color: rgba(97, 93, 103, 1);
-    display: flex;
-    margin-bottom: 90px;
-    //margin-top: 1%;
-    //margin-right: 2px;
+    margin-left: 3%;
 `
 const StateImg = styled.img`
     height:10px;
