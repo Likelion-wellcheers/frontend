@@ -259,20 +259,22 @@ export const Mainwonder = () => {
                                                 <Profile src={q.profileimage_url || '/images/profile.png'} alt="Profile" />
                                                 <Name>{q.nickname || 'Unknown User'}</Name>
                                                 <Date>{q.created_at.substr(0,10) || 'Unknown Date'}</Date>
-                                                <Status>
-                                                    <StatusButton finish={q.finish} />
-                                                </Status>
                                             </Oneline>
                                             <RequestContent>
                                                 <div>{q.title}</div>
                                                 <div>{q.content}</div>
                                             </RequestContent>
+                                            <Dost>
                                             <Doanswer onClick={() => handleAnswerClick(q)}>
                                                 <Lineimg src='/images/worm.png' alt="Answer" />
                                                 <Doanswertext>
                                                     <div>답변하기</div>
                                                 </Doanswertext>
                                             </Doanswer>
+                                            <Status>
+                                                    <StatusButton finish={q.finish} />
+                                            </Status>
+                                            </Dost>
                                         </RequestBox>
                                     </Cardwrapper>
                                 ))}
@@ -341,8 +343,13 @@ export const Mainwonder = () => {
     )
 }
 
+const Dost = styled.div`
+    display: flex;
+    gap:2%;
+`
+
 const Status = styled.div`
-    margin-left: 53%;
+    //margin-left: 53%;
 `
 
 const Loda = styled.div`
@@ -492,7 +499,7 @@ const Date = styled.div`
     color: rgba(187, 184, 184, 1);
 `
 const State = styled.div`
-    margin-left: 3%;
+    //margin-left: 3%;
 `
 const StateImg = styled.img`
     height:10px;
@@ -506,6 +513,7 @@ const Doanswer = styled.div`
     display: flex;
     gap: 1%;
     margin-left: 10%;
+    white-space: nowrap;
 `
 const Doanswertext = styled.p`
     border-bottom: 1px solid rgba(97, 93, 103, 1);

@@ -97,10 +97,6 @@ const Button = styled.button`
     line-height: 150%;
     //float: right;
     cursor: pointer;
-
-  &:hover {
-    background-color: #f2f2f2;
-  }
 `
 
 const ReviewWrapper = styled.div`
@@ -116,6 +112,7 @@ const ReviewList = styled.div`
     transition: transform 0.3s ease-in-out;
     width: calc(100% + 100px);
     margin-left: -50px;
+    justify-content: center;
 `;
 
 const ReviewCard = styled.div`
@@ -132,10 +129,6 @@ const ReviewCard = styled.div`
     align-items: flex-start;
     text-align: left;
     font-family: 'Arial, sans-serif';
-
-    &.hidden {
-        opacity: 0.5;
-    }
 `;
 
 const ReviewHeader = styled.div`
@@ -200,6 +193,7 @@ const SubTitle = styled.h3`
     align-items: center;
     margin-bottom: 3px;
     color: white;
+    white-space: nowrap;
 `;
 
 const Icon = styled.img`

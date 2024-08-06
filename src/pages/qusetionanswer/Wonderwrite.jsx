@@ -100,12 +100,6 @@ export const Wonderwrite = () => {
       </ContentWrapper>
 
       <Addfile>
-        <input
-          type="file"
-          onChange={(e)=>handleImageChange(e)}
-          style={{ marginRight: '10px' }}
-        />
-        {previewUrl && <img src={previewUrl} alt="Preview" style={{ width: '100px', height: '100px' }} />}
         <Registerbutton onClick={handleUpload}>업로드</Registerbutton>
       </Addfile>
     </Container>
