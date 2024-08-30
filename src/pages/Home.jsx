@@ -1,27 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom';
-import styled, { createGlobalStyle, keyframes } from 'styled-components'
+import styled from 'styled-components'
 import { ThemeColorContext } from '../context/context'
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { curPageRecoil } from '../recoil/atom';
+import { useRecoilValue } from 'recoil';
 import { fetchHome } from '../apis/recommend';
 import { isLoginState } from '../recoil/isLoginState';
 import { Banner } from '../component/home/Banner';
 
 
-const HomeStyle = createGlobalStyle`
-  @font-face {
-    font-family: 'GmarketSansMedium';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-  }
-`
-
 export const Home = () => {
   const themeColor = useContext(ThemeColorContext);
-  const navigate = useNavigate();
-  const [curPage, setCurPage] = useRecoilState(curPageRecoil);
   const [magData, setMagData] = useState([]);
   const [regData, setRegData] = useState([]);
   const [regKeys, setRegKeys] = useState([]);
@@ -29,16 +16,6 @@ export const Home = () => {
 
   const shuffle = (array) => {
     array.sort(() => Math.random() - 0.5);
-  }
-
-  const handleSearchClick = () => {
-    if(!isLogin){
-      alert("로그인 먼저 해주세요!");
-      navigate("/login");
-      return;
-    }
-    setCurPage("searchhome");
-    navigate("/searchhome");
   }
 
   useEffect(()=>{
