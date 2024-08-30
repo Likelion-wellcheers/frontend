@@ -7,6 +7,7 @@ import { fetchFilterList, fetchSelectedFilter } from '../../apis/recommend';
 export const SearchHome = () => {
   const navigate = useNavigate();
   const question = ['인프라', '라이프스타일', '여가활동'];
+  const localIds = []; // SearchMap 컴포넌트로 추천 받은 citycode를 담아 보내줄 것임
   const themeColor = useContext(ThemeColorContext);
   const [selected, setSelected] = useState({});
   const [filter, setFilter] = useState({});
@@ -25,8 +26,9 @@ export const SearchHome = () => {
     getFilter();
   }, []);
 
-  // 백엔드에 POST 요청할 객체 만들기
+  // 선택된 것 토대로 백엔드에 POST 요청할 객체 만들기
   const updateSelect = (name, id) => {
+    // 현재 선택된 것 토대로 보낼 객체 수정
     setPostSelect((prevState=>{
       const currentArray = prevState[name] || [];
       // 이미 있는 경우 삭제
@@ -57,7 +59,7 @@ export const SearchHome = () => {
         [id]: !prevState[qindex]?.[id]
       }
     }));
-    //postSelect를 업데이트
+    //보낼 객체인 postSelect를 업데이트
     updateSelect(name, id);
   };
 
@@ -69,18 +71,16 @@ export const SearchHome = () => {
       alert('1개 이상 선택해주세요!');
       return;
     }
-    const localIds = []; // searchmap으로 citycode 담아 보내줄 것임
 
+    // '주거지 추천받기' 버튼 클릭 시 만든 객체를 백엔드에 POST 요청
     const postSelected = async () =>{
       const result = await fetchSelectedFilter(postSelect);
-      //setLocals(result);
       result?.map(element => (
         localIds.push(element.city_code)
       ));
       navigate('/searchhome/searchmap', {state: {city_cd : localIds}});
     }
     postSelected();
-   
   }
 
 

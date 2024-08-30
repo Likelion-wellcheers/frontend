@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 
 export const Article = ({data}) => {
+  // ui 구성 위해 article1 / artice2 + article3 으로 분리하여 구분
   return (
     <ArticleContainer>
           <ArticleDescContainer>
