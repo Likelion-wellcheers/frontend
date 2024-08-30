@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { ThemeColorContext } from '../../context/context';
 import { useRecoilState } from 'recoil';
 import { curPageRecoil } from '../../recoil/atom';
+import { useLogout } from '../../hooks/useLogout'
+import { useRecoilValue } from 'recoil'; 
 import { isLoginState } from '../../recoil/isLoginState';
 
 const NavStyle = createGlobalStyle`
@@ -21,7 +23,8 @@ export const Nav = () => {
   const navigate = useNavigate();
   const themeColor = useContext(ThemeColorContext);
   const [curPage, setCurPage] = useRecoilState(curPageRecoil);
-  const [isLogin, setIsLogin] = useRecoilState(isLoginState);
+  const isLogin = useRecoilValue(isLoginState)
+  const handleLogout = useLogout();
 
   //메뉴 클릭 시 해당 버튼에 대한 페이지로 이동하도록
   const handleClick = (buttonName) => {
@@ -36,12 +39,6 @@ export const Nav = () => {
     navigate(buttonName);
   } 
 
-  //로그아웃
-  const handleLogout = () => {
-    window.localStorage.removeItem("access");
-    window.localStorage.removeItem("refresh");
-    setIsLogin(false);
-  }
 
   return (
     <>
@@ -52,8 +49,7 @@ export const Nav = () => {
           onClick={()=>{handleClick("")}}>
             <LogoContainer>
               <Logo src="/images/mainlogo.png" alt="logo"></Logo>
-            </LogoContainer>
-            유노유노후</MainButton>
+            </LogoContainer>유노유노후</MainButton>
             
           <Button  themeColor={themeColor}
           $active={curPage === "/searchhome" || curPage === "/searchhome/searchmap"  || curPage.startsWith("/searchhome/searchmap/centerdetail") || curPage === "/searchhome/searchmap/centerdetail/:centerId/postreview" || curPage === "/searchhome/searchmap/CalCost"}
@@ -79,11 +75,9 @@ export const Nav = () => {
 
           ) : (
           <>
-            <UserButton
-              onClick={()=>{handleClick("/login")}}
+            <UserButton onClick={()=>{handleClick("/login")}}
               >로그인</UserButton>
               </>)}
-           
           
         </Container>
       </OuterContainer>

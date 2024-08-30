@@ -64,6 +64,9 @@ export const Question = () => {
         { headers : { Authorization: `Bearer ${accessToken}`
         }
       });
+      if (response){
+          alert('해결되었습니다!')
+      }
 
     } catch (error) {
       console.error("Error updating question status:", error);
