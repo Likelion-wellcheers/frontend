@@ -13,7 +13,7 @@ export const Banner = () => {
           <BannerDesc>
             <BannerSubTitle themeColor={themeColor}>맞춤형 노후 지역 추천 서비스</BannerSubTitle>
             <BannerTitle>당신은 당신의 <br />노후를 아시나요?</BannerTitle>
-            <BannerButton themeColor={themeColor} onClick={handlePath('/searchhome', 1)}>나만의 노후 지역 찾아보기</BannerButton>
+            <BannerButton themeColor={themeColor} onClick={()=>handlePath('/searchhome', 1)}>나만의 노후 지역 찾아보기</BannerButton>
           </BannerDesc>
           <BannerImg src="/images/bannerImage.png" alt="이미지"></BannerImg>
         </BannerContainer>
