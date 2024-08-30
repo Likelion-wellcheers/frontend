@@ -19,7 +19,6 @@ export const Home = () => {
     getHome();
   },[]);
 
-
   return (
     <>
     <Container>
