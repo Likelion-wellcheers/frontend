@@ -30,7 +30,7 @@ https://youknowhoknow.netlify.app/
 
 
 <img alt="image" src="https://github.com/user-attachments/assets/8490427e-3600-4c7c-848a-add8ee6d0a9d" width="60%" height="60%">
-
+<img src="https://github.com/user-attachments/assets/9edd420c-aae9-4228-83ef-b4a1593c1c9e" width="60%" height="60%"/>
 
 
 > **지역 생활** 탭에서는 지역에 대한 거주민의 생생한 리뷰를 확인할 수 있고, 유저 또한 자신이 사는 지역에 대한 리뷰를 남길 수 있습니다.
@@ -53,7 +53,8 @@ https://youknowhoknow.netlify.app/
 
 > 구체적인 미래를 그릴 수 있도록 노후 계획 작성을 도와줍니다.
 
-<img src="https://github.com/user-attachments/assets/9edd420c-aae9-4228-83ef-b4a1593c1c9e" width="60%" height="60%"/>
+
+<img width="60%" height="60%" alt="image" src="https://github.com/user-attachments/assets/a8d165e7-55d8-488f-a4a6-024f142c9c2a">
 
 
 > 시설, 인프라에 대한 리뷰 확인할 수 있고, 유저 또한 리뷰를 남길 수 있습니다.
