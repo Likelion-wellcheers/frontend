@@ -2,9 +2,8 @@ import React, { useEffect, useState, useContext, useRef } from 'react'
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components'
 import { fetchCityInfo, fetchCenters } from '../../apis/recommend';
-import useMapUtils from '../../hooks/useMapUtils';
+import useMapUtils from '../../hooks/\buseMapUtils';
 
-const { kakao } = window;
 
 export const MapModal = ({mymap, load, cityCodes}) => {
     const navigate = useNavigate();

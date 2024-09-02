@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import React, { useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import styled from 'styled-components';
-import { useForm } from '../../hooks/useForm';
+import { useForm } from '../hooks/useForm';
 
-export const PostReview = ({title, isRequired}) => {
+export const PostReview = ({title, type}) => {
     // isRequired == 1일 시 지역리뷰 0 일시 센터 리뷰
     const { centerId } = useParams();
     const { cityCode } = useParams();
@@ -12,14 +12,10 @@ export const PostReview = ({title, isRequired}) => {
     const [previewUrl, setPreviewUrl] = useState(null);
     const [reviewContent, setReviewContent] = useForm();
     const navigate = useNavigate();
-    const location = useLocation();
 
     const handleRate = (idx) => {
         setRate(idx);
     }
-
-    const sentence = isRequired === 0 ? '시설의 사진을 첨부해주세요' : '파일 첨부';
-
 
     const handleImageChange = (event) => {
         
@@ -37,29 +33,16 @@ export const PostReview = ({title, isRequired}) => {
     const handleUpload = async () => {
         const formData = new FormData();
 
-        // 센터리뷰 경우
-        if(isRequired === 0){
-            if(selectedImage !== null) {
-                formData.append("thumbnail", selectedImage);
-            }
-            formData.append("content", reviewContent);
-            formData.append("score", parseInt(rate));
-            // 이미지 필수로 필요할때만 이미지 선택하라고 에러 처리
+        // 첨부한 이미지 formData에 추가
+        if(selectedImage !== null) {
+            formData.append("image", selectedImage);
         }
-
-        // 지역 리뷰 경우
-        else if(isRequired === 1){
-            if(selectedImage !== null) {
-                formData.append("image", selectedImage);
-            }
-            formData.append("content", reviewContent);
-            formData.append("score", parseInt(rate));
-            // 이미지 필수로 필요할때만 이미지 선택하라고 에러 처리
-        }
+        formData.append("content", reviewContent);
+        formData.append("score", parseInt(rate));
         
         const accessToken = localStorage.getItem("access");
 
-        if(isRequired === 0){
+        if(type === 'center'){
             try {
                 // 0일 때 센터 리뷰 
                 const response = await fetch(`https://wellcheers.p-e.kr/recommend/center/${centerId}/review/`, {
@@ -81,7 +64,7 @@ export const PostReview = ({title, isRequired}) => {
               console.error('업로드 실패:', error);
             }
         }
-        else {
+        else if(type === 'local'){
             try {
                 console.log('시티코드',cityCode);
                 // 1일 때 지역 리뷰
@@ -105,10 +88,7 @@ export const PostReview = ({title, isRequired}) => {
             }
         }
             
-    }
-
-        
-
+    }   
 
   return (
     <>
@@ -140,7 +120,7 @@ export const PostReview = ({title, isRequired}) => {
                 </PostTitle>
                 <PostTextArea onChange={setReviewContent} placeholder='후기와 별점을 입력해주세요'></PostTextArea>
                 <PostImgContainer>
-                    {sentence}
+                    파일 첨부
                     <PostImgDesc> 
                     {previewUrl && 
                         <PostImgIcon src={previewUrl} alt="이미지 미리보기" ></PostImgIcon>}
