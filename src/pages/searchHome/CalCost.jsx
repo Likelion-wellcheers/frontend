@@ -1,13 +1,15 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { ThemeColorContext } from '../../context/context';
-import Chart from 'chart.js/auto';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useForm } from '../../hooks/useForm';
 import { fetchCartId, fetchCartUpdate, fetchCompCost, fetchPlan } from '../../apis/recommend';
-import { curPageRecoil } from '../../recoil/atom';
 import { useChartUtils } from '../../hooks/useChartUtils';
 import { usePath } from '../../hooks/usePath';
+import { PlanTemplate } from '../../component/PlanTemplate';
+import { Chart, BarController, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+
+Chart.register(BarController, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 export const CalCost = () => {
     const themeColor = useContext(ThemeColorContext);
@@ -19,13 +21,9 @@ export const CalCost = () => {
     const [compare, setCompare] = useState({});
     const [addPage, setAddPage] = useState(false);
     const [inputBudget, onChangeBudget] = useForm(""); // 받아온 예산
-    const [plan_1, setPlan_1] = useForm("");
-    const [plan_2, setPlan_2] = useForm("");
-    const [plan_3, setPlan_3] = useForm("");
     const [isExtra, setisExtra] = useState(false);
     const [myBudget, setMyBudget] = useState();
     const [prepare, setPrepare] = useState();
-    //const [myBudget, setMyBudget] = useState();
     const chartRef = useRef(null); // 차트 인스턴스 저장할 ref
     const chartUtils = useChartUtils();
     const movePath = usePath();
@@ -105,22 +103,7 @@ export const CalCost = () => {
         }
     },[compare, addPage])
 
-    // 계획 저장 버튼 클릭 시
-    const handleSave = () => {
-        var planData = {
-            "plan1" : plan_1,
-            "plan2" : plan_2,
-            "plan3" : plan_3,
-            "city_code" : parseInt(city_code),
-        }
-        const getPlanSave = async(data) => {
-            const result = await fetchPlan(data);
-            setMyBudget(data[datalabel2]);
-            setPrepare(data[datalabel1]);
-        }
-        getPlanSave(planData);
-        alert("저장되었습니다!");
-    }
+   
 
     const handleGotoQna = () => {
         movePath('/mainwonder', 1)
@@ -134,7 +117,7 @@ export const CalCost = () => {
                 <SubTitle themeColor={themeColor}>여가비용 계산 <SubTitle_2><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                     <path fill-rule="evenodd" clip-rule="evenodd" d="M8.29289 5.29289C8.68342 4.90237 9.31658 4.90237 9.70711 5.29289L15.7071 11.2929C16.0976 11.6834 16.0976 12.3166 15.7071 12.7071L9.70711 18.7071C9.31658 19.0976 8.68342 19.0976 8.29289 18.7071C7.90237 18.3166 7.90237 17.6834 8.29289 17.2929L13.5858 12L8.29289 6.70711C7.90237 6.31658 7.90237 5.68342 8.29289 5.29289Z" fill="black"/>
                     </svg></SubTitle_2></SubTitle>
-                <Title>한 달 여가활동 예상 비용</Title>
+                <Titles>한 달 여가활동 예상 비용</Titles>
                 <TitleDesc>회원님이 선택하신 시설을 이용할 때 드는 평균 비용을 계산해 보았어요!</TitleDesc>
                 <CostContainer>
                 <InfraList>
@@ -191,19 +174,7 @@ export const CalCost = () => {
                 </AddGraph>
                 </AddGraphContainer>
                 <AddBackground>
-                    <AddPlanContainer>
-                        <AddPlanTitle>계획 세우기</AddPlanTitle>
-                        <AddPlanQuestion>여가비용 금액이 내 노후에 적합한가요? <br />
-                        아니라면 계획을 다시 세워보세요!</AddPlanQuestion>
-                        <AddPlanAnswer onChange={setPlan_1}></AddPlanAnswer>
-                        <AddPlanQuestion>추천받은 시설 및 활동들로 <br />
-                        회원님이 추구하는 노후를 이뤄낼 수 있을지 상상해보세요!</AddPlanQuestion>
-                        <AddPlanAnswer onChange={setPlan_2}></AddPlanAnswer>
-                        <AddPlanQuestion>내가 원하는 노후 생활을 위해서 <br />
-                        지금 준비해야할 것은 무엇이 있을지 계획해보세요!</AddPlanQuestion>
-                        <AddPlanAnswer onChange={setPlan_3}></AddPlanAnswer>
-                        <AddPlanSaveBtn onClick={handleSave}>저장</AddPlanSaveBtn>
-                    </AddPlanContainer>
+                    <PlanTemplate put={false} city_code={city_code}/>
                     <GotoQnaContainer>
                         <QnaDesc>계획을 세우며 생긴 궁금증을 주민들에게 직접 물어보세요!</QnaDesc>
                         <QnaBtn onClick={handleGotoQna}>지역 Q&A로 이동하기<svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
@@ -255,7 +226,7 @@ const SubTitle_2 = styled.div`
     display: inline-flex;
     margin-bottom: 1px;
 `
-const Title = styled.div`
+const Titles = styled.div`
     align-self: flex-start;
     font-size: 26px;
     font-style: normal;
@@ -652,6 +623,7 @@ const GotoQnaContainer = styled.div`
     box-shadow: 4px 4px 4px 0px rgba(0, 0, 0, 0.12);
     gap: 37%;
     justify-content: center;
+    margin-bottom: 60px;
 `
 const QnaDesc = styled.div`
     font-size: 18px;
