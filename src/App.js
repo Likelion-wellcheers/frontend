@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { Home } from './pages/Home';
 import { Layout } from './component/layout/Layout';
 import { Login } from './pages/login/Login';
@@ -16,19 +16,18 @@ import { Eachmagazine } from './pages/localnews/Eachmagazine';
 import { Moremagazine } from './pages/localnews/Moremagazine';
 import { Detailsavelist } from './pages/mypage/Detailsavelist';
 import { CenterDetail } from './pages/searchHome/CenterDetail';
-import { PostReview } from './pages/searchHome/PostReview';
 import { Mainwonder } from './pages/qusetionanswer/Mainwonder';
 import { Wonderwrite } from './pages/qusetionanswer/Wonderwrite';
 import { Answer } from './pages/qusetionanswer/Answer';
 import { Question } from './pages/qusetionanswer/Question';
 import { Locreview } from './pages/localnews/Locreview';
-import { Reviewing } from './pages/searchHome/Reviewing';
+import { PostReviewLocal } from './pages/searchHome/PostReviewLocal';
 import KakaoLogin from './pages/login/KakaoLogin';
 import Test from './pages/login/Test';
-import { ReviewCenter } from './pages/searchHome/ReviewCenter';
 import { Logincomplete } from './pages/login/Logincomplete';
 import { AddMyInfo } from './pages/login/AddMyInfo';
 import { MyPlans } from './pages/mypage/MyPlans';
+import { PostReviewCenter } from './pages/searchHome/PostReviewCenter';
 
 
 
@@ -50,12 +49,12 @@ const App = () => {
                   <Route path="searchhome" element={<SearchHome />} />
                   <Route path="searchhome/searchmap" element={<SearchMap />} />
                   <Route path="searchhome/searchmap/centerdetail/:centerId" element={<CenterDetail />}/>
-                  <Route path="searchhome/searchmap/centerdetail/:centerId/reviewcenter" element={<ReviewCenter />}/>
+                  <Route path="searchhome/searchmap/centerdetail/:centerId/reviewcenter" element={<PostReviewCenter />}/>
                   <Route path="searchhome/searchmap/CalCost" element={<CalCost />}/>
                   <Route path="signup" element={<Signup />} />
                   <Route path="localnews" element={<Search />} />
                   <Route path="localinfo" element={<Localinfo />} />
-                  <Route path="localinfo/:cityCode/reviewing" element={<Reviewing />} />
+                  <Route path="localinfo/:cityCode/reviewing" element={<PostReviewLocal />} />
                   <Route path="eachmagazine" element={<Eachmagazine />} />
                   <Route path="moremagazine" element={<Moremagazine />} />
                   <Route path="mainwonder" element={<Mainwonder />} />
