@@ -21,7 +21,7 @@ import { Wonderwrite } from './pages/qusetionanswer/Wonderwrite';
 import { Answer } from './pages/qusetionanswer/Answer';
 import { Question } from './pages/qusetionanswer/Question';
 import { Locreview } from './pages/localnews/Locreview';
-import { PostReviewLocal } from './pages/searchHome/PostReviewLocal';
+import { PostReviewLocal } from './pages/localnews/PostReviewLocal';
 import KakaoLogin from './pages/login/KakaoLogin';
 import Test from './pages/login/Test';
 import { Logincomplete } from './pages/login/Logincomplete';
