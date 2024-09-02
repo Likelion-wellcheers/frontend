@@ -134,7 +134,9 @@ if(centerInfo){
                             </ReviewRating>
                             <ReviewTextContent>{review?.content}</ReviewTextContent>
                             <ReviewTextImgs >
-                                <ReviewTextImg src={review?.thumbnail}></ReviewTextImg>
+                                {review.thumbnail && 
+                                <ReviewTextImg src={review.thumbnail}></ReviewTextImg>
+                            }
                             </ReviewTextImgs> 
                         </ReviewText>
                     </ReviewPost>
