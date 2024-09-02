@@ -1,12 +1,12 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext } from 'react'
 import styled, { createGlobalStyle } from "styled-components";
-import { useNavigate } from 'react-router-dom';
 import { ThemeColorContext } from '../../context/context';
 import { useRecoilState } from 'recoil';
 import { curPageRecoil } from '../../recoil/atom';
 import { useLogout } from '../../hooks/useLogout'
 import { useRecoilValue } from 'recoil'; 
 import { isLoginState } from '../../recoil/isLoginState';
+import { usePath } from '../../hooks/usePath';
 
 const NavStyle = createGlobalStyle`
   @font-face {
@@ -18,27 +18,20 @@ const NavStyle = createGlobalStyle`
 `
 
 export const Nav = () => {
-  //nav에서 현제 어떤 페이지인지 저장하는 상태
-  //home의 경로는 '/' 이므로 디폴트 값으로
-  const navigate = useNavigate();
   const themeColor = useContext(ThemeColorContext);
   const [curPage, setCurPage] = useRecoilState(curPageRecoil);
   const isLogin = useRecoilValue(isLoginState)
   const handleLogout = useLogout();
+  const movePath = usePath();
 
   //메뉴 클릭 시 해당 버튼에 대한 페이지로 이동하도록
-  const handleClick = (buttonName) => {
-    if(buttonName === "/searchhome" || buttonName === "/mainwonder"){
-      if(!isLogin){
-        alert("로그인 먼저 해주세요!");
-        navigate("/login");
-        return;
-      }
-    }
-    setCurPage(buttonName);
-    navigate(buttonName);
-  } 
-
+  // 로그인 필요 여부에 따라 나눔
+  const RequireLogin = (buttonName) => {
+    movePath(buttonName, 1)
+  }
+  const unRequireLogin = (buttonName) => {
+    movePath(buttonName, 0)
+  }
 
   return (
     <>
@@ -46,28 +39,28 @@ export const Nav = () => {
       <OuterContainer>
         <Container>
           <MainButton
-          onClick={()=>{handleClick("")}}>
+          onClick={()=>{unRequireLogin("")}}>
             <LogoContainer>
               <Logo src="/images/mainlogo.png" alt="logo"></Logo>
             </LogoContainer>유노유노후</MainButton>
             
           <Button  themeColor={themeColor}
           $active={curPage === "/searchhome" || curPage === "/searchhome/searchmap"  || curPage.startsWith("/searchhome/searchmap/centerdetail") || curPage === "/searchhome/searchmap/centerdetail/:centerId/postreview" || curPage === "/searchhome/searchmap/CalCost"}
-          onClick={()=>handleClick("/searchhome")}>나의 노후 지역 찾기</Button>
+          onClick={()=>RequireLogin("/searchhome")}>나의 노후 지역 찾기</Button>
 
             <Button  themeColor={themeColor}
           $active={curPage === "/mainwonder" || curPage === "/woderwrite" || curPage === "/answer" || curPage === "/question"}
-          onClick={()=>handleClick("/mainwonder")}>지역 Q&A</Button>
+          onClick={()=>RequireLogin("/mainwonder")}>지역 Q&A</Button>
 
           <Button  themeColor={themeColor}
           $active={curPage === "/localnews" || curPage === "/Localinfo"  || curPage === "/eachmagazine" || curPage === "/moremagazine"}
-          onClick={()=>handleClick("/localnews")}>지역생활</Button>
+          onClick={()=>unRequireLogin("/localnews")}>지역생활</Button>
 
           {isLogin ? (<>
           <UserButtons>
               <UserButton  themeColor={themeColor}
                 $active={curPage === "/mypage"}
-                onClick={()=>handleClick("/mypage")}>
+                onClick={()=>RequireLogin("/mypage")}>
                   마이페이지 </UserButton> <UserButtonDivide>|</UserButtonDivide>
                 <UserButton onClick={handleLogout}> 로그아웃</UserButton>
                 </UserButtons>
@@ -75,7 +68,7 @@ export const Nav = () => {
 
           ) : (
           <>
-            <UserButton onClick={()=>{handleClick("/login")}}
+            <UserButton onClick={()=>{unRequireLogin("/login")}}
               >로그인</UserButton>
               </>)}
           
