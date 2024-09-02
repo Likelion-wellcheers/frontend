@@ -5,37 +5,35 @@ import Chart from 'chart.js/auto';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useForm } from '../../hooks/useForm';
 import { fetchCartId, fetchCartUpdate, fetchCompCost, fetchPlan } from '../../apis/recommend';
-import { useRecoilState } from 'recoil';
 import { curPageRecoil } from '../../recoil/atom';
+import { useChartUtils } from '../../hooks/useChartUtils';
+import { usePath } from '../../hooks/usePath';
 
 export const CalCost = () => {
     const themeColor = useContext(ThemeColorContext);
-    const navigate = useNavigate();
     const location = useLocation();
-    const [curPage, setCurPage] = useRecoilState(curPageRecoil);
     const { selected_center, city_code } = location.state || {};
     const dataLabel = ['center1_id', 'center2_id', 'center3_id', 'center4_id', 'center5_id'];
     const [cart, setCart] = useState({}); // 해당 카트 아이디의 카트, 계속해서 수정시킬 것임
     const [firstLoad, setFirstLoad] = useState(true);
     const [compare, setCompare] = useState({});
     const [addPage, setAddPage] = useState(false);
-    const [myleisureCost, setMyleisureCost] = useState(0); //생활비 바탕으로 계산한 여가 비용
-    const [expectCost, setexpectCost] = useState(0); //예상 여가비용
     const [inputBudget, onChangeBudget] = useForm(""); // 받아온 예산
     const [plan_1, setPlan_1] = useForm("");
     const [plan_2, setPlan_2] = useForm("");
     const [plan_3, setPlan_3] = useForm("");
     const [isExtra, setisExtra] = useState(false);
-    const [prepare, setPrepare] = useState();
     const [myBudget, setMyBudget] = useState();
+    const [prepare, setPrepare] = useState();
+    //const [myBudget, setMyBudget] = useState();
     const chartRef = useRef(null); // 차트 인스턴스 저장할 ref
+    const chartUtils = useChartUtils();
+    const movePath = usePath();
     
     const datalabel1 = "나의 적정여가비용";
     const datalabel2 = "내가 담은 여가비용";
 
-    const [selected, setSelected] = useState({});
-    const [updated, setUpdated] = useState();
-
+    // 카트 수정
     const handleDelete = (idx) => {
         var deleteId = idx.substr(6,6);
 
@@ -50,8 +48,9 @@ export const CalCost = () => {
 
     };
 
-
+    // 여가비용 계산 버튼 클릭 시
     const showAddPage = () => {
+        // 예외 처리
         if(inputBudget === ""){
             alert("생활비를 입력하세요!");
             onChangeBudget({target : {value: ""}}); // 빈값으로
@@ -75,32 +74,7 @@ export const CalCost = () => {
         getCompCost(cart.id, compareData);
 
         const chartEI = document.getElementById('bar-chart')?.getContext('2d');
-
-        if(chartRef.current) {
-            chartRef.current.destroy();
-        }
-
-        chartRef.current = new Chart(chartEI, {
-            type: 'bar',
-            data: {
-                labels: ["예상 비용", "적정 비용"],
-                datasets: [
-                    {
-                        label: "원",
-                        backgroundColor: isExtra ? ["#F14A4A", "#5D5FEF"] : ["#C1BEFF", "#5D5FEF"],
-                        data: [prepare, myBudget]
-                    }
-                ]
-            },
-                options: {
-                    legend: { display: true },
-                    title: {
-                        display: true,
-                        text: '예상 비용과 적정 비용'
-                    }
-                }
-            });
-        
+        chartUtils.drawChart(chartRef, chartEI, compare, prepare, myBudget);
         setAddPage(true);
     }
 
@@ -112,7 +86,7 @@ export const CalCost = () => {
                 centerData[dataLabel[idx]] = parseInt(center.id)
             ))
         }
-                // 첫 로드 시에만 cart id 불러오도록
+        // 첫 로드 시에만 cart id 불러오도록
         if(firstLoad){
                 const getCartId = async(selected) => {
                     const result = await fetchCartId(selected);
@@ -123,37 +97,15 @@ export const CalCost = () => {
             }
     },[firstLoad])
 
+    // 카트 수정 시
     useEffect(()=>{
         if (addPage && compare[datalabel1] !== undefined && compare[datalabel2] !== undefined) {
             const chartEI = document.getElementById('bar-chart')?.getContext('2d');
-    
-            if (chartRef.current) {
-                chartRef.current.destroy(); // 이전 차트 인스턴스가 있을 경우 제거
-            }
-    
-            chartRef.current = new Chart(chartEI, {
-                type: 'bar',
-                data: {
-                    labels: ["예상 비용", "적정 비용"],
-                    datasets: [
-                        {
-                            label: "원",
-                            backgroundColor: compare.message ? ["#F14A4A", "#5D5FEF"] : ["#C1BEFF", "#5D5FEF"],
-                            data: [prepare, myBudget]
-                        }
-                    ]
-                },
-                options: {
-                    legend: { display: true },
-                    title: {
-                        display: true,
-                        text: '예상 비용과 적정 비용'
-                    }
-                }
-            });
+            chartUtils.drawChart(chartRef, chartEI, compare, prepare, myBudget);
         }
     },[compare, addPage])
 
+    // 계획 저장 버튼 클릭 시
     const handleSave = () => {
         var planData = {
             "plan1" : plan_1,
@@ -171,8 +123,7 @@ export const CalCost = () => {
     }
 
     const handleGotoQna = () => {
-        setCurPage('/mainwonder');
-        navigate('/mainwonder')
+        movePath('/mainwonder', 1)
     }
 
     if(cart) {

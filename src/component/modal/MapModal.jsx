@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext, useRef } from 'react'
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components'
 import { fetchCityInfo, fetchCenters } from '../../apis/recommend';
-import useMapUtils from '../../mapUtils/useMapUtils';
+import useMapUtils from '../../hooks/useMapUtils';
 
 const { kakao } = window;
 
