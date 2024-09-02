@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useContext, useRef } from 'react'
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components'
-import sig from '../../constants/sig.json';
 import { fetchCityInfo, fetchCenters } from '../../apis/recommend';
+import useMapUtils from '../../mapUtils/useMapUtils';
 
 const { kakao } = window;
 
@@ -12,10 +12,9 @@ export const MapModal = ({mymap, load, cityCodes}) => {
     const [citys, setCitys] = useState({}); // 지역 정보들 모음
     const [cityName, setCityName] = useState([]);
     const [centers, setCenters] = useState({}) // 선택한 지역에 해당하는 시설들
-    const [selectedPlace, setSelectedPlace] = useState();  // 사용자가 선택한 지역의 city_code값
     const [selectedCenter, setSelectedCenter] = useState([]); // 사용자가 선택한 인프라 리스트
-    const [infrakeys, setInfrakeys] = useState([]);
     const [cityCode, setCityCode] = useState();
+    const mapUtils = useMapUtils();
 
     const markerRefs = useRef();
     const polygonRefs = useRef();
@@ -24,83 +23,7 @@ export const MapModal = ({mymap, load, cityCodes}) => {
         array.sort(() => Math.random() - 0.5);
       }
 
-    //경도 위도 넘겨주면 마커 찍어주는 함수
-    const drawMarker = (lat, lng) => {
-        var imageSrc = '/images/marker.png', // 마커이미지의 주소입니다    
-        imageSize = new kakao.maps.Size(31, 42), // 마커이미지의 크기입니다
-        imageOption = {offset: new kakao.maps.Point(15, 28)};
-
-        // 지역 마커 찍기
-        var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption),
-        markerPosition = new kakao.maps.LatLng(lat, lng);  //임시 좌표
-
-        const marker = new kakao.maps.Marker({
-            position: markerPosition, 
-            image: markerImage // 마커이미지 설정 
-        });
-        marker.setMap(mymap);
-        markerRefs.current.push(marker);
-    }
-
-    // 시군구 코드 넘겨주면 폴리곤 그려주는 함수
-    const drawPolygon = (data, sigCD) => {
-        var polygonList = getPolygon(data, sigCD);
-    
-        var polygonPath = [];
-
-        polygonList.forEach(element => {
-            polygonPath.push(new kakao.maps.LatLng(element[1], element[0]))
-        });
-
-        const polygon = new kakao.maps.Polygon({
-            path: polygonPath, // 그려질 다각형의 좌표 배열입니다
-            strokeWeight: 1, // 선의 두께입니다
-            strokeColor: '#b62c91', // 선의 색깔입니다
-            strokeOpacity: 0.8, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
-            strokeStyle: 'longdash', // 선의 스타일입니다
-            fillColor: '#f89ef8', // 채우기 색깔입니다
-            fillOpacity: 0.3 // 채우기 불투명도 입니다
-        });
-        polygon.setMap(mymap);
-        polygonRefs.current.push(polygon);
-    }   
-
-    const clearMarkers = () => {
-        if (markerRefs.current) {
-            markerRefs.current.forEach(marker => marker.setMap(null));
-            markerRefs.current = []; 
-        }
-    };
-
-    const clearPolygons = () => {
-        if (polygonRefs.current) {
-            polygonRefs.current.forEach(polygon => polygon.setMap(null));
-            polygonRefs.current = []; 
-        }
-    };
-
-    const moveFocus = (lat, lng) => {
-        var moveLatLon = new kakao.maps.LatLng(lat, lng);
-        mymap.setCenter(moveLatLon);
-    }
-
-
-    // 시군구 코드를 넘겨주면 해당하는 폴리곤 리스트 반환
-    const getPolygon = (data, sig_cd) => {
-        // features 배열에서 조건에 맞는 객체를 찾음
-        const feature = data.features.find(
-          (feature) => feature.properties.SIG_CD === sig_cd
-        );
-        // 조건에 맞는 객체가 없으면 null 반환
-        if (!feature) {
-          return null;
-        }
-        // 객체가 존재할 경우 coordinates 반환
-        return feature.geometry.coordinates[0][0];
-      }
-
-
-      useEffect(()=>{
+    useEffect(()=>{
         if (!markerRefs.current) {
             markerRefs.current = [];
         }
@@ -108,8 +31,8 @@ export const MapModal = ({mymap, load, cityCodes}) => {
             polygonRefs.current = [];
         }
     
+        mapUtils.clearPolygons(polygonRefs);
         // 시티코드로 지역 정보를 하나하나 불러오고, 마커와 폴리곤 생성하는 함수
-        clearPolygons();
         const getCity = async (city_code) => {
             const result = await fetchCityInfo(city_code); // result 에는 지역코드: {} 형태로 지역정보 들어가있음
 
@@ -123,8 +46,8 @@ export const MapModal = ({mymap, load, cityCodes}) => {
                 [city_code]: result
             }));
 
-            drawMarker(result.latitude, result.longtitude);
-            drawPolygon(sig, String(city_code));
+            mapUtils.drawMarker(markerRefs, mymap, result.latitude, result.longtitude);
+            mapUtils.drawPolygon(polygonRefs, mymap, String(city_code));
         }
 
         // 지도 로드 완료 시 진행하도록
@@ -144,33 +67,29 @@ export const MapModal = ({mymap, load, cityCodes}) => {
         setCityName([cityName, gugoonName]);
         // 지도 확대하기 + 이동하기 (포커스)
         // map : 지도창에서 가져온 지도 객체
-        setSelectedPlace(city_code);
-
         const getCenterInfo = async(city_code) => {
             const result = await fetchCenters(city_code);
             setCenters(result);
-            if(result.length){
-                result.map((center)=>(
-                    drawMarker(center.latitude, center.longtitude)
-                ));
-            }
+            result.map((center)=>(
+                mapUtils.drawMarker(markerRefs, mymap, center.latitude, center.longtitude)
+            ));
             setModalPage(1);
         }
         getCenterInfo(city_code);
         mymap.setLevel(4); 
-        moveFocus(lat, lng);
+        mapUtils.moveFocus(mymap, lat, lng);
 
         setCityCode(city_code);
-        clearMarkers();
+        mapUtils.clearMarkers(markerRefs);
         // 시설 마커들 그리기
     }
 
     // 지역 페이지 이동 (뒤로가기)
     const handleBack = () => {
         if(mymap){
-            clearMarkers();
+            mapUtils.clearMarkers(markerRefs);
             setModalPage(0);
-            moveFocus(36.3504119, 127.3845475)
+            mapUtils.moveFocus(mymap, 36.3504119, 127.3845475)
             mymap.setLevel(12);
         }
     }
@@ -613,4 +532,3 @@ const CenterCardPutBtn = styled.button`
     border: 1px solid #5D5FEF;
     cursor: pointer;
 `
-
