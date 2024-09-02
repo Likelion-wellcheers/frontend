@@ -70,8 +70,41 @@ https://youknowhoknow.netlify.app/
 
 ## 기술 스택
 
+- **개발 환경**
+  - Visual Studio Code
+  - Git / GitHub
+
+- **Config**
+  - NPM (Node Package Manager)
+
+- **Frontend Framework**
+  - React
+
+- **Communication Tools**
+  - Slack
+  - Notion
+  - Google Meet
 
 ## 담당 파트
 
-## 아키텍처
+- **기획**: 김시연
+- **디자인**: 최윤경
+- **백엔드**: 박연우, 박예빈
+- **프론트엔드**: 황인영, 안예현
 
+## 프로젝트 아키텍처
+
+프로젝트는 클라이언트-서버 구조로 구성되어 있습니다. 프론트엔드는 React로 구성되었으며, 백엔드와 REST API를 통해 데이터를 주고받습니다.
+
+### 1. **프론트엔드**
+   - React를 사용하여 구성된 SPA(Single Page Application)입니다.
+   - 주요 기능: 사용자 인터페이스(UI)와 사용자 경험(UX)을 담당하며, 백엔드에서 제공하는 API를 통해 데이터를 받아와 화면에 렌더링합니다.
+   - 상태 관리: React의 상태 관리 기능을 사용합니다.
+
+### 2. **백엔드**
+   - 백엔드 서버는 RESTful API를 제공하며, 프론트엔드 애플리케이션과 JSON 형식으로 데이터를 주고받습니다.
+   - 데이터베이스와 연동하여 작업을 처리합니다.
+   
+### 3. **통신**
+   - 프론트엔드와 백엔드는 HTTP/HTTPS 프로토콜을 통해 통신합니다.
+   - API 호출은 주로 Axios 또는 Fetch API를 사용하여 비동기적으로 처리됩니다.
